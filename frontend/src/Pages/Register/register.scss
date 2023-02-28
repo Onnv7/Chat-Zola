@@ -1,0 +1,38 @@
+.register-name{
+    display: flex;
+    gap: 20px;
+}
+.regis-fail{
+    position: absolute;
+    display: flex;
+    align-items: center;
+    font-size: 1.4rem;
+    gap: 6px;
+    margin: 6px 0;
+}
+.regis-genderList{
+    margin-top: 36px;
+    display: flex;
+    justify-content: space-between;
+}
+.regis-genderItem{
+    font-size: 2rem;
+    margin-left: 12px;
+}
+.regis-birth{
+    display: flex;
+    align-items: center; 
+    font-size: 2rem;
+    gap: 11px;
+    margin: 36px 0 24px 0;
+    >input{
+        width: 100%;
+        font-size: 2rem;
+        border: none;
+        background-color: transparent;
+        outline: none;
+        color: rgba(255, 255, 255, 0.5);
+    }
+    padding: 4px;
+    border-bottom: 1px solid #fff ;
+}

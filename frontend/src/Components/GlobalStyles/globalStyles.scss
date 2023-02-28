@@ -1,0 +1,35 @@
+@import 'normalize.css';
+@import url('https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600&display=swap');
+@import url('https://fonts.cdnfonts.com/css/bismarck');
+:root{
+    --primary-color: #48C672;
+}
+
+*{
+    box-sizing: inherit;
+    margin: 0;
+    padding: 0;
+}
+
+html{
+    font-size: 62.5%;
+    box-sizing: border-box;
+}
+
+body{
+    font-family: 'Barlow' !important;
+    font-size: 1.6rem;
+}
+
+hr{
+    border-top: 1px solid var(--primary-color);
+    width: 1200px;
+    margin-top: 46px;
+}
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+
