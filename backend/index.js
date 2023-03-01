@@ -2,9 +2,10 @@ import express, { response } from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
-
+import crypto from "crypto";
 
 import authRoute from "./routes/auth.js";
+import conversationRoute from "./routes/conversation.js";
 
 const app = express();
 dotenv.config();
@@ -42,6 +43,7 @@ app.use((err, req, res, next) => {
 });
 
 app.use("/backend/auth", authRoute);
+app.use("/backend/conversation", conversationRoute);
 
 app.listen(8800, () => {
     connect();
