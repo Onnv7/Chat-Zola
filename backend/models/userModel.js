@@ -1,7 +1,17 @@
-import mongoose, { mongo } from "mongoose";
+import mongoose from "mongoose";
+import crypto from "crypto";
 
 const userSchema = new mongoose.Schema(
     {
+        _id: {
+            type: String,
+            // unique: true,
+            default: () => {
+                const randomBytes = crypto.randomBytes(4);
+                const id = randomBytes.readUInt32BE();
+                return id.toString();
+            }
+        },
         name: {
             type: String,
             trim: true,
@@ -40,6 +50,10 @@ const userSchema = new mongoose.Schema(
         avatar: {
             type: String,
         },
+        listFriends: [{
+            type: mongoose.Schema.ObjectId,
+            ref: "User"
+        }]
     },
     { timestamps: true }
 );
