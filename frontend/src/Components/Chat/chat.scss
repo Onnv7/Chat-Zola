@@ -1,0 +1,128 @@
+.chat{
+    display: flex; 
+    height: 100%;
+}
+.chat-container{
+    flex: 3.5;
+    border: 1px solid #19873D;
+}
+.chat-header{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 18px;
+}
+.chat-name{
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    >img{
+        width: 64px;
+        height: 64px;
+        border-radius: 50%;
+        object-fit: contain;
+    }
+    >span{
+        font-size: 2rem;
+        font-weight: 700;
+    }
+}
+.chat-headerBtn{
+    display: flex;
+    gap: 24px;
+    font-size: 2rem;
+    color: var(--primary-color);
+}
+.chat-view{
+    height: calc(100vh - 102px);
+}
+.message-view{
+    height: calc(100% - 112px);
+    background-color: #eee;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    overflow: auto;
+}
+.MyMessage, .YourMessage{
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 14px;
+    >img{
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        object-fit: contain;
+    }
+    >span{
+        padding: 15px;
+        border-radius: 30px;
+    }
+}
+.MyMessage{
+    justify-content: flex-end;
+    >span{
+        background-color: rgba(72, 198, 114, 0.5);
+    }
+}
+.YourMessage{
+    >span{
+        background-color: rgba(72, 198, 114, 0.2);
+    }
+}
+.chat-toolbar{
+    height: 52px;
+    font-size: 2.4rem;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin: 0 20px;
+    >i{
+        width: 40px;
+        height: 40px;
+        text-align: center;
+        line-height: 4rem;
+    }
+}
+.chat-inputBox{
+    border-top: 1px solid rgba(25, 135, 61, 0.6);
+}
+.chat-input{
+    height: 60px;
+    display: flex;
+    align-items: center;
+    margin: 0 20px;
+    
+    >input{
+        flex: 1;
+        border: none;
+        outline: none;
+    }
+    >i{
+        font-size: 3rem;
+        color: rgba(72, 198, 114, 0.5);
+        &:first-of-type{
+            margin-right: 20px;
+        }
+    }
+}
+.chat-detail{
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    margin: 20px 20px 0 ;
+
+    >img{
+        width: 160px;
+        height: 160px;
+        object-fit: contain;
+        border-radius: 50%;
+    }
+    >span{
+        font-size: 2.6rem;
+        font-weight: 700;
+    }
+}
