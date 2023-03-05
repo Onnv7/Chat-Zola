@@ -1,7 +1,7 @@
 import express from "express";
-import { createConversation } from "../controllers/conversationController.js"
+import { sendMessageToConversation } from "../controllers/conversationController.js"
 const router = express.Router();
 
-router.post('/create',)
+router.post('/send-message/:conversationId', sendMessageToConversation)
 
 export default router

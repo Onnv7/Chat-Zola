@@ -50,8 +50,12 @@ const userSchema = new mongoose.Schema(
         avatar: {
             type: String,
         },
-        listFriends: [{
-            type: mongoose.Schema.ObjectId,
+        friendsList: [{
+            type: String,
+            ref: "User"
+        }],
+        friendRequest: [{
+            type: String,
             ref: "User"
         }]
     },
