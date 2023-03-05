@@ -21,15 +21,16 @@ body{
     font-size: 1.6rem;
 }
 
-hr{
-    border-top: 1px solid var(--primary-color);
-    width: 1200px;
-    margin-top: 46px;
-}
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
+}
+.active{
+    background-color: #159C43;
+}
+.active-chat{
+    background-color:  rgba(72, 198, 114, 0.4)
 }
 
 
