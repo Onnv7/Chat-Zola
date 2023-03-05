@@ -1,31 +1,29 @@
 import mongoose from "mongoose";
 import { v4 as uuidv4 } from "uuid";
 
-export const messageSchema = new mongoose.Schema({
-    sender: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User'
-    },
-    content: String,
-    sentAt: {
-        type: Date,
-        default: Date.now
-    }
-});
 
 const conversationSchema = mongoose.Schema(
     {
         _id: {
-            type: mongoose.Schema.Types.ObjectId,
-            required: true,
+            type: String,
+            // required: true,
             default: () => { return uuidv4() }
         },
-        roomName: { type: String },
         participants: [{
-            type: mongoose.Schema.ObjectId,
+            type: String,
             ref: "User",
         }],
-        message: [messageSchema]
+        message: [{
+            sender: {
+                type: String,
+                ref: 'User'
+            },
+            content: String,
+            sentAt: {
+                type: Date,
+                default: Date.now
+            }
+        }]
     },
     { timestamps: false }, { _id: false }
 )

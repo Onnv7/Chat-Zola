@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const NoteSchema = mongoose.Schema({
+const noteSchema = mongoose.Schema({
     title: {
         type: String,
         default: "Title"
@@ -11,4 +11,4 @@ const NoteSchema = mongoose.Schema({
     user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
 })
 
-export default mongoose.Schema("Note", NoteSchema);
+export default mongoose.Schema("Note", noteSchema);

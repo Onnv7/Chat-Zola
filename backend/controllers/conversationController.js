@@ -1,4 +1,6 @@
-import Conversation, { messageSchema } from '../models/conversationModel.js'
+import mongoose from 'mongoose';
+
+import Conversation from '../models/conversationModel.js'
 
 export const createConversation = async (req, res, next) => {
     try {
@@ -11,11 +13,19 @@ export const createConversation = async (req, res, next) => {
         next(error)
     }
 }
-export const addMessageToConversation = async (req, res, next) => {
+export const sendMessageToConversation = async (req, res, next) => {
     try {
-        const conversation = Conversation.findOne(req.body._id)
-        const data = req.body;
-        const msg = new messageSchema({ ...data })
+        const { sender, message } = req.body;
+        const msg = {
+            sender: sender,
+            content: message,
+            sentAt: Date.now()
+        }
+        await Conversation.updateOne(
+            { _id: req.params.conversationId },
+            { $push: { message: msg } },
+        )
+        res.status(200).json({ success: true, message: "Message sent successfully" })
 
     } catch (error) {
         next(error)

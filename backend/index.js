@@ -6,6 +6,7 @@ import crypto from "crypto";
 
 import authRoute from "./routes/auth.js";
 import conversationRoute from "./routes/conversation.js";
+import userRoute from "./routes/user.js";
 
 const app = express();
 dotenv.config();
@@ -44,6 +45,7 @@ app.use((err, req, res, next) => {
 
 app.use("/backend/auth", authRoute);
 app.use("/backend/conversation", conversationRoute);
+app.use("/backend/user", userRoute);
 
 app.listen(8800, () => {
     connect();
