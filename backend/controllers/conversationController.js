@@ -32,3 +32,13 @@ export const sendMessageToConversation = async (req, res, next) => {
     }
 }
 
+export const getMessageFromConversation = async (req, res, next) => {
+    try {
+        const conversation = await Conversation.findById(req.params.conversationId)
+        // console.log(conversation)
+        res.status(200).json({ success: true, message: conversation })
+    } catch (error) {
+        next(error)
+    }
+}
+

@@ -31,10 +31,14 @@ mongoose.connection.on("connected", () => {
 app.use(cors({ credentials: true, origin: true }));
 app.use(express.json());
 
+
+
+app.use("/backend/auth", authRoute);
+app.use("/backend/conversation", conversationRoute);
+app.use("/backend/user", userRoute);
 app.use((err, req, res, next) => {
     const errorStatus = err.status || 500;
     const errorMessage = err.message || "Something went wrong!";
-
     return res.status(500).json({
         success: false,
         status: errorStatus,
@@ -42,11 +46,6 @@ app.use((err, req, res, next) => {
         stack: err.stack,
     });
 });
-
-app.use("/backend/auth", authRoute);
-app.use("/backend/conversation", conversationRoute);
-app.use("/backend/user", userRoute);
-
 app.listen(8800, () => {
     connect();
     console.log("Connected to backend");
