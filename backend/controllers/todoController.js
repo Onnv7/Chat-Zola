@@ -12,8 +12,8 @@ export const selectAllTodos = async (req, res, next) => {
 
 export const selectTodoByUserId = async (req, res, next) => {
     try {
-        const todos = await Todo.findOne({
-            user: req.params.user,
+        const todos = await Todo.find({
+            user: req.params.id,
         });
         res.status(200).json(todos);
     } catch (error) {

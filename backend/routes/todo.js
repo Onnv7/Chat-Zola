@@ -8,18 +8,18 @@ import {
 } from "../controllers/todoController.js";
 const router = express.Router();
 
-// select all categories
+// select all todos
 router.get("/", selectAllTodos);
-// select all categories
+// select all todos
 router.get("/:id", selectTodoByUserId);
 
-// create category
+// create todo
 router.post("/", createTodo);
 
-// delete category
+// delete todo
 router.delete("/:id", deleteTodo);
 
-// update name category
+// update name todo
 router.patch("/:id", updateTodo);
 
 export default router;
