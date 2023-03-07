@@ -1,11 +1,12 @@
-.login{
+.login {
     display: flex;
     align-items: center;
     height: 100vh;
     background: url('../../../public/Img/Background.png') no-repeat;
     object-fit: cover;
 }
-.login-container{
+
+.login-container {
     background-color: rgba(34, 40, 49, 0.5);
     border-radius: 5px;
     height: 100%;
@@ -15,15 +16,17 @@
     justify-content: center;
     color: #fff;
     align-items: center;
-    
-    >span{
+
+    >span {
         font-size: 3.4rem;
         font-weight: 500;
     }
 }
-.login-content{
+
+.login-content {
     max-width: 420px;
-    >button{
+
+    >button {
         background-color: var(--primary-color);
         border: none;
         width: 100%;
@@ -33,13 +36,15 @@
         color: #fff;
     }
 }
-.login-text{
+
+.login-text {
     display: flex;
     align-items: center;
     font-size: 2rem;
     gap: 11px;
     margin-top: 36px;
-    >input{
+
+    >input {
         width: 100%;
         font-size: 2rem;
         border: none;
@@ -47,62 +52,75 @@
         background-color: transparent;
         color: rgba(255, 255, 255, 0.5);
     }
+
     padding: 4px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.5);;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+    ;
 }
-.login-fail{
+
+.login-fail {
     display: flex;
     align-items: center;
     font-size: 1.4rem;
     gap: 6px;
     margin: 18px 0;
 }
-.login-help{
+
+.login-help {
     display: flex;
     align-items: center;
     justify-content: space-between;
     margin-top: 6px;
 }
-.login-rememberPass{
+
+.login-rememberPass {
     display: flex;
     align-items: center;
     gap: 6px;
-    >input{
+
+    >input {
         width: 20px;
         height: 20px;
     }
 }
-.login-footer{
+
+.login-footer {
     display: flex;
     justify-content: center;
     align-items: center;
     margin-top: 18px;
-    >span{
+
+    >span {
         font-size: 3.2rem;
         color: var(--primary-color);
         margin: 0 24px;
     }
-    &::after{
+
+    &::after {
         content: "";
         width: 160px;
         border-bottom: 1px solid #fff;
     }
-    &::before{
+
+    &::before {
         content: "";
         width: 160px;
         border-bottom: 1px solid #fff;
     }
 }
-.login-Regis{
+
+.login-Regis {
     margin-top: 18px;
     text-align: center;
     color: #BAB3B3;
-    >span:last-child{
+
+    >span:last-child {
         text-decoration: underline;
         margin-left: 4px;
     }
 }
-.login-img{
+
+.login-img {
     background: url('../../../public/Img/LikeAndFollow.png') no-repeat center;
     width: 50%;
     height: 100%;
@@ -111,11 +129,12 @@
     justify-content: center;
     margin: 0 14px;
     position: relative;
-    >span{
+
+    >span {
         font-size: 8rem;
         font-weight: 500;
         color: var(--primary-color);
         position: absolute;
-        top: calc((100% / 2) - 80px );
+        top: calc((100% / 2) - 80px);
     }
 }
