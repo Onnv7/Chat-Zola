@@ -4,12 +4,12 @@ const todoSchema = mongoose.Schema(
     {
         user: {
             type: String,
-            ref: "User"
+            ref: "User",
         },
         title: { type: String },
         description: { type: String },
-        time: { type: Date }
+        time: { type: Date },
     },
     { timestamps: true }
-)
-export default mongoose.Schema("Todo", todoSchema);
+);
+export default mongoose.model("Todo", todoSchema);
