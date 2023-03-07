@@ -113,7 +113,6 @@ export const updateProfile = async (req, res, next) => {
             { _id: req.params.userId },
             { ...req.body }
         )
-        console.log(result)
         if (result.matchedCount !== 0) {
 
             res.status(200).json({ success: true, message: "Update successfully" })
@@ -122,5 +121,18 @@ export const updateProfile = async (req, res, next) => {
         res.status(404).json({ success: false, message: "No records found to update" })
     } catch (error) {
         next(error);
+    }
+}
+export const getProfileByEmail = async (req, res, next) => {
+    try {
+        const user = await User.findOne({ email: req.query.email })
+        if (user === null) {
+            res.status(200).json(null)
+            return;
+        }
+        const { password, ...others } = user._doc;
+        res.status(200).json({ ...others })
+    } catch (error) {
+        next(error)
     }
 }
