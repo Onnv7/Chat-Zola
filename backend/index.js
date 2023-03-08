@@ -13,7 +13,9 @@ dotenv.config();
 
 const connect = async () => {
     try {
-        await mongoose.connect("mongodb://127.0.0.1:27017/Zola");
+        // "mongodb+srv://lama:<password>@cluster0.1qwmnmy.mongodb.net/test"
+        // "mongodb://127.0.0.1:27017/Zola"
+        await mongoose.connect("mongodb+srv://lama:lama@cluster0.1qwmnmy.mongodb.net/test");
         console.log("Connected to mongoDB.");
     } catch (error) {
         throw error;

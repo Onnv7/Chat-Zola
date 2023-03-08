@@ -127,12 +127,26 @@ export const getProfileByEmail = async (req, res, next) => {
     try {
         const user = await User.findOne({ email: req.query.email })
         if (user === null) {
-            res.status(200).json(null)
+            res.status(200).json(null);
             return;
         }
         const { password, ...others } = user._doc;
-        res.status(200).json({ ...others })
+        res.status(200).json({ ...others });
     } catch (error) {
-        next(error)
+        next(error);
+    }
+}
+
+export const getFriendsRequestList = async (req, res, next) => {
+    try {
+        const list = await User.findById(req.params.userId)
+                                .populate({
+                                    path: 'friendRequest',
+                                    select: '_id name'
+                                })
+                                .select({_id: 0, friendRequest: 1})
+        res.status(200).json({...list});
+    } catch (error) {
+        next(error);
     }
 }

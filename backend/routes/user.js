@@ -1,5 +1,5 @@
 import express from "express";
-import { sendFriendRequest, addNewFriend, getFriendsList, unfriend, updateProfile, getProfileByEmail } from "../controllers/userController.js"
+import { sendFriendRequest, addNewFriend, getFriendsList, unfriend, updateProfile, getProfileByEmail, getFriendsRequestList } from "../controllers/userController.js"
 const router = express.Router();
 
 router.post('/send-friend-request', sendFriendRequest);
@@ -9,5 +9,6 @@ router.patch('/unfriend/:userId', unfriend);
 router.put('/update-profile/:userId', updateProfile);
 router.get('/get-profile', getProfileByEmail);
 router.get('/get-friends-list/:userId', getFriendsList);
+router.get('/get-list-friend-requests/:userId', getFriendsRequestList);
 
 export default router
