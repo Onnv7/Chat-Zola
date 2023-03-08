@@ -57,6 +57,10 @@ const userSchema = new mongoose.Schema(
         friendRequest: [{
             type: String,
             ref: "User"
+        }],
+        invitationSent: [{
+            type: String,
+            ref: "User"
         }]
     },
     { timestamps: true }
