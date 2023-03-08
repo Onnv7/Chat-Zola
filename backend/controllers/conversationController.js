@@ -35,7 +35,7 @@ export const sendMessageToConversation = async (req, res, next) => {
 export const deleteConversation = async (req, res, next) => {
     try {
         const rs = await Conversation.findByIdAndDelete(req.params.conversationId);
-        
+
     } catch (error) {
         next(error);
     }
@@ -44,7 +44,7 @@ export const deleteConversation = async (req, res, next) => {
 export const getMessageFromConversation = async (req, res, next) => {
     try {
         const conversation = await Conversation.findById(req.params.conversationId)
-        res.status(200).json(conversation )
+        res.status(200).json(conversation)
     } catch (error) {
         next(error)
     }
@@ -54,18 +54,18 @@ export const getAllConversations = async (req, res, next) => {
     try {
         const userId = req.params.userId;
         const list = await Conversation.find({
-            participants: { $in: [userId]}
+            participants: { $in: [userId] }
         }).populate({
             path: 'participants',
             select: 'name avatar _id'
-          });
+        });
         console.log(list)
         const data = list.map(conversation => {
             const lastIndex = conversation.message.length - 1;
             const lastestMsg = conversation.message[lastIndex];
-            const {message, ...others} = conversation.toObject();
-            return {lastestMsg, ...others };
-          });
+            const { message, ...others } = conversation.toObject();
+            return { ...others, lastestMsg };
+        });
         console.log("data", data._doc)
         res.status(200).json(data);
     } catch (error) {
