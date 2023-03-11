@@ -1,8 +1,7 @@
 import React, { useState, useContext }from 'react';
 import { useNavigate } from "react-router-dom";
-import Cookies from "js-cookie";
 import './login.scss';
-import axios from "../../Hooks/axios.js"
+import axios from "../../Hooks/axios.js";
 import { CloseCircle } from 'iconsax-react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEnvelope, faKey } from '@fortawesome/free-solid-svg-icons';

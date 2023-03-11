@@ -43,11 +43,26 @@ export const login = async (req, res, next) => {
 
         const token = jwt.sign({ id: user._id, email: user.email }, "an");
         const { avatar, password, ...otherDetails } = user._doc;
-        console.log(otherDetails)
+
         res.cookie("access_token", token)
             .status(200)
             .json({ ...otherDetails });
     } catch (err) {
         next(err);
+    }
+};
+
+export const changePassword = async (req, res, next) => {
+    try {
+        const salt = bcrypt.genSaltSync(10);
+        const hash = bcrypt.hashSync(req.body.password, salt);
+
+        await User.updateOne(
+            { _id: req.params.userId },
+            { password: hash }
+        )
+        res.status(200).json({ success: true, message: "Change password successfully" });
+    } catch (error) {
+        next(error);
     }
 };
