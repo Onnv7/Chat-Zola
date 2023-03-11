@@ -36,6 +36,7 @@ export const deleteConversation = async (req, res, next) => {
     try {
         const rs = await Conversation.findByIdAndDelete(req.params.conversationId);
 
+
     } catch (error) {
         next(error);
     }
