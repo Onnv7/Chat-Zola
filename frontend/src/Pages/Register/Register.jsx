@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { toast } from 'react-toastify'
-import { useNavigate } from "react-router-dom";
-import axios from "../../Hooks/axios.js"
+import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
+import axios from '../../Hooks/axios.js';
 import './register.scss';
 import { CloseCircle, Mobile } from 'iconsax-react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -12,23 +12,23 @@ const Register = () => {
     const [check, setCheck] = useState({
         existedEmail: false,
         errorPwd: false,
-    })
+    });
     const [info, setInfo] = useState({
-        name: "",
-        email: "",
-        password: "",
-        rePassword: "",
-        gender: "male",
-        birthday: "",
+        name: '',
+        email: '',
+        password: '',
+        rePassword: '',
+        gender: 'male',
+        birthday: '',
     });
 
     const handleChange = (e) => {
         setInfo((prev) => ({ ...prev, [e.target.id]: e.target.value }));
-    }
+    };
     const handleChecked = async (e) => {
         setInfo((prev) => ({ ...prev, gender: e.target.value }));
-    }
-   
+    };
+
     async function isExistedUser() {
         try {
             const { data: user } = await axios.get(`/user/get-profile?email=${info.email}`);
@@ -36,48 +36,42 @@ const Register = () => {
                 return false;
             }
             return true;
-        } catch (error) {
-            
-        }
-        
+        } catch (error) {}
     }
     async function registerNewUser() {
         try {
-            const {rePassword, ...user } = {...info}
-            const { data } = await axios.post("/auth/register", user);
-            if(data.success) {
+            const { rePassword, ...user } = { ...info };
+            const { data } = await axios.post('/auth/register', user);
+            if (data.success) {
                 return true;
             }
             return false;
         } catch (error) {
-            console.error("Error:" + error.message);
+            console.error('Error:' + error.message);
         }
     }
 
     const handleRegister = async () => {
-        if(await isExistedUser())
-        {
+        if (await isExistedUser()) {
             setCheck((prev) => ({
                 ...prev,
                 existedEmail: true,
-            }))
+            }));
             return;
         }
-        if(info.password !== info.rePassword)
-        {
+        if (info.password !== info.rePassword) {
             setCheck((prev) => ({
                 ...prev,
                 errorPwd: true,
-            }))
+            }));
             return;
         }
         setCheck((prev) => ({
             ...prev,
             existedEmail: false,
             errorPwd: false,
-        }))
-        if(await registerNewUser())
-            navigate("/login");
+        }));
+        if (await registerNewUser()) navigate('/login');
     };
     return (
         <div>
@@ -88,7 +82,7 @@ const Register = () => {
                         <div className="register-name">
                             <div className="login-text">
                                 <FontAwesomeIcon icon={faUser} />
-                                <input id="name" type="text" placeholder="Họ và tên" onChange={handleChange}/>
+                                <input id="name" type="text" placeholder="Họ và tên" onChange={handleChange} />
                             </div>
                         </div>
                         {/* <div className="register-name">
@@ -103,12 +97,14 @@ const Register = () => {
                         </div> */}
                         <div className="login-text">
                             <FontAwesomeIcon icon={faEnvelope} />
-                            <input id="email" type="text" placeholder="Email" onChange={handleChange}/>
+                            <input id="email" type="text" placeholder="Email" onChange={handleChange} />
                         </div>
-                        {check.existedEmail && (<div className="regis-fail">
-                            <CloseCircle size="18" variant="Bold" />
-                            <span>Email đã được đăng ký bởi một tài khoản khác.</span>
-                        </div>)}
+                        {check.existedEmail && (
+                            <div className="regis-fail">
+                                <CloseCircle size="18" variant="Bold" />
+                                <span>Email đã được đăng ký bởi một tài khoản khác.</span>
+                            </div>
+                        )}
                         {/* <div className="login-text">
                             <Mobile size="32" color="#fff" />
                             <input type="number" 
@@ -127,21 +123,28 @@ const Register = () => {
                         </div>
                         <div className="login-text">
                             <FontAwesomeIcon icon={faKey} />
-                            <input id="rePassword" type="password" placeholder="Xác nhận mật khẩu" onChange={handleChange}/>
+                            <input
+                                id="rePassword"
+                                type="password"
+                                placeholder="Xác nhận mật khẩu"
+                                onChange={handleChange}
+                            />
                         </div>
-                        {check.errorPwd && (<div className="regis-fail">
-                            <CloseCircle size="18" variant="Bold" />
-                            <span>Mật khẩu nhập lại không trùng khớp.</span>
-                        </div>)}
+                        {check.errorPwd && (
+                            <div className="regis-fail">
+                                <CloseCircle size="18" variant="Bold" />
+                                <span>Mật khẩu nhập lại không trùng khớp.</span>
+                            </div>
+                        )}
                         <div className="regis-genderList">
                             <div className="form-check">
                                 <input
                                     className="form-check-input"
                                     type="radio"
-                                    value={"male"}
+                                    value={'male'}
                                     name="flexRadioDefault"
                                     id="flexRadioDefault1"
-                                    checked={info.gender === "male"}
+                                    checked={info.gender === 'male'}
                                     onChange={handleChecked}
                                 />
                                 <label className="form-check-label regis-genderItem" htmlFor="flexRadioDefault1">
@@ -152,13 +155,13 @@ const Register = () => {
                                 <input
                                     className="form-check-input"
                                     type="radio"
-                                    value={"female"}
+                                    value={'female'}
                                     name="flexRadioDefault"
-                                    id="flexRadioDefault1"
-                                    checked={info.gender === "female"}
+                                    id="flexRadioDefault2"
+                                    checked={info.gender === 'female'}
                                     onChange={handleChecked}
                                 />
-                                <label className="form-check-label regis-genderItem" htmlFor="flexRadioDefault1">
+                                <label className="form-check-label regis-genderItem" htmlFor="flexRadioDefault2">
                                     Nữ
                                 </label>
                             </div>
@@ -166,13 +169,13 @@ const Register = () => {
                                 <input
                                     className="form-check-input"
                                     type="radio"
-                                    value={"other"}
+                                    value={'other'}
                                     name="flexRadioDefault"
-                                    id="flexRadioDefault1"
-                                    checked={info.gender === "other"}
+                                    id="flexRadioDefault3"
+                                    checked={info.gender === 'other'}
                                     onChange={handleChecked}
                                 />
-                                <label className="form-check-label regis-genderItem" htmlFor="flexRadioDefault1">
+                                <label className="form-check-label regis-genderItem" htmlFor="flexRadioDefault3">
                                     Khác
                                 </label>
                             </div>
