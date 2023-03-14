@@ -1,7 +1,10 @@
+
 import React, { useEffect, useState } from 'react';
+
 import SidebarNav from '../../Components/SidebarNav/SidebarNav';
 import MessengerTab from '../../Components/MessengerTab/MessengerTab';
 import './home.scss';
+
 import BeCalled from '../../Components/BeCalled/BeCalled';
 import Friend from '../../Components/Friend/Friend';
 import Meet from '../../Components/Meet/Meet';
@@ -34,6 +37,7 @@ const Home = () => {
             <div className="beCall-modal hide">
                 <BeCalled />
             </div>
+
         </div>
     );
 };

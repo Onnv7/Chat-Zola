@@ -1,9 +1,15 @@
+
 import { SearchNormal } from 'iconsax-react';
 import React, { useState } from 'react';
 import Chat from '../Chat/Chat';
+
 import './messengerTab.scss';
 
+import axios from "../../Hooks/axios.js";
+import { AuthContext } from '../../Contexts/AuthContext.js';
+import { SelectedConversationContext } from './../../Contexts/SelectedConversationContext';
 const MessengerTab = () => {
+
     const [active, setActive] = useState(1);
     const handleClick = (i) => {
         setActive(i);
@@ -47,6 +53,7 @@ const MessengerTab = () => {
             <div className="messgerTab-chat">
                 <Chat />
             </div>
+
         </div>
     );
 };
