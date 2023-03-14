@@ -102,16 +102,17 @@ const Chat = () => {
                         })}
                         
                     </div>
-                    <div className="chat-toolbar">
-                        <i className="fa-light fa-face-smile-beam"></i>
-                        <i className="fa-light fa-image"></i>
-                    </div>
-                    <div className="chat-inputBox">
-                        <div className="chat-input">
-                            <input type="text" placeholder="Nhập tin nhắn" value={text} onChange={(e) => {
-                                setText(e.target.value)}} />
-                            <i className="fa-solid fa-paper-plane-top" onClick={(e) => handleClickSendMessage(conversation.id)}></i>
-                            <i className="fa-solid fa-thumbs-up"></i>
+                    <div className="chat-box">
+                        <div className="chat-toolbar">
+                            <i className="fa-light fa-face-smile-beam"></i>
+                            <i className="fa-light fa-image"></i>
+                        </div>
+                        <div className="chat-inputBox">
+                            <div className="chat-input">
+                                <input type="text" placeholder="Nhập tin nhắn" />
+                                <i className="fa-solid fa-paper-plane-top"></i>
+                                <i className="fa-solid fa-thumbs-up"></i>
+                            </div>
                         </div>
                     </div>
                 </div>

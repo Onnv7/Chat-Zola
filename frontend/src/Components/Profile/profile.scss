@@ -1,0 +1,234 @@
+.profile{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+}
+.profile-box{
+    width: 600px;
+    height: 640px;
+    box-shadow: 0px 0px 6px rgba(0, 0, 0, 0.5);
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+.profile-header{
+    flex: 1;
+    background-color: var(--third-color);
+    position: relative;
+    
+}
+.profile-headerBox{
+    position: absolute;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    top: 50%;
+    width: 100%;
+    >img{
+        width: 140px;
+        height: 140px;
+        border-radius: 50%;
+        object-fit: contain;
+    }
+}
+.profile-name{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 2.4rem;
+    font-weight: 700;
+    margin-top: 10px;
+    >i{
+        &:first-of-type{
+            color: var(--red-color);
+        }
+        &:last-of-type{
+            color: var(--male-color);
+        }
+    }
+}
+.profile-body{
+    flex: 2.5;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    flex-direction: column;
+    margin: 130px 90px 20px;
+
+    >button{
+        padding: 9px 26px;
+        font-size: 2.4rem;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        color: #fff;
+        background: rgba(23, 215, 160, 0.8);
+        border: 1px solid var(--third-color);
+        border-radius: 10px;
+        &:hover{
+            cursor: pointer;
+            background-color: var(--third-color);
+        }
+    }
+}
+.profile-item{
+    width: 100%;
+    font-size: 2rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.5);
+    margin-bottom: 28px;
+    padding-bottom: 5px;
+    >input{
+        border: none;
+        outline: none;
+        width: 100%;
+        font-size: 2rem;
+    }
+    >span{
+        width: 100%;
+        display: flex;
+        >input{
+            width: 75%;
+            border: none;
+            outline: none;
+            font-size: 2rem;
+        }
+    }
+    &:last-of-type{
+        margin: 26px 0 14px;
+        >i{
+            color: var(--birth-color);
+        }
+    }
+    &:nth-child(1){
+        >i{
+            color: var(--red-color);
+        }
+    }
+    &:nth-child(2){
+        >i{
+            color: var(--third-color);
+        }
+    }
+    &:nth-child(3){
+        >i{
+            color: var(--male-color);
+        }
+    }
+}
+.profile-icon:hover{
+    cursor: pointer;
+    color: var(--third-color) !important;
+}
+.profile-gender{
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    font-size: 2rem;
+}
+.profile-genderBox{
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 2rem;
+}
+.profile-modal{
+    position: fixed;
+    background-color: rgba(0, 0, 0, 0.4);
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.changePassword{
+    position: absolute;
+    background: #fff;
+    box-shadow: 0px 0px 6px rgba(0, 0, 0, 0.5);
+    border-radius: 20px;
+    width: 600px;
+    height: 590px;
+    animation: btn-glide ease .5s;
+    padding: 40px 60px;
+}
+.changePassword-box{
+    width: 100%;
+    height: 100%;
+    >button{
+        float: right;
+        padding: 16px 40px;
+        font-size: 2rem;
+        color: #fff;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        background: var(--third-color);
+        border: 1px solid var(--third-color);
+        box-shadow: inset 0px 0px 4px rgba(220, 91, 14, 0.5);
+        border-radius: 10px;
+    }
+}
+.changePassword-title{
+    position: relative;
+    text-align: center;
+    font-size: 3.2rem;
+    font-weight: 700;
+    margin-bottom: 54px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    >i{
+        position: absolute;
+        left: 0;
+        transform: rotate(-0.5turn);
+        color: var(--red-color);
+    }
+}
+.changePassword-List{
+    display: flex;
+    gap: 48px;
+    flex-direction: column;
+}
+.changePassword-itemBox{
+    position: relative;
+    border: 1px solid var(--third-color);
+    box-shadow: inset 0px 0px 4px rgba(220, 91, 14, 0.5);
+    border-radius: 10px;
+    padding: 24px 20px 16px;
+    margin-bottom: 6px;
+    
+    >span{
+        position: absolute;
+        font-size: 2rem;
+        font-weight: 700;
+        padding: 4px 10px;
+        background-color: #fff;
+        top: -16px;
+    }
+}
+.changePassword-input{
+    display: flex;
+    align-items: center;
+    >input{
+        width: 100%;
+        border: none;
+        outline: none;
+        font-size: 2.4rem;
+    }
+}
+.changePassword-check{
+    color: var(--red-color);
+}
+.changePassword-check{
+    >i{
+        margin-right: 4px;
+    }
+}

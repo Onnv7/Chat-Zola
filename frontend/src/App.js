@@ -1,4 +1,5 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import Calling from './Components/Calling/Calling';
 import Home from './Pages/Home/Home';
 import Login from './Pages/Login/Login';
 import Register from './Pages/Register/Register';
@@ -11,6 +12,7 @@ function App() {
                 <Route path="/register" element={<Register />} />
 
                 <Route path="home" element={<Home />} />
+                <Route path="call" element={<Calling />} />
             </Routes>
         </BrowserRouter>
     );
