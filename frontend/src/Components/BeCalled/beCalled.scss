@@ -1,0 +1,47 @@
+.beCalled{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 440px;
+    height: 280px;
+    background-color: rgba(72, 198, 114, 0.7);
+    border-radius: 20px;
+    animation: btn-glide ease .5s;
+
+    >img{
+        width: 100px;
+        height: 100px;
+        object-fit: contain;
+        border-radius: 50%;
+    }
+
+    >span:first-of-type{   
+        font-size: 2.4rem;
+        font-weight: 700;
+        margin: 10px 0 6px;
+    }
+}
+.beCalled-icon{
+    margin-top: 16px;
+    display: flex;
+    
+    gap: 68px;
+}
+.beCalled-Video, .beCalled-cancel{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 58px;
+    height: 58px;
+    border-radius: 50%;
+    font-size: 2.2rem;
+    color: #fff;
+    border: 1px solid #fff;
+}
+.beCalled-Video{
+    background-color:  rgba(21, 156, 67, 0.6);
+}
+.beCalled-cancel{
+    background-color: #EB455F;
+}

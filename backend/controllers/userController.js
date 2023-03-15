@@ -14,14 +14,9 @@ export const sendFriendRequest = async (req, res, next) => {
             { _id: req.body.senderId },
             { $push: { invitationSent: req.body.receiverId } }
         );
-        // console.log("🚀 ~ file: userController.js:17 ~ sendFriendRequest ~ sender:", sender)
         if (sender.matchedCount === 0) {
             throw createError(404, "Sender not found");
         }
-        // const receiver = await User.findOne({ _id: req.body.receiverId });
-        // if (receiver !== null) {
-        //     res.status(404).json({ success: false, message: `Already sent a friend request before` })
-        // }
 
         await User.updateOne(
             { _id: req.body.receiverId },

@@ -8,7 +8,11 @@
     
 }
 .main-img{
-    margin: 20px 18px 38px;
+    width: 100%;
+    height: 104px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     >img{
         width: 64px;
         height: 64px;
@@ -31,48 +35,8 @@
     justify-content: center;
     font-size: 2.8rem;
     color: #fff;
-    
-}
-.sub-tab{
-    width: 360px;
-}
-.subTab-Search{
-    display: flex;
-    margin: 18px 12px 20px;
-    align-items: center;
-    gap: 12px;
-
-    >i{
-        color: rgba(11, 115, 45, 0.6);
-        font-size: 2rem;
+    &:hover{
+        cursor: pointer;
+        opacity: 0.8;
     }
-}
-.searchBox{
-    display: flex;
-    align-items: center;
-    border: 1px solid #19873D;
-    border-radius: 10px;
-    width: 260px;
-}
-.searchBox-icon{
-    color: var(--primary-color);
-    &:first-child{
-        margin: 8px;
-    }
-}
-.searchBox-input{
-    display: flex;
-    align-items: center;
-    justify-content: space-around;
-    gap: 4px;
-    flex: 1;
-
-    >input{
-        border: none;
-        outline: none;
-        color: rgba(0, 0, 0, 0.6);
-    }
-}
-.subTab-type{
-    width: 100%;
 }

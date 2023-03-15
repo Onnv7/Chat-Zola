@@ -1,0 +1,64 @@
+.calling{
+    height: 100vh;
+    background-color: rgba(72, 198, 114, 0.4);
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+    gap: 148px;
+}
+.calling-box{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+
+    >img{
+        width: 240px;
+        height: 240px;
+        object-fit: cover;
+        margin-bottom: 10px;
+        border-radius: 50%;
+    }
+    >span{
+        &:first-of-type{
+            font-size: 3.2rem;
+            font-weight: 700;
+        }
+        &:last-of-type{
+            font-size: 2rem;
+        }
+    }
+}
+.calling-icon{
+    display: flex;
+    gap: 32px;
+}
+.calling-hideVideo, .calling-muteMic, .calling-cancelPhone{
+    width: 66px;
+    height: 66px;
+    border: 1px solid #fff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.6rem;
+}
+.calling-hideVideo{
+    background-color: rgba(34, 40, 49, 0.8);
+    >i{
+        color: #fff;
+    }
+}
+.calling-muteMic{
+    background-color: #fff;
+    >i{
+        color: rgba(34, 40, 49, 0.6);
+    }
+}
+.calling-cancelPhone{
+    background-color: #EB455F;
+    >i{
+        color: #fff;
+    }
+}
