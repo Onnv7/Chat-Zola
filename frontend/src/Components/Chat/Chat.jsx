@@ -1,4 +1,4 @@
-import React, {useContext, useState, useEffect, useRef} from 'react';
+import React, {useContext, useState, useEffect, useRef, useLayoutEffect} from 'react';
 import { io } from 'socket.io-client';
 
 import './chat.scss';
@@ -8,11 +8,13 @@ import axios from "../../Hooks/axios.js";
 const Chat = ({conversation, handleLatestMsg}) => {
     const { user } = useContext(AuthContext);
     
+    const containerRef = useRef(null);
     // const [conv, setConv] = useState(conversation);
+    const [isLoadingOldMsg, setIsLoadingOldMsg] = useState(false)
     const conv = useRef(conversation);
     const [text, setText] = useState("");
     const [skip, setSkip] = useState(0);
-    const [messages, setMessages] = useState(null);
+    const [messages, setMessages] = useState([]);
     const [arrivalMessage, setArrivalMessage] = useState(null);
     const socket = useRef();
 
@@ -23,12 +25,33 @@ const Chat = ({conversation, handleLatestMsg}) => {
                 setArrivalMessage(data?.message)
             handleLatestMsg(data);
         });
-    }, [])
+    }, []);
 
     useEffect(() => {
+        if(isLoadingOldMsg === false) {
+            const container = containerRef.current;
+            container.scrollTop = container.scrollHeight;
+        }
+        else 
+        {
+            const container = containerRef.current;
+            container.scrollTop = 20;
+        }
+    }, [messages])
+    
+
+    useEffect(() => {
+        const fetchFirstMessages =async (conversationId) => {
+            if(!conv.current)
+            return
+            const { data } = await axios.get(`/conversation/messages/${conversationId}/0`)
+            setSkip(10);
+            return data
+        }
         conv.current = conversation;
-        fetchMessages(conversation?.id);
-        
+        fetchFirstMessages(conversation?.id)
+                    .then(res => {setMessages(res);setIsLoadingOldMsg(false)})
+                    
     }, [conversation])
     
     useEffect(() => {     
@@ -44,7 +67,6 @@ const Chat = ({conversation, handleLatestMsg}) => {
         socket.current.emit("addUser", user._id)
         socket.current.on("getUsers", users => console.log(users))
     }, [user])
-
     const handleClickSendMessage = async (conversationId) => {
         if(text.trim() === "")
             return;
@@ -81,16 +103,45 @@ const Chat = ({conversation, handleLatestMsg}) => {
                 }
             })
             setText("");
+            setSkip(prev => prev + 1);
+            setIsLoadingOldMsg(false);
         })
         .catch((err) => {
             console.log(err)
         })
     }
-    const fetchMessages = async (conversationId) => {
-        if(!conversation)
-        return
-        await axios.get(`/conversation/messages/${conversationId}/${skip}`).then(res => setMessages(res.data));
-    }
+    
+    useEffect(() => {
+        const fetchMessages = async () => {
+            if(!conversation)
+            return
+            const { data } = await axios.get(`/conversation/messages/${conversation.id}/${skip}`)
+            // setSkip(prevSkip => prevSkip + 10);
+            return data
+        }
+        const handleScroll = () => {
+            const container = containerRef.current;
+            if (container.scrollTop === 0)  {
+                console.log("????????", skip, messages?.length)
+                fetchMessages()
+                .then(res => {
+                    if(res.length !== 0) 
+                    {
+                        setMessages(prevMessages => [...res, ...prevMessages]);
+                        setSkip(prevSkip => prevSkip + 10);
+                        setIsLoadingOldMsg(true);
+                    }
+                })
+            }
+        };
+        const container = containerRef.current;
+        // if(container !== null)
+            container.addEventListener('scroll', handleScroll);
+        return () => container.removeEventListener('scroll', handleScroll);
+    }, [conversation, skip]);
+
+    
+    
 
     
     return (
@@ -108,8 +159,9 @@ const Chat = ({conversation, handleLatestMsg}) => {
                     </div>
                 </div>
                 <div className="chat-view">
-                    <div className="message-view">
-                        {/* {console.log("RENDER", messages)} */}
+                    <div className="message-view" 
+                        ref={containerRef} 
+                        style={{ overflowY: 'scroll', height: '400px' }}>
                         {messages && messages.map((message) => {
                                 if(message.sender !== user._id)
                                 {
