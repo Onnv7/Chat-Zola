@@ -27,9 +27,12 @@ io.on("connection", (socket) => {
         io.emit("getUsers", users);
     });
 
-    socket.on("sendMessage", ({ senderId, receiverId, message }) => {
+    socket.on("sendMessage", ({ conversationId, senderId, receiverId, message }) => {
         const receiver = getUser(receiverId);
-        io.to(receiver.socketId).emit("getMessage", message);
+        if (receiver)
+            io.to(receiver.socketId).emit("getMessage", { conversationId, message });
+        else
+            console.log("Receiver is offline")
     });
 
     socket.on("disconnect", () => {

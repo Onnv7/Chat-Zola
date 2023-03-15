@@ -15,17 +15,19 @@ export const createConversation = async (req, res, next) => {
 }
 export const sendMessageToConversation = async (req, res, next) => {
     try {
-        const { sender, message } = req.body;
+        const { sender, message, sendAt } = req.body;
+        // const sendAt = Date.now()
         const msg = {
             sender: sender,
             content: message,
-            sentAt: Date.now()
+            sentAt: sendAt
         }
-        await Conversation.updateOne(
+        await Conversation.findByIdAndUpdate(
             { _id: req.params.conversationId },
             { $push: { message: msg } },
         )
         res.status(200).json({ success: true, message: "Message sent successfully" })
+        // res.status(200).json({ ...msg, sentAt: new Date(sendAt) })
 
     } catch (error) {
         next(error)
@@ -42,19 +44,34 @@ export const deleteConversation = async (req, res, next) => {
     }
 }
 
-export const getMessageFromConversation = async (req, res, next) => {
+export const getOneConversation = async (req, res, next) => {
     try {
         const conversation = await Conversation.findById(req.params.conversationId)
             .populate({
                 path: "participants",
                 select: { name: 1 }
             })
+            .select({
+                message: 0
+            });
         res.status(200).json(conversation)
     } catch (error) {
         next(error)
     }
 }
-
+export const getFewMessages = async (req, res, next) => {
+    try {
+        const skip = Number(req.params.skip);
+        const { message } = await Conversation.findById(req.params.conversationId)
+            .select({
+                _id: 0,
+                message: { $slice: [-(skip + 10), 10] },
+            });
+        res.status(200).json(message)
+    } catch (error) {
+        next(error);
+    }
+}
 export const getAllConversations = async (req, res, next) => {
     try {
         const userId = req.params.userId;
@@ -67,9 +84,9 @@ export const getAllConversations = async (req, res, next) => {
 
         const data = list.map(conversation => {
             const lastIndex = conversation.message.length - 1;
-            const lastestMsg = conversation.message[lastIndex];
+            const latestMsg = conversation.message[lastIndex];
             const { message, ...others } = conversation.toObject();
-            return { ...others, lastestMsg };
+            return { ...others, latestMsg };
         });
 
         res.status(200).json(data);
