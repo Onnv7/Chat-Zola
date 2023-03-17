@@ -45,7 +45,6 @@ const MessengerTab = () => {
     //     }
     //   };
     const handleLatestMsg = async ({conversationId, message}) => {
-    console.log("🚀 ~ file: MessengerTab.jsx:48 ~ handleLatestMsg ~ message:", message)
     
         setConversations((prevState) => {
           const conversationIndex = prevState.findIndex(
@@ -57,9 +56,7 @@ const MessengerTab = () => {
           };
           let updatedConversationList = prevState.slice();
           updatedConversationList[conversationIndex] = updatedConversation;
-          console.log("🚀 ~ file: MessengerTab.jsx:59 ~ setConversations ~ updatedConversationList:", updatedConversationList)
-          const an = updatedConversationList.sort((a, b) => new Date(b.latestMsg.sentAt) - new Date(a.latestMsg.sentAt));
-          console.log("🚀 ~ SORTED:", an)
+          updatedConversationList.sort((a, b) => new Date(b.latestMsg.sentAt) - new Date(a.latestMsg.sentAt));
           
           return updatedConversationList;
         });
