@@ -62,11 +62,27 @@ export const getOneConversation = async (req, res, next) => {
 export const getFewMessages = async (req, res, next) => {
     try {
         const skip = Number(req.params.skip);
-        const { message } = await Conversation.findById(req.params.conversationId)
+        let { message } = await Conversation.findById(req.params.conversationId)
             .select({
                 _id: 0,
-                message: { $slice: [-(skip + 10), 10] },
+                message: 1
             });
+        // console.log("🚀 ~ file: conversationController.js:71 ~ getFewMessages ~ message.length:", message.length)
+        if (skip > message.length) {
+            res.status(200).json([])
+            return;
+        }
+        let start = message.length - 10 - skip;
+        let end = start + 10;
+        if (start < 0) {
+            start = 0
+        }
+        if (message.length <= 10) {
+            start = 0;
+            end = message.length - 1
+        }
+        message = message.slice(start, end);
+        // console.log(start, end, message.length)
         res.status(200).json(message)
     } catch (error) {
         next(error);
