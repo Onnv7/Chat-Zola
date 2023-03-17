@@ -9,6 +9,7 @@ import { faCakeCandles, faEnvelope, faKey, faUser } from '@fortawesome/free-soli
 
 const Register = () => {
     const navigate = useNavigate();
+    const [error, setError] = useState('');
     const [check, setCheck] = useState({
         existedEmail: false,
         errorPwd: false,
@@ -27,6 +28,11 @@ const Register = () => {
     };
     const handleChecked = async (e) => {
         setInfo((prev) => ({ ...prev, gender: e.target.value }));
+    };
+    const handleBlur = () => {
+        if (info.password.length < 5) {
+            setError('A user password must have more or equal than 6 characters');
+        } else setError('');
     };
 
     async function isExistedUser() {
@@ -119,8 +125,15 @@ const Register = () => {
                         </div> */}
                         <div className="login-text">
                             <FontAwesomeIcon icon={faKey} />
-                            <input id="password" type="password" placeholder="Mật khẩu" onChange={handleChange} />
+                            <input
+                                id="password"
+                                type="password"
+                                placeholder="Mật khẩu"
+                                onChange={handleChange}
+                                onBlur={handleBlur}
+                            />
                         </div>
+                        {error && <div className="regis-fail">{error}</div>}
                         <div className="login-text">
                             <FontAwesomeIcon icon={faKey} />
                             <input
