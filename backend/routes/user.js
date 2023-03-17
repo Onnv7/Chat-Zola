@@ -1,9 +1,9 @@
 import express from "express";
-import { sendFriendRequest, acceptNewFriend, getFriendsList, unfriend, updateProfile, getProfileByEmail, getFriendsRequestList, rejectNewFriend, getProfileById, getListOfInvitationsSent } from "../controllers/userController.js"
+import { sendFriendRequest, acceptNewFriend, getFriendsList, unfriend, updateProfile, getProfileByEmail, getFriendsRequestList, rejectNewFriend, getProfileById, getListOfInvitationsSent, unsendFriendRequest } from "../controllers/userController.js"
 const router = express.Router();
 
 router.post('/send-friend-request', sendFriendRequest);
-router.post('/send-friend-request', sendFriendRequest);
+router.post('/unsend-friend-request', unsendFriendRequest);
 router.post('/accept-new-friend', acceptNewFriend);
 router.post('/reject-new-friend', rejectNewFriend);
 router.patch('/unfriend/:userId', unfriend);
