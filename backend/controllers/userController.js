@@ -34,6 +34,38 @@ export const sendFriendRequest = async (req, res, next) => {
     }
 }
 
+export const unsendFriendRequest = async (req, res, next) => {
+    let session = await mongoose.startSession();
+    try {
+        // const friend = await User.findOne({ friendRequest: req.body.receiverId })
+        // const user = await User.findOne({ friendRequest: req.body.senderId })
+        session.startTransaction();
+        // Thu hồi lời mời ở người nhận
+        await User.updateOne(
+            { _id: req.body.receiverId },
+            {
+                $pull: { friendRequest: req.body.senderId }
+            }
+        );
+
+        // Thu hồi ở người gửi
+        await User.updateOne(
+            { _id: req.body.senderId },
+            {
+                $pull: { invitationSent: req.body.receiverId }
+            }
+        );
+        await session.commitTransaction();
+        res.status(200).json({ success: true, message: "Unsend successfully" });
+    } catch (error) {
+        await session.abortTransaction();
+        next(error);
+    }
+    finally {
+        session.endSession();
+    }
+}
+
 export const acceptNewFriend = async (req, res, next) => {
     let session = await mongoose.startSession();
     try {
