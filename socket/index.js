@@ -26,7 +26,7 @@ const getUser = (userId) => {
 io.on("connection", (socket) => {
     console.log("A user connected");
     socket.on("addUser", ({ userId, peerId }) => {
-        console.log("THêm", userId);
+        console.log("THêm", userId, peerId);
         addUser(userId, socket.id, peerId);
         console.log("DS", users);
         io.emit("getUsers", users);
@@ -44,9 +44,18 @@ io.on("connection", (socket) => {
 
 
     // setup for calling
-    socket.on("calling", () => {
-
+    socket.on("calling", ({ callerID, calleeID }) => {
+        console.log(callerID, "GỌI", calleeID);
+        const callee = getUser(calleeID);
+        if (callee)
+            io.to(callee.socketId).emit("incoming call", { callerID })
     })
+
+    socket.on("accept video call", ({ calleePeerID, callerID }) => {
+        const caller = getUser(callerID);
+        io.to(caller.socketId).emit("send peerID to caller", { calleePeerID });
+    })
+
     socket.on('join-room', (roomId, userId) => {
         socket.join(roomId);
         users[socket.id] = { roomId, userId };

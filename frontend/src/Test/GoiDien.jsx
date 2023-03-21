@@ -9,8 +9,9 @@ const GoiDien = () => {
     const remoteVideo = useRef(null);
     const peerInstance = useRef(null);
     const userVideo = useRef(null);
-    const { socket, peer } = useContext(SocketClientContext);
-    console.log("🚀 ~ file: GoiDien.jsx:13 ~ GoiDien ~ peer:", peer._id)
+    const { socket } = useContext(SocketClientContext);
+    const peer = new Peer();
+    console.log("🚀 ~ file: GoiDien.jsx:13 ~ GoiDien ~ peer:", peer?._id)
     useEffect(() => {
         setPeerId(peer._id)
         let pid;

@@ -6,6 +6,9 @@ import { AuthContext } from './AuthContext.js';
 const INITIAL_STATE = {
     socket: null,
     peer: null,
+    callRealTime: {
+        incomingCall: false,
+    }
 };
 
 // socket.current.emit("addUser", user._id)
@@ -30,29 +33,27 @@ const AuthReducer = (state, action) => {
 export const SocketClientContextProvider = ({ children }) => {
     const { user } = useContext(AuthContext);
 
-    const socket = io("ws://localhost:8900");
+    // const socket = io("ws://localhost:8900");
 
-    const peer = new Peer();
-
-    const [state, dispatch] = useReducer(AuthReducer, { ...INITIAL_STATE, peer, socket });
-
+    const [state, dispatch] = useReducer(AuthReducer, { ...INITIAL_STATE });
     useEffect(() => {
-        let peerId;
-        dispatch({ type: "CONNECTED", payload: { socket } });
-        const setup = async () => {
-            await peer.on('open', (id) => {
-                console.log("🚀 CONTEXT:", id)
-                peerId = id
-                // setPeerId(id);
-            });
-            await socket.emit("addUser", { userId: user._id, peerId })
-            await socket.on("getUsers", users => console.log("ONLINE:", users))
+        const peer = new Peer();
 
-        }
-        setup();
+        // peer.on('open', (id) => {
+        //     dispatch({ type: "CONNECTED", payload: { peer } });
+        //     socket.emit("addUser", { userId: user._id, peerId: id });
+        //     // setPeerId(id);
+        // })
+        // socket.on("getUsers", users => console.log("ONLINE:", users));
+
 
 
     }, [])
+
+    // useEffect(() => {
+    //     socket.emit("addUser", { userId: user._id, peerId: "NOOOO" });
+    //     socket.on("getUsers", users => console.log("ONLINE:", users));
+    // }, [])
 
 
     return (
@@ -60,6 +61,7 @@ export const SocketClientContextProvider = ({ children }) => {
             value={{
                 peer: state.peer,
                 socket: state.socket,
+                callRealTime: state.callRealTime,
                 dispatch,
             }}
         >
