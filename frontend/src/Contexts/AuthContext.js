@@ -4,6 +4,7 @@ import { createContext } from "react";
 console.log("TUI LA AUTHEN")
 let userData = null;
 if (localStorage.getItem("user") !== "undefined") {
+    console.log("DA LUU DATA")
     userData = JSON.parse(localStorage.getItem("user"));
 }
 const INITIAL_STATE = {

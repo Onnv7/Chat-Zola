@@ -1,7 +1,6 @@
 import React, {useContext, useState, useEffect, useRef, } from 'react';
 import { io } from 'socket.io-client';
 import './chat.scss';
-import Peer from 'peerjs'; 
 import { AuthContext } from '../../Contexts/AuthContext.js';
 import { SocketClientContext } from '../../Contexts/SocketClientContext.js';
 import axios from "../../Hooks/axios.js";
@@ -10,9 +9,9 @@ import { useNavigate } from 'react-router-dom';
 const Chat = ({conversation, handleLatestMsg}) => {
     const navigate = useNavigate();
     const { user } = useContext(AuthContext);
-    let { socket } = useContext(SocketClientContext);
+    let { socket, peer, dispatch } = useContext(SocketClientContext);
+    // console.log("🚀 ~ file: Chat.jsx:14 ~ Chat ~ socket:", socket?.id, peer?._id)
    
-    const peerInstance = useRef();
     
     const containerRef = useRef(null);
     // const [conv, setConv] = useState(conversation);
@@ -31,6 +30,18 @@ const Chat = ({conversation, handleLatestMsg}) => {
                 setArrivalMessage(data?.message)
             handleLatestMsg(data);
         });
+        socket.on("incoming call", ({callerID}) => {
+            dispatch({
+                type: "CONNECTED", 
+                payload: {
+                    callRealTime : {
+                        incomingCall: true, 
+                        callerID
+                    }
+                }
+            })
+        })
+        socket.on()
     }, []);
 
     useEffect(() => {
@@ -117,19 +128,29 @@ const Chat = ({conversation, handleLatestMsg}) => {
             console.log(err)
         })
     }
-    const handleCallVideo = async () => {
+    const handleCallVideo = async (peer) => {
         // navigate('/call', {state: { peer, socket}})
         
-        const socketId = socket.id;
+        // const socketId = socket.id;
         // const peerId = peer.id;
-        const encodedSocketId = window.btoa(socketId);
-        const encodedPeerId = window.btoa("peerId");
-        const url = `/call?socketId=${encodedSocketId}&peerId=${encodedPeerId}`;
+        // const encodedSocketId = window.btoa(socketId);
+        // const encodedPeerId = window.btoa("peerId");
+        const url = `/call`;
         const width = 800;
         const height = 600;
         const left = (window.innerWidth - width) / 2;
         const top = (window.innerHeight - height) / 2;
-        window.open(url, '_blank', `width=${width}, height=${height}, left=${left}, top=${top}`);
+        const newWindow =window.open(url, '_blank', `width=${width}, height=${height}, left=${left}, top=${top}`);
+        
+        newWindow.props = {
+            peer: peer,
+            socket: socket,
+            callerID: user._id,
+            calleeID: conversation?.friend._id,
+            };
+//         newWindow.onload = () => {
+//     newWindow.opener.postMessage({ type: "peerId", peerId }, "*");
+//   };
 
     }
     const handleCall = async () => {
@@ -180,7 +201,7 @@ const Chat = ({conversation, handleLatestMsg}) => {
                         <i className="fa-light fa-phone-volume"
                             onClick={handleCall}/>
                         <i className="fa-light fa-video"
-                        onClick={handleCallVideo}></i>
+                        onClick={() => handleCallVideo(peer)}></i>
                     </div>
                 </div>
                 <div className="chat-view">
