@@ -5,7 +5,8 @@ import Calling from './Components/Calling/Calling';
 import Home from './Pages/Home/Home';
 import Login from './Pages/Login/Login';
 import Register from './Pages/Register/Register';
-
+import GoiDien from './Test/GoiDien.jsx'
+import GoiVIP from './Test/GoiVIP.jsx'
 function App() {
     return (
         <BrowserRouter>
@@ -16,6 +17,8 @@ function App() {
 
                 <Route path="home" element={<Home />} />
                 <Route path="call" element={<Calling />} />
+                <Route path="/an" element={<GoiDien />} />
+                <Route path="/a" element={<GoiVIP />} />
             </Routes>
         </BrowserRouter>
     );

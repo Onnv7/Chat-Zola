@@ -217,12 +217,40 @@ export const getProfileById = async (req, res, next) => {
     }
 }
 
-// export const getProfileMyFriend = async (req, res, next) => {
-//     try {
-//     } catch (error) {
-//         next(error);
-//     }
-// }
+export const getProfileMyFriend = async (req, res, next) => {
+    try {
+        const myId = req.query.my_id;
+        const friend = await User.findOne(
+            {
+                _id: req.params.userId
+            }
+        );
+        if (friend === null) {
+            res.status(404).json({ success: false, message: "Not found user" });
+            return;
+        }
+        let relationship = "none";
+
+        const isFriend = friend.friendsList.find(friendId => friendId === myId) ? true : false;
+        const isSentRequest = friend.friendRequest.find(friendId => friendId === myId) ? true : false;
+
+        if (isFriend) {
+            relationship = "friend"
+        }
+        else if (isSentRequest) {
+            relationship = "sent request"
+        }
+
+        const { password, friendRequest, friendsList, ...others } = friend._doc;
+        const data = {
+            ...others,
+            relationship,
+        }
+        res.status(200).json(data);
+    } catch (error) {
+        next(error);
+    }
+}
 
 export const getFriendsRequestList = async (req, res, next) => {
     try {

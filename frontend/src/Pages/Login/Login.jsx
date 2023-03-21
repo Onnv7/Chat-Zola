@@ -1,5 +1,6 @@
 import React, { useState, useContext }from 'react';
 import { useNavigate } from "react-router-dom";
+import { SocketClientContext } from '../../Contexts/SocketClientContext.js';
 import './login.scss';
 import axios from "../../Hooks/axios.js";
 import { CloseCircle } from 'iconsax-react';
@@ -7,6 +8,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEnvelope, faKey } from '@fortawesome/free-solid-svg-icons';
 import { AuthContext } from '../../Contexts/AuthContext.js';
 const Login = () => {
+    // const { socket, peer } = useContext(SocketClientContext);
     const [empty, setEmpty] = useState({
         email: false,
         password: false,
@@ -57,6 +59,8 @@ const Login = () => {
             
             // Cookies.set("userInfo", JSON.stringify(data));
             dispatch({ type: "LOGIN_SUCCESS", payload: data });
+            
+            // socket.emit("addUser", data._id)
             navigate("/home")
               
         } catch (err) {

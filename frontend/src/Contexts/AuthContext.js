@@ -1,5 +1,7 @@
 import { useReducer, useEffect } from "react";
 import { createContext } from "react";
+
+console.log("TUI LA AUTHEN")
 let userData = null;
 if (localStorage.getItem("user") !== "undefined") {
     userData = JSON.parse(localStorage.getItem("user"));
