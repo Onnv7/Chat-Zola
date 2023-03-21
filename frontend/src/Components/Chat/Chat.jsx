@@ -1,12 +1,18 @@
-import React, {useContext, useState, useEffect, useRef, useLayoutEffect} from 'react';
+import React, {useContext, useState, useEffect, useRef, } from 'react';
 import { io } from 'socket.io-client';
-
 import './chat.scss';
+import Peer from 'peerjs'; 
 import { AuthContext } from '../../Contexts/AuthContext.js';
+import { SocketClientContext } from '../../Contexts/SocketClientContext.js';
 import axios from "../../Hooks/axios.js";
+import { useNavigate } from 'react-router-dom';
 
 const Chat = ({conversation, handleLatestMsg}) => {
+    const navigate = useNavigate();
     const { user } = useContext(AuthContext);
+    let { socket } = useContext(SocketClientContext);
+   
+    const peerInstance = useRef();
     
     const containerRef = useRef(null);
     // const [conv, setConv] = useState(conversation);
@@ -16,11 +22,11 @@ const Chat = ({conversation, handleLatestMsg}) => {
     const [skip, setSkip] = useState(0);
     const [messages, setMessages] = useState([]);
     const [arrivalMessage, setArrivalMessage] = useState(null);
-    const socket = useRef();
+    
 
     useEffect(() => {
-        socket.current = io("ws://localhost:8900");
-        socket.current.on("getMessage", (data) => {
+        // socket.emit("addUser", user._id);
+        socket.on("getMessage", (data) => {
             if(conv.current?.id === data.conversationId)
                 setArrivalMessage(data?.message)
             handleLatestMsg(data);
@@ -56,7 +62,7 @@ const Chat = ({conversation, handleLatestMsg}) => {
     
     useEffect(() => {     
         if(conversation === undefined) 
-        return;
+            return;
         if (arrivalMessage) 
             setMessages((prev) => {
                 return [...prev, arrivalMessage]
@@ -64,9 +70,10 @@ const Chat = ({conversation, handleLatestMsg}) => {
     }, [arrivalMessage])
 
     useEffect(() => {
-        socket.current.emit("addUser", user._id)
-        socket.current.on("getUsers", users => console.log(users))
+        // socket.emit("addUser", user._id)
+        // socket.on("getUsers", users => console.log(users))
     }, [user])
+
     const handleClickSendMessage = async (conversationId) => {
         if(text.trim() === "")
             return;
@@ -92,7 +99,7 @@ const Chat = ({conversation, handleLatestMsg}) => {
             return res;
         })
         .then((res) => {
-            socket.current.emit("sendMessage", {
+            socket.emit("sendMessage", {
                 conversationId: conversationId,
                 senderId: user._id,
                 receiverId: conversation.friend._id,
@@ -110,7 +117,24 @@ const Chat = ({conversation, handleLatestMsg}) => {
             console.log(err)
         })
     }
-    
+    const handleCallVideo = async () => {
+        // navigate('/call', {state: { peer, socket}})
+        
+        const socketId = socket.id;
+        // const peerId = peer.id;
+        const encodedSocketId = window.btoa(socketId);
+        const encodedPeerId = window.btoa("peerId");
+        const url = `/call?socketId=${encodedSocketId}&peerId=${encodedPeerId}`;
+        const width = 800;
+        const height = 600;
+        const left = (window.innerWidth - width) / 2;
+        const top = (window.innerHeight - height) / 2;
+        window.open(url, '_blank', `width=${width}, height=${height}, left=${left}, top=${top}`);
+
+    }
+    const handleCall = async () => {
+        navigate('/an')
+    }
     useEffect(() => {
         const fetchMessages = async () => {
             if(!conversation)
@@ -135,8 +159,7 @@ const Chat = ({conversation, handleLatestMsg}) => {
             }
         };
         const container = containerRef.current;
-        // if(container !== null)
-            container.addEventListener('scroll', handleScroll);
+        container.addEventListener('scroll', handleScroll);
         return () => container.removeEventListener('scroll', handleScroll);
     }, [conversation, skip]);
 
@@ -154,8 +177,10 @@ const Chat = ({conversation, handleLatestMsg}) => {
                     </div>
                     <div className="chat-headerBtn">
                         <i className="fa-light fa-magnifying-glass"></i>
-                        <i className="fa-light fa-phone-volume"></i>
-                        <i className="fa-light fa-video"></i>
+                        <i className="fa-light fa-phone-volume"
+                            onClick={handleCall}/>
+                        <i className="fa-light fa-video"
+                        onClick={handleCallVideo}></i>
                     </div>
                 </div>
                 <div className="chat-view">

@@ -1,7 +1,15 @@
 import React, { useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
+
 import './calling.scss';
 
 const Calling = ({ setIsOpen }) => {
+    const location = useLocation();
+    const params = new URLSearchParams(window.location.search);
+    const encodedSocketId = params.get('socketId');
+    const encodedPeerId = params.get('peerId');
+    const socketId = window.atob(encodedSocketId);
+    const peerId = window.atob(encodedPeerId);
     useEffect(() => {
         window.addEventListener('beforeunload', handleBeforeUnload);
         return () => {
