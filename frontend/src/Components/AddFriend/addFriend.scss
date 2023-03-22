@@ -35,6 +35,7 @@
     justify-content: center;
 }
 .addFriend-infoContent{
+    position: relative;
     width: 600px;
     height: 640px;
     display: flex;
@@ -45,11 +46,23 @@
     border: 1px solid #159C43;
     box-shadow: 0px 0px 6px rgba(21, 156, 67, 0.5);
     border-radius: 20px;
-    overflow: hidden;
+    // overflow: hidden;
     animation: btn-glide ease .5s;
-
+    >i{
+        position: absolute;
+        top: -4px;
+        right: -6px;
+        z-index: 1;
+        color: var(--red-color);
+        font-size: 2rem;
+        cursor: pointer;
+        &:hover{
+            opacity: 0.8;
+        }
+    }
 }
 .addFriend-none{
+    position: relative;
     width: 600px;
     height: 104px;
     background-color: #fff;
@@ -61,5 +74,17 @@
     >span{
         font-size: 3rem;
         font-weight: 700;
+    }
+    >i{
+        position: absolute;
+        top: -4px;
+        right: -6px;
+        z-index: 1;
+        color: var(--red-color);
+        font-size: 2rem;
+        cursor: pointer;
+        &:hover{
+            opacity: 0.8;
+        }
     }
 }
