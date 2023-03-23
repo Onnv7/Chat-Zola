@@ -13,7 +13,6 @@ const AddFriend = () => {
     const handleChange = (e) => {
         setEmail(e.target.value);
     };
-    console.log(email);
     useEffect(() => {
         const fetchData = async () => {
             const { data } = await axios.get(`/user/get-profile?email=${email}`);
@@ -21,10 +20,8 @@ const AddFriend = () => {
         };
         fetchData();
     }, [email]);
-    // console.log(info);
     const handleSearch = (e) => {
         if (e.key === 'Enter') {
-            toast.success('hi');
             setShow(true);
             if (info != null) {
                 setView(<AddFriendInfo info={info} setShow={setShow} />);
@@ -34,7 +31,7 @@ const AddFriend = () => {
     return (
         <div className="addFriend">
             <div className="addFriend-search">
-                <i class="fa-duotone fa-magnifying-glass"></i>
+                <i className="fa-duotone fa-magnifying-glass"></i>
                 <input type="email" placeholder="Tìm kiếm" onChange={handleChange} onKeyDown={handleSearch} />
             </div>
             {show && <div className="addFriend-modal">{view}</div>}

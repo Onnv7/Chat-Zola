@@ -25,13 +25,17 @@ const Friend = () => {
                     onClick={() => handleClick(1)}
                     className={active === 1 ? 'friend-navIcon active-v2' : 'friend-navIcon'}
                 >
-                    {active === 1 ? <i className="fa-solid fa-user-plus"></i> : <i class="fa-light fa-user-plus"></i>}
+                    {active === 1 ? (
+                        <i className="fa-solid fa-user-plus"></i>
+                    ) : (
+                        <i className="fa-light fa-user-plus"></i>
+                    )}
                 </div>
                 <div
                     onClick={() => handleClick(2)}
                     className={active === 2 ? 'friend-navIcon active-v2' : 'friend-navIcon'}
                 >
-                    {active === 2 ? <i className="fa-solid fa-users"></i> : <i class="fa-light fa-users"></i>}
+                    {active === 2 ? <i className="fa-solid fa-users"></i> : <i className="fa-light fa-users"></i>}
                 </div>
                 <div
                     onClick={() => handleClick(3)}

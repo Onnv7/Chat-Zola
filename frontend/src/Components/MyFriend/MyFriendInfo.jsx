@@ -4,14 +4,14 @@ import { format, parseISO } from 'date-fns';
 import { AuthContext } from '../../Contexts/AuthContext';
 import { toast } from 'react-toastify';
 
-const InfoFrSend = ({ setIds, ids }) => {
+const MyFriendInfo = ({ friendId, setFriendId }) => {
     const { user } = useContext(AuthContext);
     const [info, setInfo] = useState();
     const [date, setDate] = useState();
     useEffect(() => {
         const fetchData = async () => {
-            if (ids) {
-                const { data } = await axios.get(`/user/get-profile/${ids}`);
+            if (friendId) {
+                const { data } = await axios.get(`user/get-profile/${friendId}`);
                 setInfo(data);
                 const birth = parseISO(data.birthday);
                 const date = format(birth, 'dd/MM/yyyy');
@@ -19,15 +19,12 @@ const InfoFrSend = ({ setIds, ids }) => {
             }
         };
         fetchData();
-    }, [ids]);
-    const handleUnsend = async () => {
+    }, [friendId]);
+    const handleUnfriend = async () => {
         try {
-            await axios.post('/user/unsend-friend-request', {
-                receiverId: info._id,
-                senderId: user._id,
-            });
-            setIds(null);
-            toast.success('Hủy lời mời thành công');
+            await axios.patch(`/user/unfriend/${user._id}?friendId=${friendId}`);
+            toast.success('Hủy bạn thành công');
+            setFriendId(null);
         } catch (err) {
             toast.error(err.message);
         }
@@ -49,9 +46,13 @@ const InfoFrSend = ({ setIds, ids }) => {
             </div>
             <div className="myFriend-infoBox">
                 <div className="myFriend-btn">
-                    <button onClick={handleUnsend}>
-                        <i className="fa-solid fa-circle-xmark"></i>
-                        Hủy lời mời kết bạn
+                    <button>
+                        <i className="fa-brands fa-facebook-messenger"></i>
+                        Nhắn tin
+                    </button>
+                    <button onClick={handleUnfriend}>
+                        <i className="fa-regular fa-user-xmark"></i>
+                        Hủy kết bạn
                     </button>
                 </div>
                 <div className="myFriend-infoList">
@@ -73,4 +74,4 @@ const InfoFrSend = ({ setIds, ids }) => {
     );
 };
 
-export default InfoFrSend;
+export default MyFriendInfo;

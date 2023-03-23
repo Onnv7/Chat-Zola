@@ -40,14 +40,6 @@
     font-size: 2.4rem;
     font-weight: 700;
     margin-top: 10px;
-    >i{
-        &:first-of-type{
-            color: var(--red-color);
-        }
-        &:last-of-type{
-            color: var(--male-color);
-        }
-    }
 }
 .profile-body{
     flex: 2.5;
@@ -190,6 +182,10 @@
         left: 0;
         transform: rotate(-0.5turn);
         color: var(--red-color);
+        &:hover{
+            cursor: pointer;
+            opacity: 0.8;
+        }
     }
 }
 .changePassword-List{
