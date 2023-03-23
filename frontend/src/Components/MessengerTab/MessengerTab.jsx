@@ -109,7 +109,7 @@ const MessengerTab = () => {
                 </div>
             </div>
             <div className="messgerTab-chat">
-                <Chat conversation={selectedConversation.current} 
+                <Chat key={selectedConversation.current?.id} conversation={selectedConversation.current} 
                         handleLatestMsg={handleLatestMsg}/>
             </div>
 

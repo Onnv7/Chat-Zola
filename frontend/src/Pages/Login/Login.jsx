@@ -1,5 +1,8 @@
 import React, { useState, useContext }from 'react';
 import { useNavigate } from "react-router-dom";
+import { io } from 'socket.io-client';
+import Peer from 'peerjs';
+import { SocketClientContext } from '../../Contexts/SocketClientContext.js';
 import './login.scss';
 import axios from "../../Hooks/axios.js";
 import { CloseCircle } from 'iconsax-react';
@@ -7,6 +10,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEnvelope, faKey } from '@fortawesome/free-solid-svg-icons';
 import { AuthContext } from '../../Contexts/AuthContext.js';
 const Login = () => {
+    const { dispatch: updateSocket } = useContext(SocketClientContext);
+    // const { updateSocket } = others.dispatch;
+    // console.log("🚀 ~ file: Login.jsx:15 ~ Login ~ updateSocket:", updateSocket)
     const [empty, setEmpty] = useState({
         email: false,
         password: false,
@@ -54,12 +60,22 @@ const Login = () => {
             const { data } = await axios.post("/auth/login", credentials, {
                 withCredentials: true,
               });
+            const socket = io("ws://localhost:8900");
+            const peer = new Peer();
+            // let peerId
+            peer.on('open', (id) => {
+                socket.emit("addUser", { userId: data._id, peerId: id });
+            })
             
             // Cookies.set("userInfo", JSON.stringify(data));
             dispatch({ type: "LOGIN_SUCCESS", payload: data });
+            updateSocket({ type: "CONNECTED", payload: {socket: socket, peer: peer} });
+            
+            // socket.emit("addUser", data._id)
             navigate("/home")
               
         } catch (err) {
+            console.error("CAIDIIIIIIIIIII")
             dispatch({ type: "LOGIN_FAILURE", payload: err });
         }
     }
