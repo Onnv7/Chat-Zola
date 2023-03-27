@@ -8,9 +8,9 @@ const io = new Server(8900, {
 
 let users = []
 
-const addUser = (userId, socketId) => {
+const addUser = (userId, socketId, peerId) => {
     if (!users.some(user => user.userId === userId))
-        users.push({ userId, socketId });
+        users.push({ userId, socketId, peerId });
 }
 const removeUser = (socketId) => {
     users = users.filter(user => user.socketId !== socketId);
@@ -20,13 +20,20 @@ const getUser = (userId) => {
     const user = users.find(user => user.userId === userId);
     return user;
 }
+
+
+
 io.on("connection", (socket) => {
     console.log("A user connected");
-    socket.on("addUser", userId => {
-        addUser(userId, socket.id);
+    socket.on("addUser", ({ userId, peerId }) => {
+        console.log("THêm", userId, peerId);
+        addUser(userId, socket.id, peerId);
+        console.log("DS", users);
         io.emit("getUsers", users);
     });
 
+
+    // setup for chatting
     socket.on("sendMessage", ({ conversationId, senderId, receiverId, message }) => {
         const receiver = getUser(receiverId);
         if (receiver)
@@ -35,9 +42,43 @@ io.on("connection", (socket) => {
             console.log("Receiver is offline")
     });
 
+
+    // setup for calling
+    socket.on("calling", ({ callerID, calleeID }) => {
+        console.log(callerID, "GỌI", calleeID);
+        const callee = getUser(calleeID);
+        if (callee)
+            io.to(callee.socketId).emit("incoming call", { callerID })
+    })
+
+    socket.on("accept video call", ({ calleePeerID, callerID }) => {
+        const caller = getUser(callerID);
+        io.to(caller.socketId).emit("send peerID to caller", { calleePeerID });
+    })
+
+    socket.on('join-room', (roomId, userId) => {
+        socket.join(roomId);
+        users[socket.id] = { roomId, userId };
+
+        socket.to(roomId).broadcast.emit('user-connected', userId);
+
+        socket.on('disconnect', () => {
+            socket.to(roomId).broadcast.emit('user-disconnected', userId);
+            delete users[socket.id];
+        });
+
+        socket.on('call-user', (data) => {
+            socket.to(data.userToCall).emit('receive-call', { signal: data.signalData, from: data.from });
+        });
+
+        socket.on('answer-call', (data) => {
+            socket.to(data.from).emit('call-accepted', data.signal);
+        });
+    });
+
     socket.on("disconnect", () => {
         console.log("User disconnected");
         removeUser(socket.id);
         io.emit("getUsers", users);
-    })
+    });
 });
