@@ -4,6 +4,7 @@
     height: 100vh;
     background: url('../../../public/Img/Background.png') no-repeat;
     object-fit: cover;
+    background-size: 100%;
 }
 
 .login-container {
@@ -71,6 +72,12 @@
     align-items: center;
     justify-content: space-between;
     margin-top: 6px;
+    >span{
+        &:hover{
+            cursor: pointer;
+            color: var(--third-color);
+        }
+    }
 }
 
 .login-rememberPass {
@@ -137,4 +144,15 @@
         position: absolute;
         top: calc((100% / 2) - 80px);
     }
+}
+.modal-recovery{
+    position: fixed;
+    background-color: rgba(0, 0, 0, 0.4);
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
