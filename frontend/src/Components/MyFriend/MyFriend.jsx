@@ -10,6 +10,7 @@ const MyFriend = () => {
     const [list, setList] = useState();
     const [friendId, setFriendId] = useState();
     const [active, setActive] = useState('');
+    const [isUpdated, setIsUpdated] = useState(false);
     const [view, setView] = useState();
     useEffect(() => {
         const fetchData = async () => {
@@ -17,7 +18,8 @@ const MyFriend = () => {
             setList(data);
         };
         fetchData();
-    }, [list]);
+    }, [isUpdated]);
+
     const handleClick = (id) => {
         setFriendId(id);
         setActive(id);
@@ -31,6 +33,7 @@ const MyFriend = () => {
             await axios.patch(`/user/unfriend/${user._id}?friendId=${id}`);
             toast.success('Hủy bạn thành công');
             setFriendId(null);
+            setIsUpdated((prev) => !prev);
         } catch (err) {
             toast.error(err.message);
         }

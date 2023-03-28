@@ -6,7 +6,10 @@ import axios from "../../Hooks/axios";
 const FriendReceive = ({ setIdr }) => {
     const { user } = useContext(AuthContext);
     const [list, setList] = useState();
-    const [active, setActive] = useState("");
+
+    const [isUpdated, setIsUpdated] = useState(false);
+    const [active, setActive] = useState('');
+
     useEffect(() => {
         const fetchData = async () => {
             const { data } = await axios.get(
@@ -15,7 +18,7 @@ const FriendReceive = ({ setIdr }) => {
             setList(data);
         };
         fetchData();
-    }, [list]);
+    }, [isUpdated]);
     const handleClick = (id) => {
         setIdr(id);
         setActive(id);
@@ -30,7 +33,10 @@ const FriendReceive = ({ setIdr }) => {
             //     setList(list.length - 1);
             // } else setList(null);
             setIdr(null);
-            toast.success("Kết bạn thành công");
+
+            setIsUpdated((prev) => !prev);
+            toast.success('Kết bạn thành công');
+
         } catch (err) {
             toast.error(err.message);
         }
@@ -42,7 +48,10 @@ const FriendReceive = ({ setIdr }) => {
                 senderId: id,
             });
             setIdr(null);
-            toast.success("Hủy lời mời thành công");
+
+            setIsUpdated((prev) => !prev);
+            toast.success('Hủy lời mời thành công');
+
         } catch (err) {
             toast.error(err.message);
         }

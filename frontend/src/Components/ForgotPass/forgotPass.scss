@@ -1,0 +1,189 @@
+//email
+.verifyEmail{
+    width: 600px;
+    background-color: #fff;
+    box-shadow: 0px 0px 6px rgba(0, 0, 0, 0.5);
+    border-radius: 20px;
+    padding: 40px 60px;
+    animation: btn-glide ease .5s;
+    >button{
+        margin-top: 32px;
+        width: 100%;
+        height: 64px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 16px;
+        font-size: 3.2rem;
+        font-weight: 700;
+        background: rgba(23, 215, 160, 0.8);
+        border: 1px solid rgba(23, 215, 160, 0.8);
+        box-shadow: inset 0px 0px 4px rgba(220, 91, 14, 0.5);
+        border-radius: 10px;
+        color: #fff;
+        &:hover{
+            cursor: pointer;
+            opacity: 0.8;
+        }
+    }
+}
+.verifyEmail-title{
+    font-size: 3.2rem;
+    text-align: center;
+    font-weight: 700;
+    margin-bottom: 50px;
+    >i{
+        float: left;
+        transform: rotate(-0.5turn);
+        color: var(--red-color);
+        &:hover{
+            opacity: 0.8;
+            cursor: pointer;
+        }
+    }
+}
+
+.verifyEmail-input{
+    border: 1px solid var(--third-color);
+    box-shadow: inset 0px 0px 4px rgba(220, 91, 14, 0.5);
+    border-radius: 10px;
+    position: relative;
+    margin-bottom: 5px;
+    >span{
+        position: absolute;
+        padding: 2px 16px;
+        background-color: #fff;
+        font-size: 2rem;
+        font-weight: 700;
+        top: -16px;
+        left: 30px;
+    }
+    >input{
+        font-size: 2.4rem;
+        padding: 24px 20px 16px;
+        border: none;
+        outline: none;
+        border-radius: 10px;
+        width: 100%;
+    }
+}
+.verifyEmail-fail{
+    color: var(--red-color);
+    >i{
+        margin-right: 6px;
+    }
+    >span{
+        font-weight: 500;
+    }
+}
+
+//code
+.verifyCode{
+    width: 600px;
+    background-color: #fff;
+    box-shadow: 0px 0px 6px rgba(0, 0, 0, 0.5);
+    border-radius: 20px;
+    padding: 40px 60px;
+    animation: btn-glide ease .5s;
+    >span{
+        font-size: 2rem;
+        display: block;
+        text-align: center;
+    }
+    >button{
+        margin-top: 40px;
+        width: 100%;
+        height: 64px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 16px;
+        font-size: 3.2rem;
+        font-weight: 700;
+        background: rgba(23, 215, 160, 0.8);
+        border: 1px solid rgba(23, 215, 160, 0.8);
+        box-shadow: inset 0px 0px 4px rgba(220, 91, 14, 0.5);
+        border-radius: 10px;
+        color: #fff;
+        &:hover{
+            cursor: pointer;
+            opacity: 0.8;
+        }
+    }
+}
+.verifyCode-input{
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    justify-content: center;
+    margin-bottom: 40px;
+    >input{
+        width: 40px;
+        font-size: 6.4rem;
+        outline: none;
+        border: none;
+        border-bottom: 1px solid #000;
+    }
+}
+.re-verifyCode{
+    color: var(--third-color);
+    margin-top: 10px;
+    &:hover{
+        cursor: pointer;
+        color: var(--red-color);
+    }
+}
+.verifyCode-fail{
+    font-size: 2rem;
+    font-weight: 700;
+    text-align: center;
+    margin-top: 20px;
+    color: var(--red-color);
+    >i{
+        margin-right: 6px;
+    }
+}
+
+//changePass
+.changePass-btn{
+    width: 100%;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    font-size: 3.2rem;
+    font-weight: 700;
+    background: rgba(23, 215, 160, 0.8);
+    border: 1px solid rgba(23, 215, 160, 0.8);
+    box-shadow: inset 0px 0px 4px rgba(220, 91, 14, 0.5);
+    border-radius: 10px;
+    color: #fff;
+    &:hover{
+        cursor: pointer;
+        opacity: 0.8;
+    }
+}
+
+//success
+.changePassSuccess{
+    position: relative;
+    width: 600px;
+    box-shadow: 0px 0px 6px rgba(0, 0, 0, 0.5);
+    border-radius: 20px;
+    padding: 40px;
+    background-color: #fff;
+    font-size: 2.8rem;
+    text-align: center;
+    >i{
+        position: absolute;
+        top: -10px;
+        right: -8px;
+        color: var(--red-color);
+        &:hover{
+            cursor: pointer;
+            opacity: 0.8;
+        }
+
+    }
+}
