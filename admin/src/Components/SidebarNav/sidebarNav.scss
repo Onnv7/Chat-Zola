@@ -1,0 +1,42 @@
+.sidebarNav{
+    display: flex;
+}
+.main-tab{
+    width: 100px;
+    height: 100vh;
+    background-color: var(--primary-color);
+    
+}
+.main-img{
+    width: 100%;
+    height: 104px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    >img{
+        width: 64px;
+        height: 64px;
+        border-radius: 50%;
+        object-fit: contain;
+    }
+}
+.mainTool-box{
+    height: calc(100% - 125px);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.mainTool-Item{
+    width: 100%;
+    height: 66px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.8rem;
+    color: #fff;
+    &:hover{
+        cursor: pointer;
+        opacity: 0.8;
+    }
+}

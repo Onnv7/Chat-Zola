@@ -1,16 +1,20 @@
-import React, { useContext, useEffect, useState } from 'react';
-import { toast } from 'react-toastify';
-import { AuthContext } from '../../Contexts/AuthContext';
-import axios from '../../Hooks/axios';
+import React, { useContext, useEffect, useState } from "react";
+import { toast } from "react-toastify";
+import { AuthContext } from "../../Contexts/AuthContext";
+import axios from "../../Hooks/axios";
 
 const FriendReceive = ({ setIdr }) => {
     const { user } = useContext(AuthContext);
     const [list, setList] = useState();
+
     const [isUpdated, setIsUpdated] = useState(false);
     const [active, setActive] = useState('');
+
     useEffect(() => {
         const fetchData = async () => {
-            const { data } = await axios.get(`/user/get-list-friend-requests/${user._id}`);
+            const { data } = await axios.get(
+                `/user/get-list-friend-requests/${user._id}`
+            );
             setList(data);
         };
         fetchData();
@@ -21,7 +25,7 @@ const FriendReceive = ({ setIdr }) => {
     };
     const handleAccept = async (id) => {
         try {
-            await axios.post('/user/accept-new-friend', {
+            await axios.post("/user/accept-new-friend", {
                 receiverId: user._id,
                 senderId: id,
             });
@@ -29,21 +33,25 @@ const FriendReceive = ({ setIdr }) => {
             //     setList(list.length - 1);
             // } else setList(null);
             setIdr(null);
+
             setIsUpdated((prev) => !prev);
             toast.success('Kết bạn thành công');
+
         } catch (err) {
             toast.error(err.message);
         }
     };
     const handleUnsend = async (id) => {
         try {
-            await axios.post('/user/unsend-friend-request', {
+            await axios.post("/user/unsend-friend-request", {
                 receiverId: user._id,
                 senderId: id,
             });
             setIdr(null);
+
             setIsUpdated((prev) => !prev);
             toast.success('Hủy lời mời thành công');
+
         } catch (err) {
             toast.error(err.message);
         }
@@ -53,7 +61,11 @@ const FriendReceive = ({ setIdr }) => {
             {list?.map((item) => (
                 <div
                     key={item._id}
-                    className={active === item._id ? 'myFriend-item active-box' : 'myFriend-item'}
+                    className={
+                        active === item._id
+                            ? "myFriend-item active-box"
+                            : "myFriend-item"
+                    }
                     onClick={() => handleClick(item._id)}
                 >
                     <div className="myFriend-info">
@@ -66,8 +78,14 @@ const FriendReceive = ({ setIdr }) => {
                         )} */}
                     </div>
                     <div className="myFriend-icon">
-                        <i onClick={() => handleAccept(item._id)} className="fa-solid fa-user-plus"></i>
-                        <i onClick={() => handleUnsend(item._id)} className="fa-solid fa-circle-xmark"></i>
+                        <i
+                            onClick={() => handleAccept(item._id)}
+                            className="fa-solid fa-user-plus"
+                        ></i>
+                        <i
+                            onClick={() => handleUnsend(item._id)}
+                            className="fa-solid fa-circle-xmark"
+                        ></i>
                     </div>
                 </div>
             ))}
