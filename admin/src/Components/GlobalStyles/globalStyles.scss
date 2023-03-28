@@ -1,0 +1,89 @@
+@import 'normalize.css';
+@import url('https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600&display=swap');
+@import url('https://fonts.cdnfonts.com/css/bismarck');
+
+:root {
+    --primary-color: #48C672;
+    --sub-color: #159C43;
+    --red-color: #EB455F;
+    --third-color: #17D7A0;
+    --male-color: #42C2FF;
+    --birth-color: #FFBD35;
+}
+
+* {
+    box-sizing: inherit;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    font-size: 62.5%;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Barlow' !important;
+    font-size: 1.6rem;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.active {
+    background-color: var(--sub-color);
+}
+
+.active-chat {
+    background-color: rgba(72, 198, 114, 0.4)
+}
+
+.active-v2 {
+    color: var(--sub-color);
+    border-bottom: 3px solid var(--primary-color);
+}
+
+.active-box {
+    box-shadow: 0px 0px 6px 6px rgba(23, 215, 160, 0.4) !important;
+}
+
+.hide {
+    display: none !important;
+}
+
+@keyframes btn-glide {
+    from {
+        opacity: 0;
+        transform: translateY(-140px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+::-webkit-scrollbar {
+    // width: 0px;
+    background-color: #F5F5F5;
+}
+
+::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    background-color: #FFF;
+    background-image: -webkit-gradient(linear,
+            40% 0%,
+            75% 84%,
+            from(#4D9C41),
+            to(#19911D),
+            color-stop(.6, #54DE5D))
+}
+.fa-mars{
+    color: var(--male-color) !important;
+}
+.fa-venus{
+    color: var(--red-color) !important;
+}

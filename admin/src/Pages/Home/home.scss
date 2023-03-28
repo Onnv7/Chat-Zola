@@ -1,0 +1,17 @@
+.home{
+    display: flex;
+}
+.homeView{
+    flex: 1;
+}
+.beCall-modal{
+    position: fixed;
+    background-color: rgba(0, 0, 0, 0.4);
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
