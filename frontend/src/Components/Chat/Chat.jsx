@@ -30,18 +30,7 @@ const Chat = ({conversation, handleLatestMsg}) => {
                 setArrivalMessage(data?.message)
             handleLatestMsg(data);
         });
-        socket.on("incoming call", ({callerID}) => {
-            dispatch({
-                type: "CONNECTED", 
-                payload: {
-                    callRealTime : {
-                        incomingCall: true, 
-                        callerID
-                    }
-                }
-            })
-        })
-        socket.on()
+        
     }, []);
 
     useEffect(() => {
@@ -129,12 +118,6 @@ const Chat = ({conversation, handleLatestMsg}) => {
         })
     }
     const handleCallVideo = async (peer) => {
-        // navigate('/call', {state: { peer, socket}})
-        
-        // const socketId = socket.id;
-        // const peerId = peer.id;
-        // const encodedSocketId = window.btoa(socketId);
-        // const encodedPeerId = window.btoa("peerId");
         const url = `/call`;
         const width = 800;
         const height = 600;
@@ -147,7 +130,11 @@ const Chat = ({conversation, handleLatestMsg}) => {
             socket: socket,
             callerID: user._id,
             calleeID: conversation?.friend._id,
-            };
+        };
+        
+        // newWindow.addEventListener('beforeunload', () => {
+        //     newWindow.close();
+        // });
 //         newWindow.onload = () => {
 //     newWindow.opener.postMessage({ type: "peerId", peerId }, "*");
 //   };

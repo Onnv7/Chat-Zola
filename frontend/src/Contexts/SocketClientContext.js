@@ -8,6 +8,7 @@ const INITIAL_STATE = {
     peer: null,
     callRealTime: {
         incomingCall: false,
+        callerID: "",
     }
 };
 
@@ -24,7 +25,12 @@ const AuthReducer = (state, action) => {
         case "CONNECTED":
             return { ...state, ...action.payload };
         case "DISCONNECTED":
-            return INITIAL_STATE;
+            return {
+                ...state, callRealTime: {
+                    incomingCall: false,
+                    callerID: "",
+                }
+            };;
         default:
             return state;
     }
