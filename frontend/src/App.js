@@ -13,6 +13,7 @@ import Login from './Pages/Login/Login';
 import Register from './Pages/Register/Register';
 import GoiDien from './Test/GoiDien.jsx'
 import GoiVIP from './Test/GoiVIP.jsx'
+import ImageUploader from './Test/ImageUploader.jsx'
 import { AuthContext } from './Contexts/AuthContext.js';
 function App() {
     const test = useRef();
@@ -135,6 +136,7 @@ function App() {
                 <Route path="call" element={<Calling />} />
                 <Route path="/an" element={<GoiDien />} />
                 <Route path="/a" element={<GoiVIP />} />
+                <Route path="/upload" element={<ImageUploader />} />
             </Routes>
         </BrowserRouter>
     );

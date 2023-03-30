@@ -34,10 +34,10 @@ io.on("connection", (socket) => {
 
 
     // setup for chatting
-    socket.on("sendMessage", ({ conversationId, senderId, receiverId, message }) => {
+    socket.on("send message", ({ conversationId, senderId, receiverId, message }) => {
         const receiver = getUser(receiverId);
         if (receiver)
-            io.to(receiver.socketId).emit("getMessage", { conversationId, message });
+            io.to(receiver.socketId).emit("get message", { conversationId, message });
         else
             console.log("Receiver is offline")
     });
