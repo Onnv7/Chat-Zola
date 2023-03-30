@@ -44,16 +44,47 @@ io.on("connection", (socket) => {
 
 
     // setup for calling
+
+    // Nhận data từ NGƯỜI GỌI, tìm kiếm NGƯỜI NHẬN và phát 'incoming call' đến NGƯỜI NHẬN
     socket.on("calling", ({ callerID, calleeID }) => {
         console.log(callerID, "GỌI", calleeID);
         const callee = getUser(calleeID);
-        if (callee)
+        if (callee) {
+            console.log("PHÁT TÍN HIỆU TỚI", calleeID)
             io.to(callee.socketId).emit("incoming call", { callerID })
+        }
     })
 
     socket.on("accept video call", ({ calleePeerID, callerID }) => {
         const caller = getUser(callerID);
-        io.to(caller.socketId).emit("send peerID to caller", { calleePeerID });
+        console.log(callerID, "CHẤP NHẬN CUỘC GỌI", caller.socketId)
+        io.to(caller.socketId).emit("accepted calling", { calleePeerID });
+        console.log("Đã gửi")
+
+    })
+
+    socket.on("deny calling", ({ callerID }) => {
+        console.log(callerID, "HỦY CUỘC GỌI")
+        const caller = getUser(callerID)
+        io.to(caller.socketId).emit("denied calling");
+
+    })
+
+    socket.on("end calling", ({ finisher, callerID, calleeID }) => {
+        console.log("KẾT THÚC CUỘC GỌI caller = ", callerID)
+        const callee = getUser(calleeID)
+        io.to(callee.socketId).emit("ended calling", {});
+        const caller = getUser(callerID)
+        io.to(caller.socketId).emit("ended calling", {});
+        // if (finisher === callerID) {
+        //     const callee = getUser(calleeID)
+        //     io.to(callee.socketId).emit("ended calling", {});
+        // }
+        // else if (finisher === calleeID) {
+        //     const caller = getUser(callerID)
+        //     io.to(caller.socketId).emit("ended calling", {});
+        // }
+
     })
 
     socket.on('join-room', (roomId, userId) => {
@@ -77,8 +108,8 @@ io.on("connection", (socket) => {
     });
 
     socket.on("disconnect", () => {
-        console.log("User disconnected");
         removeUser(socket.id);
-        io.emit("getUsers", users);
+        console.log("User disconnected", users);
+        // io.emit("getUsers", users);
     });
 });
