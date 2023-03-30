@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 
 import Conversation from '../models/conversationModel.js'
 
+import cloudinary from "../utils/cloudinary.js";
 export const createConversation = async (req, res, next) => {
     try {
         const conversation = new Conversation({
@@ -15,19 +16,40 @@ export const createConversation = async (req, res, next) => {
 }
 export const sendMessageToConversation = async (req, res, next) => {
     try {
-        const { sender, message, sendAt } = req.body;
+        let msg;
+        const { sender, message, sendAt, type } = req.body;
         // const sendAt = Date.now()
-        const msg = {
-            sender: sender,
-            content: message,
-            sentAt: sendAt
+        if (type === 'message') {
+            msg = {
+                sender: sender,
+                content: message,
+                sentAt: sendAt,
+                type
+            }
+
         }
-        await Conversation.findByIdAndUpdate(
+        else {
+            let fileStr = message;
+            const uploadedResponse = await cloudinary.uploader.upload(fileStr, {
+                upload_preset: 'chat'
+            })
+            msg = {
+                sender: sender,
+                content: uploadedResponse.public_id,
+                sentAt: sendAt,
+                type,
+                seen: false,
+            }
+        }
+        const conversation = await Conversation.findByIdAndUpdate(
             { _id: req.params.conversationId },
             { $push: { message: msg } },
+            { new: true },
         )
-        res.status(200).json({ success: true, message: "Message sent successfully" })
-        // res.status(200).json({ ...msg, sentAt: new Date(sendAt) })
+        const messages = conversation.message
+        const data = messages[messages.length - 1]
+
+        res.status(200).json({ success: true, message: "Message sent successfully", data })
 
     } catch (error) {
         next(error)
@@ -61,28 +83,28 @@ export const getOneConversation = async (req, res, next) => {
 }
 export const getFewMessages = async (req, res, next) => {
     try {
+        const numberSkip = 10
         const skip = Number(req.params.skip);
         let { message } = await Conversation.findById(req.params.conversationId)
             .select({
                 _id: 0,
                 message: 1
             });
-        // console.log("🚀 ~ file: conversationController.js:71 ~ getFewMessages ~ message.length:", message.length)
         if (skip > message.length) {
             res.status(200).json([])
             return;
         }
-        let start = message.length - 10 - skip;
-        let end = start + 10;
+        let start = message.length - numberSkip - skip;
+        let end = start + numberSkip;
         if (start < 0) {
             start = 0
         }
-        if (message.length <= 10) {
+        if (message.length <= numberSkip) {
             start = 0;
-            end = message.length - 1
+            end = message.length
         }
+        // console.log(message.slice(0, 2))
         message = message.slice(start, end);
-        // console.log(start, end, message.length)
         res.status(200).json(message)
     } catch (error) {
         next(error);
@@ -102,7 +124,7 @@ export const getAllConversations = async (req, res, next) => {
             const lastIndex = conversation.message.length - 1;
             const latestMsg = conversation.message[lastIndex];
             const { message, ...others } = conversation.toObject();
-            return { ...others, latestMsg };
+            return { ...others, latestMsg: latestMsg === undefined ? null : latestMsg };
         });
 
         res.status(200).json(data);

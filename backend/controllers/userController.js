@@ -3,6 +3,38 @@ import { createError } from "../utils/error.js";
 
 import User from "../models/userModel.js";
 import Conversation from "../models/conversationModel.js";
+import cloudinary from "../utils/cloudinary.js";
+
+export const getAvatar = async (req, res, next) => {
+    try {
+        const public_id = "Zola/" + req.params.public_id;
+        console.log("object", public_id)
+        const result = await cloudinary.api.resource(public_id);
+        console.log("🚀 ~ file: userController.js:13 ~ getAvatar ~ result:", result)
+        const imageUrl = result.secure_url;
+        res.status(200).json(imageUrl);
+    } catch (error) {
+        next(error);
+    }
+}
+export const changeAvatar = async (req, res, next) => {
+    try {
+        let fileStr = req.body.data;
+        console.log(process.env.CLOUDINARY_NAME, process.env.CLOUDINARY_API_KEY)
+        // console.log("🚀 ~ file: userController.js:11 ~ changeAvatar ~ fileStr:", fileStr)
+        const uploadedResponse = await cloudinary.uploader.upload(fileStr, {
+            upload_preset: 'avatar'
+        }, () => {
+            console.log("OK LUON")
+        })
+        console.log(uploadedResponse);
+        res.status(200).json("OK")
+    } catch (error) {
+        console.log(error)
+        next(error)
+    }
+}
+
 
 export const sendFriendRequest = async (req, res, next) => {
     const session = await mongoose.startSession();
