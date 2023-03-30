@@ -8,19 +8,28 @@ import './friendInvite.scss';
 const FriendInvite = () => {
     const [active, setActive] = useState(1);
     const [view, setView] = useState(<FriendSend />);
-    const [info, setInfo] = useState(<InfoFrSend />);
+    const [infoS, setInfoS] = useState();
+    const [infoR, setInfoR] = useState();
+    const [idr, setIdr] = useState(null);
+    const [ids, setIds] = useState(null);
     useEffect(() => {
         if (active === 1) {
-            setView(<FriendSend />);
-            setInfo(<InfoFrSend />);
+            setView(<FriendReceive setIdr={setIdr} />);
         } else {
-            setView(<FriendReceive />);
-            setInfo(<InfoFrReceive />);
+            setView(<FriendSend setIds={setIds} />);
         }
     }, [active]);
+    useEffect(() => {
+        if (idr) setInfoR(<InfoFrReceive setIdr={setIdr} idr={idr} />);
+        else setInfoR('');
+
+        if (ids) setInfoS(<InfoFrSend setIds={setIds} ids={ids} />);
+        else setInfoS('');
+    }, [idr, ids]);
     const handleClick = (i) => {
         setActive(i);
     };
+    console.log(ids);
     return (
         <div className="myFriend">
             <div className="myFriend-List">
@@ -38,7 +47,7 @@ const FriendInvite = () => {
                 </div>
                 {view}
             </div>
-            {info}
+            {active === 1 ? infoR : infoS}
         </div>
     );
 };

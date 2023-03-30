@@ -1,0 +1,89 @@
+.manageUser {
+    width: 100%;
+}
+.manageUser_header {
+    margin-top: 20px;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+}
+.manageUser_title {
+    color: var(--primary-color);
+}
+.manageUser_line {
+    border: 1px solid var(--primary-color);
+    width: 360px;
+    margin-top: 20px;
+}
+.manageUser_container {
+    height: 100%;
+    margin: 0 60px 50px;
+}
+.manageUser_list {
+    height: calc(100vh - 150px);
+    margin-top: 20px;
+    overflow-y: auto;
+}
+.manageUser_item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 10px 20px 16px;
+    box-shadow: 0px 0px 6px rgba(21, 156, 67, 0.4);
+    border-radius: 20px;
+    padding: 20px;
+}
+.manageUser_name {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.manageUser_name span {
+    margin-left: 20px;
+    margin-right: 20px;
+    font-size: 18px;
+}
+.manageUser_name:hover {
+    color: var(--primary-color);
+    cursor: pointer;
+}
+.manageUser_icon {
+    font-size: 24px;
+}
+.manageUser_email {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.manageUser_email:hover {
+    color: var(--primary-color);
+    cursor: pointer;
+}
+.manageUser_email .manageUser_icon {
+    color: #eb455f;
+    margin-right: 12px;
+}
+.manageUser_birthday {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.manageUser_birthday:hover {
+    color: var(--primary-color);
+    cursor: pointer;
+}
+.manageUser_birthday .manageUser_icon {
+    color: #ffbd35;
+    margin-right: 12px;
+}
+.manageUser_lock {
+    border-radius: 50%;
+    padding: 10px 12px;
+    background-color: #eb455f;
+}
+.manageUser_lock:hover {
+    cursor: pointer;
+}
+.manageUser_lock .manageUser_icon {
+    color: #fff;
+}

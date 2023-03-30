@@ -1,12 +1,25 @@
-import React, { useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import './profile.scss';
-import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import 'react-datepicker/dist/react-datepicker-cssmodules.css';
 import ChangePass from './ChangePass';
+import { AuthContext } from '../../Contexts/AuthContext';
+import axios from '../../Hooks/axios';
+import { format, parseISO } from 'date-fns';
 
 const Profile = () => {
+    const { user } = useContext(AuthContext);
+    const [info, setInfo] = useState();
+    useEffect(() => {
+        const fetchData = async () => {
+            const { data } = await axios.get(`/user/get-profile/${user._id}`);
+            setInfo(data);
+        };
+        fetchData();
+    }, [user]);
     const [open, setOpen] = useState(false);
+    const birth = info?.birthday ? parseISO(info.birthday) : null;
+    const date = birth ? format(birth, 'yyyy-MM-dd') : '';
     return (
         <div className="profile">
             <div className="profile-box">
@@ -14,24 +27,27 @@ const Profile = () => {
                     <div className="profile-headerBox">
                         <img src="../Img/Avatar.png" alt="" />
                         <div className="profile-name">
-                            <span>Enemy B</span>
-                            <i className="fa-regular fa-venus"></i>
-                            <i className="fa-regular fa-mars hide"></i>
+                            <span>{info?.name}</span>
+                            {info?.gender === 'male' ? (
+                                <i className="fa-regular fa-mars"></i>
+                            ) : (
+                                <i className="fa-regular fa-venus"></i>
+                            )}
                         </div>
                     </div>
                 </div>
                 <div className="profile-body">
                     <div className="profile-item">
                         <i className="fa-duotone fa-envelope"></i>
-                        <input type="text" />
+                        <input type="email" defaultValue={info?.email} />
                     </div>
-                    <div className="profile-item">
+                    {/* <div className="profile-item">
                         <i className="fa-solid fa-phone-volume"></i>
                         <input type="number" />
-                    </div>
+                    </div> */}
                     <div className="profile-item">
                         <i className="fa-duotone fa-key"></i>
-                        <input type="password" />
+                        <input type="password" value={12345} />
                         <i onClick={() => setOpen(true)} className="fa-duotone fa-pen profile-icon"></i>
                     </div>
                     <div className="profile-gender">
@@ -41,7 +57,8 @@ const Profile = () => {
                                 type="radio"
                                 name="inlineRadioOptions"
                                 id="inlineRadio1"
-                                value="option1"
+                                value="male"
+                                checked={info?.gender === 'male'}
                             />
                             <label className="form-check-label" htmlFor="inlineRadio1">
                                 Nam
@@ -53,7 +70,8 @@ const Profile = () => {
                                 type="radio"
                                 name="inlineRadioOptions"
                                 id="inlineRadio2"
-                                value="option2"
+                                value="female"
+                                checked={info?.gender === 'female'}
                             />
                             <label className="form-check-label" htmlFor="inlineRadio2">
                                 Nữ
@@ -65,7 +83,8 @@ const Profile = () => {
                                 type="radio"
                                 name="inlineRadioOptions"
                                 id="inlineRadio3"
-                                value="option3"
+                                value="other"
+                                checked={info?.gender === 'other'}
                             />
                             <label className="form-check-label" htmlFor="inlineRadio3">
                                 Khác
@@ -76,7 +95,7 @@ const Profile = () => {
                         <i className="fa-duotone fa-cake-candles"></i>
                         <span>
                             Ngày sinh:
-                            <input type="date" />
+                            <input type="date" value={date} />
                         </span>
                     </div>
                     <button>

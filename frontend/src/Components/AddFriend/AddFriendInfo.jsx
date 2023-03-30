@@ -7,8 +7,7 @@ import { AuthContext } from '../../Contexts/AuthContext';
 const AddFriendInfo = ({ info, setShow }) => {
     const { user } = useContext(AuthContext);
     const birth = parseISO(info.birthday);
-    const date = format(birth, 'dd/mm/yyyy');
-    console.log(user._id);
+    const date = format(birth, 'dd/MM/yyyy');
     const handleClick = async () => {
         try {
             await axios.post(`/user/send-friend-request`, {
@@ -22,6 +21,7 @@ const AddFriendInfo = ({ info, setShow }) => {
     };
     return (
         <div className="addFriend-infoContent">
+            <i onClick={() => setShow(false)} className="fa-solid fa-circle-xmark"></i>
             <div className="myFriend-bg">
                 <div className="myFriend-name">
                     <img src="../Img/Avatar1.png" alt="" />

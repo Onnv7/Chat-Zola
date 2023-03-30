@@ -68,7 +68,7 @@
         &:last-child{
             color: var(--red-color);
             &:hover{
-                color: red;
+                opacity: 0.8;
             };
         }
     }
@@ -91,6 +91,7 @@
     height: 30%;
     width: 100%;
     box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.5);
+    border-radius: 20px 20px 0px 0px;
     background-color: var(--third-color);
 }
 .myFriend-name{
@@ -120,13 +121,6 @@
     }
     >i{
         font-size: 2rem;
-        &:first-of-type{
-            color: var(--male-color);
-        }
-        &:last-of-type{
-            color: var(--red-color);
-        }
-
     }
 }
 .myFriend-infoBox{
