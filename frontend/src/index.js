@@ -1,12 +1,13 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
+import Modal from 'react-modal';
 import reportWebVitals from './reportWebVitals';
 import GlobalStyles from './Components/GlobalStyles';
 import './Fonts/css/all.css';
 import { AuthContextProvider } from './Contexts/AuthContext.js';
 import { SocketClientContextProvider } from './Contexts/SocketClientContext.js';
-
+Modal.setAppElement('#root');
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
     // <React.StrictMode>

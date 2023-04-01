@@ -5,15 +5,21 @@ import { AuthContext } from '../../Contexts/AuthContext.js';
 import { SocketClientContext } from '../../Contexts/SocketClientContext.js';
 import axios from "../../Hooks/axios.js";
 import { useNavigate } from 'react-router-dom';
+import { Image } from 'cloudinary-react';
+// import Picker from 'emoji-picker-react';
+import data from '@emoji-mart/data'
+import Picker from '@emoji-mart/react'
 
+
+import { formatDateTime } from '../../Hooks/formatDateTime.js';
 const Chat = ({conversation, handleLatestMsg}) => {
     const navigate = useNavigate();
     const { user } = useContext(AuthContext);
     let { socket, peer, dispatch } = useContext(SocketClientContext);
-    // console.log("🚀 ~ file: Chat.jsx:14 ~ Chat ~ socket:", socket?.id, peer?._id)
-   
+    
     
     const containerRef = useRef(null);
+    const inputFile = useRef(null);
     // const [conv, setConv] = useState(conversation);
     const [isLoadingOldMsg, setIsLoadingOldMsg] = useState(false)
     const conv = useRef(conversation);
@@ -21,41 +27,20 @@ const Chat = ({conversation, handleLatestMsg}) => {
     const [skip, setSkip] = useState(0);
     const [messages, setMessages] = useState([]);
     const [arrivalMessage, setArrivalMessage] = useState(null);
-    
+    const [image, setImage] = useState(null);
+    const [isOpenPicker, setIsOpenPicker] = useState(false);
 
+
+    
     useEffect(() => {
-        // socket.emit("addUser", user._id);
-        socket.on("getMessage", (data) => {
+        socket.on("get message", (data) => {
             if(conv.current?.id === data.conversationId)
                 setArrivalMessage(data?.message)
             handleLatestMsg(data);
         });
-        socket.on("incoming call", ({callerID}) => {
-            dispatch({
-                type: "CONNECTED", 
-                payload: {
-                    callRealTime : {
-                        incomingCall: true, 
-                        callerID
-                    }
-                }
-            })
-        })
-        socket.on()
+        
     }, []);
 
-    useEffect(() => {
-        if(isLoadingOldMsg === false) {
-            const container = containerRef.current;
-            container.scrollTop = container.scrollHeight;
-        }
-        else 
-        {
-            const container = containerRef.current;
-            container.scrollTop = 20;
-        }
-    }, [messages])
-    
 
     useEffect(() => {
         const fetchFirstMessages =async (conversationId) => {
@@ -67,7 +52,10 @@ const Chat = ({conversation, handleLatestMsg}) => {
         }
         conv.current = conversation;
         fetchFirstMessages(conversation?.id)
-                    .then(res => {setMessages(res);setIsLoadingOldMsg(false)})
+                    .then(res => {
+                        setMessages(res);
+                        setIsLoadingOldMsg(false);
+                    })
                     
     }, [conversation])
     
@@ -80,45 +68,43 @@ const Chat = ({conversation, handleLatestMsg}) => {
             })
     }, [arrivalMessage])
 
-    useEffect(() => {
-        // socket.emit("addUser", user._id)
-        // socket.on("getUsers", users => console.log(users))
-    }, [user])
 
     const handleClickSendMessage = async (conversationId) => {
-        if(text.trim() === "")
-            return;
+        if(image !== null){
+            console.log("send")
+            await sendMessage(conversationId, "image", image);}
+        if(text !== "")
+            await sendMessage(conversationId, "message", text);
+        
+    }
+    const sendMessage = async (conversationId, type, content) => {
         const sentAt = Date.now()
+        if(content.trim() === "")
+            return;
         await axios.post(`/conversation/send-messages/${conversationId}`, {
             sender: user._id,
-            message: text,
-            sentAt: sentAt
+            message: content,
+            sentAt: sentAt,
+            type: type,
         })
         .then((res) => {
-            setMessages(prev => [...prev, {
-                sender: user._id,
-                content: text
-            }])
+            const newMessage = res.data.data
+            setMessages(prev => {
+                return [...prev, newMessage]
+            })
             handleLatestMsg({
                 conversationId: conversationId,
-                message: {
-                    sender: user._id,
-                    content: text,
-                    sentAt: new Date(sentAt)
-                }
+                message: newMessage
             });
             return res;
         })
         .then((res) => {
-            socket.emit("sendMessage", {
+            const newMessage = res.data.data
+            socket.emit("send message", {
                 conversationId: conversationId,
                 senderId: user._id,
                 receiverId: conversation.friend._id,
-                message: {
-                    sender: user._id,
-                    content: text,
-                    sentAt: new Date(sentAt)
-                }
+                message: newMessage
             })
             setText("");
             setSkip(prev => prev + 1);
@@ -127,14 +113,9 @@ const Chat = ({conversation, handleLatestMsg}) => {
         .catch((err) => {
             console.log(err)
         })
+        setImage(null)
     }
     const handleCallVideo = async (peer) => {
-        // navigate('/call', {state: { peer, socket}})
-        
-        // const socketId = socket.id;
-        // const peerId = peer.id;
-        // const encodedSocketId = window.btoa(socketId);
-        // const encodedPeerId = window.btoa("peerId");
         const url = `/call`;
         const width = 800;
         const height = 600;
@@ -147,7 +128,11 @@ const Chat = ({conversation, handleLatestMsg}) => {
             socket: socket,
             callerID: user._id,
             calleeID: conversation?.friend._id,
-            };
+        };
+        
+        // newWindow.addEventListener('beforeunload', () => {
+        //     newWindow.close();
+        // });
 //         newWindow.onload = () => {
 //     newWindow.opener.postMessage({ type: "peerId", peerId }, "*");
 //   };
@@ -155,6 +140,15 @@ const Chat = ({conversation, handleLatestMsg}) => {
     }
     const handleCall = async () => {
         navigate('/an')
+    }
+    const handleImageUpload = async (event) => {
+        const file = event.target.files[0];
+        const reader = new FileReader();
+
+        reader.onloadend = () => {
+            setImage(reader.result);
+        };
+        reader.readAsDataURL(file);
     }
     useEffect(() => {
         const fetchMessages = async () => {
@@ -167,7 +161,6 @@ const Chat = ({conversation, handleLatestMsg}) => {
         const handleScroll = () => {
             const container = containerRef.current;
             if (container.scrollTop === 0)  {
-                console.log("????????", skip, messages?.length)
                 fetchMessages()
                 .then(res => {
                     if(res.length !== 0) 
@@ -185,9 +178,25 @@ const Chat = ({conversation, handleLatestMsg}) => {
     }, [conversation, skip]);
 
     
+    useEffect(() => {
+        if(isLoadingOldMsg === false) {
+            const container = containerRef.current;
+            container.scrollTop = container.scrollHeight;
+        }
+        else 
+        {
+            const container = containerRef.current;
+            container.scrollTop = 20;
+        }
+    }, [messages])
     
-
-    
+    const onEmojiClick = (emojiObject) => {
+        console.log(emojiObject)
+        setText((text) => text + emojiObject.native);
+    }
+    const showEmojiPicker = () => {
+        setIsOpenPicker(prev => !prev);
+    }
     return (
         <div className="chat">
             <div className="chat-container">
@@ -209,25 +218,80 @@ const Chat = ({conversation, handleLatestMsg}) => {
                         ref={containerRef} 
                         style={{ overflowY: 'scroll', height: '400px' }}>
                         {messages && messages.map((message) => {
+                            const sentAt = formatDateTime(message.sentAt);
+                            // console.log("MES ne", message)
                                 if(message.sender !== user._id)
                                 {
-                                    return (<div className="YourMessage">
-                                                <img src="../Img/Avatar1.png" alt="" />
-                                                <span>{message.content}</span>
-                                            </div>)
+                                    if(message.type === 'message')
+                                        return (<div className="YourMessage">
+                                                    <img src="../Img/Avatar1.png" alt="" />
+                                                    <span>{message.content}</span>
+                                                    <div>{sentAt}</div>
+                                                </div>)
+                                    else if(message.type === 'image')
+                                        {
+                                            return (<div className="MyMessage">
+                                                    <span>
+                                                        <Image
+                                                        cloudName="dtvnsczg8"
+                                                        publicId={message.content}
+                                                        crop="scale"
+                                                        width="300"
+                                                        ></Image>
+                                                    </span>
+                                                    <div>{sentAt}</div>
+                                                    <img src="../Img/Avatar.png" alt="" />
+                                                </div>)}
                                 }
-                                return (<div className="MyMessage">
-                                            <span>{message.content}</span>
-                                            <img src="../Img/Avatar.png" alt="" />
-                                        </div>)
+                                else {
+                                    if(message.type === 'message'){
+                                        
+                                        return (<div className="MyMessage">
+                                                <span>{message.content}</span>
+                                                <div>{sentAt}</div>
+                                                <img src="../Img/Avatar.png" alt="" />
+                                            </div>)
+                                    }
+                                    else if(message.type === 'image')
+                                        return (<div className="MyMessage">
+                                                    <span>
+                                                        <Image
+                                                        cloudName="dtvnsczg8"
+                                                        publicId={message.content}
+                                                        crop="scale"
+                                                        width="300"
+                                                        ></Image>
+                                                    </span>
+                                                    <div>{sentAt}</div>
+                                                    <img src="../Img/Avatar.png" alt="" />
+                                                </div>)
+                                }
                         })}
                     </div>
                     <div className="chat-box">
+                    
                         <div className="chat-toolbar">
-                            <i className="fa-light fa-face-smile-beam"></i>
-                            <i className="fa-light fa-image"></i>
+                            <i className="fa-light fa-face-smile-beam"
+                            onClick={showEmojiPicker}></i>
+                            {isOpenPicker && <Picker data={data} onEmojiSelect={onEmojiClick} />}
+                            {/* <Picker data={data} onEmojiSelect={chosenEmoji}/> */}
+                            {/* {isOpenPicker && <Picker  onEmojiClick={onEmojiClick} />} */}
+                            <div style={{textAlign: 'left',marginLeft:'810px'}}>
+                                {/* { chosenEmoji && <EmojiData chosenEmoji={chosenEmoji}/>} */}
+                            </div>
+                            <i className="fa-light fa-image"
+                                onClick={(e) => inputFile.current.click()}
+                                ></i>
+                            <input type="file" 
+                                    id="file" 
+                                    ref={inputFile} 
+                                    style={{ display: 'none' }} onChange={handleImageUpload} />
                         </div>
                         <div className="chat-inputBox">
+                            
+                        {image && (
+                            <img src={image} alt="Preview" style={{ maxWidth: '70px', maxHeight: '70px' }} />
+                        )}
                             <div className="chat-input">
                                 <input type="text" 
                                         placeholder="Nhập tin nhắn" 

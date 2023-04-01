@@ -7,13 +7,15 @@ const FriendSend = ({ setIds }) => {
     const { user } = useContext(AuthContext);
     const [list, setList] = useState();
     const [active, setActive] = useState('');
+    const [isUpdated, setIsUpdated] = useState(false);
+
     useEffect(() => {
         const fetchData = async () => {
             const { data } = await axios.get(`/user/get-list-invitations-sent/${user._id}`);
             setList(data);
         };
         fetchData();
-    }, [list]);
+    }, [isUpdated]);
     const handleClick = (id) => {
         setIds(id);
         setActive(id);
@@ -25,6 +27,7 @@ const FriendSend = ({ setIds }) => {
                 senderId: user._id,
             });
             setIds(null);
+            setIsUpdated((prev) => !prev);
             toast.success('Hủy lời mời thành công');
         } catch (err) {
             toast.error(err.message);

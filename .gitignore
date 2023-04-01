@@ -1,3 +1,10 @@
 /backend/node_modules
+/backend/.env
+
+
+
 /frontend/node_modules
+
+
+
 /socket/node_modules
