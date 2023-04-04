@@ -1,21 +1,22 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCommentDots } from '@fortawesome/free-regular-svg-icons';
 import { faClipboardList, faGear, faUserGroup, faVideo } from '@fortawesome/free-solid-svg-icons';
 import './sidebarNav.scss';
+import { AuthContext } from '../../Contexts/AuthContext.js';
 
 const SidebarNav = ({ handleClick }) => {
+    const { user } = useContext(AuthContext);
     const [show, setShow] = useState(1);
     const setClick = (i) => {
         setShow(i);
         handleClick(i);
     };
-
     return (
         <nav className="sidebarNav">
             <div className="main-tab">
                 <div onClick={() => setClick(4)} className={show === 4 ? 'main-img active' : 'main-img'}>
-                    <img src="../Img/Avatar.png" alt="Avatar" />
+                    <img src={user?.avatar !== "" ? user.avatar : "../Img/Avatar.png"} alt="Avatar" />
                 </div>
                 <div className="mainTool-box">
                     <div className="mainTool-List">

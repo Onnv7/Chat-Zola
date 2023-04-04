@@ -71,7 +71,7 @@ export const getOneConversation = async (req, res, next) => {
         const conversation = await Conversation.findById(req.params.conversationId)
             .populate({
                 path: "participants",
-                select: { name: 1 }
+                select: { name: 1, avatar: 1 }
             })
             .select({
                 message: 0
@@ -118,14 +118,20 @@ export const getAllConversations = async (req, res, next) => {
         }).populate({
             path: 'participants',
             select: 'name avatar _id'
-        });
+        }).then(conversations => {
+            return conversations.map(conversation => {
+                const filteredParticipants = conversation.participants.filter(participant => participant._id !== userId);
+                return { ...conversation._doc, participants: filteredParticipants };
+            });
+        });;
 
         const data = list.map(conversation => {
             const lastIndex = conversation.message.length - 1;
             const latestMsg = conversation.message[lastIndex];
-            const { message, ...others } = conversation.toObject();
+            const { message, ...others } = conversation;
             return { ...others, latestMsg: latestMsg === undefined ? null : latestMsg };
         });
+
 
         res.status(200).json(data);
     } catch (error) {

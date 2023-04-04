@@ -8,9 +8,7 @@ import cloudinary from "../utils/cloudinary.js";
 export const getAvatar = async (req, res, next) => {
     try {
         const public_id = "Zola/" + req.params.public_id;
-        console.log("object", public_id)
         const result = await cloudinary.api.resource(public_id);
-        console.log("🚀 ~ file: userController.js:13 ~ getAvatar ~ result:", result)
         const imageUrl = result.secure_url;
         res.status(200).json(imageUrl);
     } catch (error) {
@@ -20,14 +18,12 @@ export const getAvatar = async (req, res, next) => {
 export const changeAvatar = async (req, res, next) => {
     try {
         let fileStr = req.body.data;
-        console.log(process.env.CLOUDINARY_NAME, process.env.CLOUDINARY_API_KEY)
         // console.log("🚀 ~ file: userController.js:11 ~ changeAvatar ~ fileStr:", fileStr)
         const uploadedResponse = await cloudinary.uploader.upload(fileStr, {
             upload_preset: 'avatar'
         }, () => {
             console.log("OK LUON")
         })
-        console.log(uploadedResponse);
         res.status(200).json("OK")
     } catch (error) {
         console.log(error)
@@ -137,6 +133,7 @@ export const acceptNewFriend = async (req, res, next) => {
 
 
     } catch (error) {
+        console.log(error)
         await session.abortTransaction();
         next(error);
     }
@@ -172,7 +169,6 @@ export const getFriendsList = async (req, res, next) => {
         const list = await User.findById(req.params.userId)
             .populate('friendsList', 'name avatar')
             .select({ friendsList: 1, _id: 0 });
-        console.log(list);
         res.status(200).json(list.friendsList);
     } catch (error) {
         next(error)
@@ -206,13 +202,22 @@ export const unfriend = async (req, res, next) => {
 
 export const updateProfile = async (req, res, next) => {
     try {
-        const result = await User.updateOne(
-            { _id: req.params.userId },
-            { ...req.body }
+        let { avatar, ...others } = req.body;
+        let fileStr = avatar;
+        const uploadedResponse = await cloudinary.uploader.upload(fileStr, {
+            public_id: others._id,
+            upload_preset: 'avatar'
+        })
+        avatar = uploadedResponse.url
+
+        const result = await User.findByIdAndUpdate(
+            req.params.userId,
+            { ...req.body, avatar: avatar },
+            { new: true },
         )
         if (result.matchedCount !== 0) {
-
-            res.status(200).json({ success: true, message: "Update successfully" })
+            const { password, friendsList, friendRequest, invitationSent, ...others } = result._doc
+            res.status(200).json({ success: true, message: "Update successfully", result: { ...others } })
             return
         }
         res.status(404).json({ success: false, message: "No records found to update" })

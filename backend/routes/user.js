@@ -9,7 +9,7 @@ router.post('/unsend-friend-request', unsendFriendRequest);
 router.post('/accept-new-friend', acceptNewFriend);
 router.post('/reject-new-friend', rejectNewFriend);
 router.patch('/unfriend/:userId', unfriend);
-router.put('/update-profile/:userId', updateProfile);
+router.patch('/update-profile/:userId', updateProfile);
 router.get('/get-profile/:userId', getProfileById);
 router.get('/get-profile-my-friend/:userId', getProfileMyFriend);
 router.get('/get-profile', getProfileByEmail);

@@ -12,8 +12,11 @@ import Picker from '@emoji-mart/react';
 
 import { formatDateTime } from '../../Hooks/formatDateTime.js';
 const Chat = ({ conversation, handleLatestMsg }) => {
+    const avatar = conversation?.friend.avatar
     const navigate = useNavigate();
     const { user } = useContext(AuthContext);
+    const myAvatar = user?.avatar !== "" ? user.avatar : "../Img/Avatar.png"
+    
     let { socket, peer, dispatch } = useContext(SocketClientContext);
 
     const containerRef = useRef(null);
@@ -21,13 +24,13 @@ const Chat = ({ conversation, handleLatestMsg }) => {
     // const [conv, setConv] = useState(conversation);
     const [isLoadingOldMsg, setIsLoadingOldMsg] = useState(false);
     const conv = useRef(conversation);
+    const pickerRef = useRef();
     const [text, setText] = useState('');
     const [skip, setSkip] = useState(0);
     const [messages, setMessages] = useState([]);
     const [arrivalMessage, setArrivalMessage] = useState(null);
     const [image, setImage] = useState(null);
     const [isOpenPicker, setIsOpenPicker] = useState(false);
-
     useEffect(() => {
         socket.on('get message', (data) => {
             if (conv.current?.id === data.conversationId) setArrivalMessage(data?.message);
@@ -101,6 +104,7 @@ const Chat = ({ conversation, handleLatestMsg }) => {
                 console.log(err);
             });
         setImage(null);
+        setText("");
     };
     const handleCallVideo = async (peer) => {
         const url = `/call`;
@@ -171,18 +175,18 @@ const Chat = ({ conversation, handleLatestMsg }) => {
     }, [messages]);
 
     const onEmojiClick = (emojiObject) => {
-        console.log(emojiObject);
         setText((text) => text + emojiObject.native);
     };
     const showEmojiPicker = () => {
         setIsOpenPicker((prev) => !prev);
     };
+   
     return (
         <div className="chat">
             <div className="chat-container">
                 <div className="chat-header">
                     <div className="chat-name">
-                        <img src="../Img/Avatar1.png" alt="" />
+                        <img src={avatar} alt="" />
                         <span>{conversation?.friend.name}</span>
                     </div>
                     <div className="chat-headerBtn">
@@ -197,21 +201,21 @@ const Chat = ({ conversation, handleLatestMsg }) => {
                             messages.map((message) => {
                                 const sentAt = formatDateTime(message.sentAt);
                                 // console.log("MES ne", message)
-                                const date = new Date(sentAt);
-                                console.log(date);
                                 // const time = sentAt.toLocaleTimeString();
+                                // your
                                 if (message.sender !== user._id) {
                                     if (message.type === 'message')
                                         return (
                                             <div className="YourMessage">
-                                                <img src="../Img/Avatar1.png" alt="" />
+                                                <img src={avatar} alt="" />
                                                 <span>{message.content}</span>
                                                 <div>{sentAt}</div>
                                             </div>
                                         );
                                     else if (message.type === 'image') {
                                         return (
-                                            <div className="MyMessage">
+                                            <div className="YourMessage">
+                                                <img src={avatar} alt="" />
                                                 <span>
                                                     <Image
                                                         cloudName="dtvnsczg8"
@@ -221,17 +225,18 @@ const Chat = ({ conversation, handleLatestMsg }) => {
                                                     ></Image>
                                                 </span>
                                                 <div>{sentAt}</div>
-                                                <img src="../Img/Avatar.png" alt="" />
                                             </div>
                                         );
                                     }
-                                } else {
+                                } 
+                                // me
+                                else {
                                     if (message.type === 'message') {
                                         return (
                                             <div className="MyMessage">
-                                                <div>{sentAt}</div>
                                                 <span>{message.content}</span>
-                                                <img src="../Img/Avatar.png" alt="" />
+                                                <div>{sentAt}</div>
+                                                <img src={myAvatar} alt="" />
                                             </div>
                                         );
                                     } else if (message.type === 'image')
@@ -246,7 +251,7 @@ const Chat = ({ conversation, handleLatestMsg }) => {
                                                     ></Image>
                                                 </span>
                                                 <div>{sentAt}</div>
-                                                <img src="../Img/Avatar.png" alt="" />
+                                                <img src={myAvatar} alt="" />
                                             </div>
                                         );
                                 }
@@ -256,7 +261,7 @@ const Chat = ({ conversation, handleLatestMsg }) => {
                         <div className="chat-toolbar">
                             <i className="fa-light fa-face-smile-beam" onClick={showEmojiPicker}></i>
                             <div className="emoji-adjust">
-                                {isOpenPicker && <Picker data={data} onEmojiSelect={onEmojiClick} />}
+                                {isOpenPicker && <Picker data={data} onEmojiSelect={onEmojiClick} ref={pickerRef} />}
                             </div>
                             {/* <Picker data={data} onEmojiSelect={chosenEmoji}/> */}
                             {/* {isOpenPicker && <Picker  onEmojiClick={onEmojiClick} />} */}
@@ -274,8 +279,8 @@ const Chat = ({ conversation, handleLatestMsg }) => {
                         <div className="chat-inputBox">
                             {image && <img src={image} alt="Preview" style={{ width: '70px', height: '50px' }} />}
                             <div className="chat-input">
-                                <textarea onChange={(e) => setText(e.target.value)} placeholder="Nhập tin nhắn">
-                                    {text}
+                                <textarea onChange={(e) => setText(e.target.value)} placeholder="Nhập tin nhắn" value={text}>
+                                    
                                 </textarea>
                                 <i
                                     className="fa-solid fa-paper-plane-top"
