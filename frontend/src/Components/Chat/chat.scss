@@ -48,6 +48,14 @@
     flex-direction: column;
     overflow: auto;
 }
+.message-viewImage{
+    height: calc(100% - 175px);
+    background-color: #eee;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    overflow: auto;
+}
 .MyMessage, .YourMessage{
     display: flex;
     align-items: center;
@@ -82,10 +90,12 @@
     margin: 0 10px 10px;
 }
 .chat-toolbar{
+    position: relative;
     height: 52px;
     font-size: 2.4rem;
     display: flex;
     align-items: center;
+    justify-content: space-between;
     gap: 20px;
     margin: 0 20px;
     >i{
@@ -99,19 +109,26 @@
         }
     }
 }
+.emoji-adjust{
+    position: absolute;
+    transform: translateY(calc(-55% - 6px));
+}
 .chat-inputBox{
     border-top: 1px solid rgba(25, 135, 61, 0.6);
 }
 .chat-input{
-    height: 60px;
     display: flex;
-    align-items: center;
-    margin: 0 20px;
+    margin: 12px 20px 0;
+    overflow: hidden;
     
-    >input{
-        flex: 1;
-        border: none;
+    >textarea{
+        overflow-y: auto;
+        border: 0;
+        width: 100%;
+        resize: none;
         outline: none;
+        font-size: 2rem;
+        word-break: break-all;
     }
     >i{
         font-size: 3rem;

@@ -81,6 +81,12 @@
         font-size: 1.8rem;
         font-weight: 700;
     }
+    >span:last-child{
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        width: 250px;
+    }
 }
 .messgerTab-chat{
     flex: 1;

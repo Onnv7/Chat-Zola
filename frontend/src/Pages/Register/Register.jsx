@@ -85,12 +85,11 @@ const Register = () => {
                 <div className="login-container">
                     <span>Đăng Ký</span>
                     <div className="login-content">
-                        <div className="register-name">
-                            <div className="login-text">
-                                <FontAwesomeIcon icon={faUser} />
-                                <input id="name" type="text" placeholder="Họ và tên" onChange={handleChange} />
-                            </div>
+                        <div className="login-text">
+                            <FontAwesomeIcon icon={faUser} />
+                            <input id="name" type="text" placeholder="Họ và tên" onChange={handleChange} />
                         </div>
+
                         {/* <div className="register-name">
                             <div className="login-text">
                                 <FontAwesomeIcon icon={faUser} />
