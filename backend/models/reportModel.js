@@ -9,7 +9,7 @@ const reportSchema = mongoose.Schema({
         type: String,
     },
     reporter: {
-        type: mongoose.Schema.Types.ObjectId,
+        type: String,
         ref: "User",
     },
     done: {
