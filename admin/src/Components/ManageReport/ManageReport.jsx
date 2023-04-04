@@ -10,20 +10,28 @@ const ManageReport = () => {
     const [view, setView] = useState(<ReportReceive />);
     const [infoR, setInfoR] = useState();
     const [infoD, setInfoD] = useState();
-    const [idR, setIdR] = useState(null);
-    const [idD, setIdD] = useState(null);
+    const [idR, setIdR] = useState();
+    const [idD, setIdD] = useState();
+    const [refresh, setRefresh] = useState(false);
     useEffect(() => {
         if (active === 1) {
-            setView(<ReportReceive setIdR={setIdR} />);
+            setView(<ReportReceive setIdR={setIdR} refresh={refresh} />);
         } else {
             setView(<ReportDone setIdD={setIdD} />);
         }
-    }, [active]);
+    }, [active, refresh]);
     useEffect(() => {
-        if (idR === 1) setInfoR(<InfoRpReceive setIdr={setIdR} idr={idR} />);
+        if (idR)
+            setInfoR(
+                <InfoRpReceive
+                    setIdR={setIdR}
+                    idR={idR}
+                    setRefresh={setRefresh}
+                />
+            );
         else setInfoR("");
 
-        if (idD) setInfoD(<InfoRpDone setIdD={setIdD} ids={idD} />);
+        if (idD) setInfoD(<InfoRpDone setIdD={setIdD} idD={idD} />);
         else setInfoD("");
     }, [idD, idR]);
     const handleClick = (i) => {
