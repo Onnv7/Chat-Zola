@@ -13,16 +13,23 @@ import {
     faGear,
 } from "@fortawesome/free-solid-svg-icons";
 import axios from "../../Hooks/axios.js";
-const ReportReceive = ({ setIdR, refresh }) => {
+const ReportReceive = ({ setIdR, refresh, search }) => {
     const [list, setList] = useState([]);
     const [active, setActive] = useState();
     useEffect(() => {
         const fetchData = async () => {
             const { data } = await axios.get("/report/notdone");
-            setList(data.result);
+            if (search) {
+                const temp = data.result.filter((item) =>
+                    item.reporter.name.includes(search)
+                );
+                setList(temp);
+            } else {
+                setList(data.result);
+            }
         };
         fetchData();
-    }, [refresh]);
+    }, [refresh, search]);
 
     const handleClick = (id) => {
         setIdR(id);

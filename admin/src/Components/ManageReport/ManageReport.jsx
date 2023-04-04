@@ -13,13 +13,22 @@ const ManageReport = () => {
     const [idR, setIdR] = useState();
     const [idD, setIdD] = useState();
     const [refresh, setRefresh] = useState(false);
+    const [search, setSearch] = useState("");
     useEffect(() => {
         if (active === 1) {
-            setView(<ReportReceive setIdR={setIdR} refresh={refresh} />);
+            setView(
+                <ReportReceive
+                    setIdR={setIdR}
+                    refresh={refresh}
+                    search={search}
+                />
+            );
         } else {
-            setView(<ReportDone setIdD={setIdD} />);
+            setView(
+                <ReportDone setIdD={setIdD} refresh={refresh} search={search} />
+            );
         }
-    }, [active, refresh]);
+    }, [active, refresh, search]);
     useEffect(() => {
         if (idR)
             setInfoR(
@@ -64,7 +73,12 @@ const ManageReport = () => {
                         </span>
                         <div className="addFriend-search manageReport_search">
                             <i className="fa-duotone fa-magnifying-glass"></i>
-                            <input type="text" placeholder="Tìm kiếm" />
+                            <input
+                                type="text"
+                                placeholder="Tìm kiếm"
+                                value={search}
+                                onChange={(e) => setSearch(e.target.value)}
+                            />
                         </div>
                     </div>
                     {view}

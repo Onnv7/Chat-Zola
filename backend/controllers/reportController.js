@@ -49,7 +49,6 @@ export const getReportById = async (req, res, next) => {
     try {
         const report = await Report.find({
             _id: req.params.id,
-            done: false,
         }).populate({
             path: "reporter",
             select: "_id avatar name gender",
