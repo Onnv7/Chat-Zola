@@ -35,13 +35,19 @@
 }
 .manageUser_name {
     display: flex;
-    justify-content: space-between;
+    justify-content: start;
     align-items: center;
+    width: 300px;
 }
 .manageUser_name span {
     margin-left: 20px;
     margin-right: 20px;
     font-size: 18px;
+}
+.manageUser_name img {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
 }
 .manageUser_name:hover {
     color: var(--primary-color);
@@ -52,8 +58,9 @@
 }
 .manageUser_email {
     display: flex;
-    justify-content: space-between;
+    justify-content: start;
     align-items: center;
+    width: 200px;
 }
 .manageUser_email:hover {
     color: var(--primary-color);
@@ -65,8 +72,9 @@
 }
 .manageUser_birthday {
     display: flex;
-    justify-content: space-between;
+    justify-content: start;
     align-items: center;
+    width: 200px;
 }
 .manageUser_birthday:hover {
     color: var(--primary-color);

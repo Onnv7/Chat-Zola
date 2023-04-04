@@ -3,15 +3,19 @@ import mongoose from "mongoose";
 const reportSchema = mongoose.Schema({
     title: {
         type: String,
-        default: "Title"
+        default: "Title",
     },
     description: {
         type: String,
     },
     reporter: {
-        type: mongoose.Types.Schema.ObjectId,
-        ref: "User"
-    }
-})
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+    },
+    done: {
+        type: Boolean,
+        default: false,
+    },
+});
 
-export default mongoose.Schema("Report", reportSchema);
+export default mongoose.model("Report", reportSchema);
