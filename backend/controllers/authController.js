@@ -2,7 +2,7 @@ import User from "../models/userModel.js";
 import bcrypt from "bcryptjs";
 import { createError } from "../utils/error.js";
 import jwt from "jsonwebtoken";
-
+import { sendEmail } from "../utils/sendEmail.js";
 
 
 // register a new user
@@ -71,6 +71,19 @@ export const changePassword = async (req, res, next) => {
             { password: hash }
         )
         res.status(200).json({ success: true, message: "Change password successfully" });
+    } catch (error) {
+        next(error);
+    }
+};
+export const sendCodeVerify = async (req, res, next) => {
+    try {
+        const code = Math.floor(Math.random() * 9000) + 1000;
+        const isSent = await sendEmail(req.body.email, "Your code: ", "" + code);
+        if (isSent)
+            res.status(200).json({ success: true, message: "Sent code successfully", result: code });
+        else
+            res.status(200).json({ success: false, message: "Cant send code" });
+
     } catch (error) {
         next(error);
     }
