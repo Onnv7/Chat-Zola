@@ -20,12 +20,7 @@ export const getAllUser = async (req, res, next) => {
 export const getAvatar = async (req, res, next) => {
     try {
         const public_id = "Zola/" + req.params.public_id;
-        console.log("object", public_id);
         const result = await cloudinary.api.resource(public_id);
-        console.log(
-            "🚀 ~ file: userController.js:13 ~ getAvatar ~ result:",
-            result
-        );
         const imageUrl = result.secure_url;
         res.status(200).json(imageUrl);
     } catch (error) {
@@ -35,22 +30,12 @@ export const getAvatar = async (req, res, next) => {
 export const changeAvatar = async (req, res, next) => {
     try {
         let fileStr = req.body.data;
-        console.log(
-            process.env.CLOUDINARY_NAME,
-            process.env.CLOUDINARY_API_KEY
-        );
-        // console.log("🚀 ~ file: userController.js:11 ~ changeAvatar ~ fileStr:", fileStr)
-        const uploadedResponse = await cloudinary.uploader.upload(
-            fileStr,
-            {
-                upload_preset: "avatar",
-            },
-            () => {
-                console.log("OK LUON");
-            }
-        );
-        console.log(uploadedResponse);
-        res.status(200).json("OK");
+        const uploadedResponse = await cloudinary.uploader.upload(fileStr, {
+            upload_preset: 'avatar'
+        }, () => {
+            console.log("OK LUON")
+        })
+        res.status(200).json("OK")
     } catch (error) {
         console.log(error);
         next(error);
@@ -62,11 +47,16 @@ export const sendFriendRequest = async (req, res, next) => {
     try {
         // TODO: chưa check id người gửi
         session.startTransaction();
+        const receiverId = req.body.receiverId
 
-        const sender = await User.updateOne(
+        const sender = await User.findOne(
             { _id: req.body.senderId },
-            { $push: { invitationSent: req.body.receiverId } }
         );
+        if (sender.invitationSent.includes(receiverId) || sender.friendsList.includes(receiverId) || sender.friendRequest.includes(receiverId))
+            return res.status(200).json({ success: false, message: "Send faild" })
+
+        sender.invitationSent.push(req.body.receiverId)
+        sender.save();
         if (sender.matchedCount === 0) {
             throw createError(404, "Sender not found");
         }
@@ -160,6 +150,7 @@ export const acceptNewFriend = async (req, res, next) => {
             });
         }
     } catch (error) {
+        console.log(error)
         await session.abortTransaction();
         next(error);
     } finally {
@@ -193,7 +184,6 @@ export const getFriendsList = async (req, res, next) => {
         const list = await User.findById(req.params.userId)
             .populate("friendsList", "name avatar")
             .select({ friendsList: 1, _id: 0 });
-        console.log(list);
         res.status(200).json(list.friendsList);
     } catch (error) {
         next(error);
@@ -232,13 +222,11 @@ export const updateProfile = async (req, res, next) => {
         const result = await User.updateOne(
             { _id: req.params.userId },
             { ...req.body }
-        );
+        )
         if (result.matchedCount !== 0) {
-            res.status(200).json({
-                success: true,
-                message: "Update successfully",
-            });
-            return;
+
+            res.status(200).json({ success: true, message: "Update successfully" })
+            return
         }
         res.status(404).json({
             success: false,
@@ -280,25 +268,19 @@ export const getProfileById = async (req, res, next) => {
 export const getProfileMyFriend = async (req, res, next) => {
     try {
         const myId = req.query.my_id;
-        const friend = await User.findOne({
-            _id: req.params.userId,
-        });
+        const friend = await User.findOne(
+            {
+                _id: req.params.userId
+            }
+        );
         if (friend === null) {
             res.status(404).json({ success: false, message: "Not found user" });
             return;
         }
         let relationship = "none";
 
-        const isFriend = friend.friendsList.find(
-            (friendId) => friendId === myId
-        )
-            ? true
-            : false;
-        const isSentRequest = friend.friendRequest.find(
-            (friendId) => friendId === myId
-        )
-            ? true
-            : false;
+        const isFriend = friend.friendsList.find(friendId => friendId === myId) ? true : false;
+        const isSentRequest = friend.friendRequest.find(friendId => friendId === myId) ? true : false;
 
         if (isFriend) {
             relationship = "friend";
@@ -346,4 +328,4 @@ export const getListOfInvitationsSent = async (req, res, next) => {
     } catch (error) {
         next(error);
     }
-};
+}

@@ -42,7 +42,7 @@ export const login = async (req, res, next) => {
             throw createError(400, "Wrong password or username!");
 
         const token = jwt.sign({ id: user._id, email: user.email }, "an");
-        const { avatar, password, ...otherDetails } = user._doc;
+        const { password, friendsList, friendRequest, invitationSent, ...otherDetails } = user._doc;
 
         res.cookie("access_token", token)
             .status(200)
@@ -54,8 +54,17 @@ export const login = async (req, res, next) => {
 
 export const changePassword = async (req, res, next) => {
     try {
+        const user = await User.findOne({ email: req.body.email });
+        // console.log(req.body, req.params.userId)
+        const isPasswordCorrect = await bcrypt.compare(
+            req.body.password,
+            user.password
+        );
+        // console.log(isPasswordCorrect)
+        if (!isPasswordCorrect)
+            return res.status(200).json({ success: false, message: "Old password is incorrect" })
         const salt = bcrypt.genSaltSync(10);
-        const hash = bcrypt.hashSync(req.body.password, salt);
+        const hash = bcrypt.hashSync(req.body.newPwd, salt);
 
         await User.updateOne(
             { _id: req.params.userId },

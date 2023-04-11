@@ -1,31 +1,97 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState, useRef } from 'react';
 import './profile.scss';
 import 'react-datepicker/dist/react-datepicker.css';
 import 'react-datepicker/dist/react-datepicker-cssmodules.css';
+import { Image } from 'cloudinary-react';
 import ChangePass from './ChangePass';
 import { AuthContext } from '../../Contexts/AuthContext';
 import axios from '../../Hooks/axios';
 import { format, parseISO } from 'date-fns';
 
 const Profile = () => {
+    const inputFile = useRef(null);
     const { user } = useContext(AuthContext);
     const [info, setInfo] = useState();
+    const [image, setImage] = useState(null);
     useEffect(() => {
         const fetchData = async () => {
-            const { data } = await axios.get(`/user/get-profile/${user._id}`);
+            let { data } = await axios.get(`/user/get-profile/${user._id}`);
+            
+            console.log("🚀 FIRSTa:", data)
+            const birth = data?.birthday ? parseISO(data.birthday) : null;
+            const date = birth ? format(birth, 'yyyy-MM-dd') : '';
+            data = { ...data, birthday: date}
             setInfo(data);
         };
         fetchData();
     }, [user]);
     const [open, setOpen] = useState(false);
-    const birth = info?.birthday ? parseISO(info.birthday) : null;
-    const date = birth ? format(birth, 'yyyy-MM-dd') : '';
+    const handleUpdateProfile = async (e) => {
+        try {
+            const { email, ...others } = info;
+            console.log(info?.avatar)
+            const { data } = await axios.patch(`/user/update-profile/${user._id}`, {
+                ...others
+            })
+            if(data.success)
+            {
+                localStorage.setItem("user", JSON.stringify(data.result));
+                setInfo(data.result);
+                console.log("Updated")
+            }
+            else
+            {
+
+                console.log("Cant update")
+            }
+        
+        } catch (error) {
+            console.log(error)
+        }
+    }
+    const handleImageUpload = async (event) => {
+        const file = event.target.files[0];
+        const reader = new FileReader();
+
+        reader.onloadend = () => {
+            setInfo(prev => {
+                return { ...prev, avatar: reader.result}
+            })
+            setImage(reader.result);
+        };
+        reader.readAsDataURL(file);
+    };
     return (
         <div className="profile">
+        
             <div className="profile-box">
                 <div className="profile-header">
                     <div className="profile-headerBox">
-                        <img src="../Img/Avatar.png" alt="" />
+                        {/* <img src={image ? image: "../Img/Avatar.png"} alt="" /> */}
+                        {console.log(info?.avatar === "")}
+                        {console.log(image == null)}
+                        
+                        {
+                            
+                            image !== null ? (<img
+                                src={image}
+                                alt=""></img>) :
+                            info?.avatar !== "" ? 
+                            (<img
+                            src={info?.avatar}
+                            alt=''></img>) : (<img
+                                src={"../Img/Avatar.png"}
+                                alt=""></img>) 
+                        }
+                        <i className="fa-light fa-image" onClick={(e) => inputFile.current.click()}></i>
+                            <input
+                                type="file"
+                                id="file"
+                                ref={inputFile}
+                                style={{ display: 'none' }}
+                                multiple
+                                onChange={handleImageUpload}
+                            />
                         <div className="profile-name">
                             <span>{info?.name}</span>
                             {info?.gender === 'male' ? (
@@ -39,7 +105,18 @@ const Profile = () => {
                 <div className="profile-body">
                     <div className="profile-item">
                         <i className="fa-duotone fa-envelope"></i>
-                        <input type="email" defaultValue={info?.email} />
+                        <input type="text" defaultValue={info?.name} 
+                        onChange={(e) => {
+                            setInfo(prev => {
+                                return { 
+                                    ...prev, name: e.target.value 
+                                }
+                            });
+                        }} />
+                    </div>
+                    <div className="profile-item">
+                        <i className="fa-duotone fa-envelope"></i>
+                        <input type="email" defaultValue={info?.email} readOnly />
                     </div>
                     {/* <div className="profile-item">
                         <i className="fa-solid fa-phone-volume"></i>
@@ -59,6 +136,14 @@ const Profile = () => {
                                 id="inlineRadio1"
                                 value="male"
                                 checked={info?.gender === 'male'}
+                                onChange={(e) => {
+                                    if(e.target.checked)
+                                        setInfo(prev => {
+                                            return { 
+                                                ...prev, gender: 'male' 
+                                            }
+                                        });
+                                }}
                             />
                             <label className="form-check-label" htmlFor="inlineRadio1">
                                 Nam
@@ -72,6 +157,14 @@ const Profile = () => {
                                 id="inlineRadio2"
                                 value="female"
                                 checked={info?.gender === 'female'}
+                                onChange={(e) => {
+                                    if(e.target.checked)
+                                        setInfo(prev => {
+                                            return { 
+                                                ...prev, gender: 'female' 
+                                            }
+                                        });
+                                }}
                             />
                             <label className="form-check-label" htmlFor="inlineRadio2">
                                 Nữ
@@ -85,6 +178,14 @@ const Profile = () => {
                                 id="inlineRadio3"
                                 value="other"
                                 checked={info?.gender === 'other'}
+                                onChange={(e) => {
+                                    if(e.target.checked)
+                                        setInfo(prev => {
+                                            return { 
+                                                ...prev, gender: 'other' 
+                                            }
+                                        });
+                                }}
                             />
                             <label className="form-check-label" htmlFor="inlineRadio3">
                                 Khác
@@ -95,10 +196,19 @@ const Profile = () => {
                         <i className="fa-duotone fa-cake-candles"></i>
                         <span>
                             Ngày sinh:
-                            <input type="date" value={date} />
+                            <input type="date" value={info?.birthday} 
+                            onChange={(e) => {
+                                console.log(e.target.value)
+                                setInfo(prev => {
+                                    return { 
+                                        ...prev, birthday: e.target.value 
+                                    }
+                                });
+                            }}/>
                         </span>
                     </div>
-                    <button>
+                    <button
+                        onClick={handleUpdateProfile}>
                         Lưu
                         <i className="fa-regular fa-arrow-right-from-arc"></i>
                     </button>
