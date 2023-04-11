@@ -16,7 +16,21 @@ export const getAllUser = async (req, res, next) => {
         next(error);
     }
 };
-
+export const lockUser = async (req, res, next) => {
+    try {
+        const user = await User.findByIdAndUpdate(
+            req.params.userId,
+            { isBlocked: req.body.isBlocked },
+            { new: true }
+        );
+        res.status(200).json({
+            message: "Success",
+            user,
+        });
+    } catch (error) {
+        next(error);
+    }
+};
 export const getAvatar = async (req, res, next) => {
     try {
         const public_id = "Zola/" + req.params.public_id;
@@ -30,12 +44,16 @@ export const getAvatar = async (req, res, next) => {
 export const changeAvatar = async (req, res, next) => {
     try {
         let fileStr = req.body.data;
-        const uploadedResponse = await cloudinary.uploader.upload(fileStr, {
-            upload_preset: 'avatar'
-        }, () => {
-            console.log("OK LUON")
-        })
-        res.status(200).json("OK")
+        const uploadedResponse = await cloudinary.uploader.upload(
+            fileStr,
+            {
+                upload_preset: "avatar",
+            },
+            () => {
+                console.log("OK LUON");
+            }
+        );
+        res.status(200).json("OK");
     } catch (error) {
         console.log(error);
         next(error);
@@ -47,15 +65,19 @@ export const sendFriendRequest = async (req, res, next) => {
     try {
         // TODO: chưa check id người gửi
         session.startTransaction();
-        const receiverId = req.body.receiverId
+        const receiverId = req.body.receiverId;
 
-        const sender = await User.findOne(
-            { _id: req.body.senderId },
-        );
-        if (sender.invitationSent.includes(receiverId) || sender.friendsList.includes(receiverId) || sender.friendRequest.includes(receiverId))
-            return res.status(200).json({ success: false, message: "Send faild" })
+        const sender = await User.findOne({ _id: req.body.senderId });
+        if (
+            sender.invitationSent.includes(receiverId) ||
+            sender.friendsList.includes(receiverId) ||
+            sender.friendRequest.includes(receiverId)
+        )
+            return res
+                .status(200)
+                .json({ success: false, message: "Send faild" });
 
-        sender.invitationSent.push(req.body.receiverId)
+        sender.invitationSent.push(req.body.receiverId);
         sender.save();
         if (sender.matchedCount === 0) {
             throw createError(404, "Sender not found");
@@ -150,7 +172,7 @@ export const acceptNewFriend = async (req, res, next) => {
             });
         }
     } catch (error) {
-        console.log(error)
+        console.log(error);
         await session.abortTransaction();
         next(error);
     } finally {
@@ -222,11 +244,13 @@ export const updateProfile = async (req, res, next) => {
         const result = await User.updateOne(
             { _id: req.params.userId },
             { ...req.body }
-        )
+        );
         if (result.matchedCount !== 0) {
-
-            res.status(200).json({ success: true, message: "Update successfully" })
-            return
+            res.status(200).json({
+                success: true,
+                message: "Update successfully",
+            });
+            return;
         }
         res.status(404).json({
             success: false,
@@ -268,19 +292,25 @@ export const getProfileById = async (req, res, next) => {
 export const getProfileMyFriend = async (req, res, next) => {
     try {
         const myId = req.query.my_id;
-        const friend = await User.findOne(
-            {
-                _id: req.params.userId
-            }
-        );
+        const friend = await User.findOne({
+            _id: req.params.userId,
+        });
         if (friend === null) {
             res.status(404).json({ success: false, message: "Not found user" });
             return;
         }
         let relationship = "none";
 
-        const isFriend = friend.friendsList.find(friendId => friendId === myId) ? true : false;
-        const isSentRequest = friend.friendRequest.find(friendId => friendId === myId) ? true : false;
+        const isFriend = friend.friendsList.find(
+            (friendId) => friendId === myId
+        )
+            ? true
+            : false;
+        const isSentRequest = friend.friendRequest.find(
+            (friendId) => friendId === myId
+        )
+            ? true
+            : false;
 
         if (isFriend) {
             relationship = "friend";
@@ -328,4 +358,4 @@ export const getListOfInvitationsSent = async (req, res, next) => {
     } catch (error) {
         next(error);
     }
-}
+};

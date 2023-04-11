@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import "./ManageUser.css";
-
+import "./../Modal/Modal.scss";
 import axios from "../../Hooks/axios.js";
 import {
     faMars,
@@ -10,18 +10,27 @@ import {
     faCakeCandles,
     faLock,
     faUnlockKeyhole,
+    faUnlock,
 } from "@fortawesome/free-solid-svg-icons";
 import { useEffect } from "react";
 import { formatDateTime } from "../../Hooks/formatDateTime";
+import Modal from "../Modal/Modal";
 
 const ManageUser = () => {
     const [users, setUsers] = useState([]);
+    const [open, setOpen] = useState(false);
+    const [user, setUser] = useState(null);
     useEffect(() => {
+        const fetchData = async () => {
+            const { data } = await axios.get("/user");
+            setUsers(data.users);
+        };
         fetchData();
-    }, []);
-    const fetchData = async () => {
-        const { data } = await axios.get("/user");
-        setUsers(data.users);
+    }, [open]);
+
+    const handleLock = (user) => {
+        setUser(user);
+        setOpen(true);
     };
     return (
         <div className="manageUser">
@@ -65,16 +74,40 @@ const ManageUser = () => {
                                     />
                                     <span>{formatDateTime(user.birthday)}</span>
                                 </div>
-                                <div className="manageUser_lock">
-                                    <FontAwesomeIcon
-                                        className="manageUser_icon"
-                                        icon={faUnlockKeyhole}
-                                    />
-                                </div>
+                                {user.isBlocked ? (
+                                    <div
+                                        className="manageUser_lock"
+                                        onClick={() => handleLock(user)}
+                                    >
+                                        <FontAwesomeIcon
+                                            className="manageUser_icon"
+                                            icon={faLock}
+                                        />
+                                    </div>
+                                ) : (
+                                    <div
+                                        className="manageUser_lock"
+                                        onClick={() => handleLock(user)}
+                                        style={{
+                                            background: "#17d7a0",
+                                            border: "1px solid #17d7a0",
+                                        }}
+                                    >
+                                        <FontAwesomeIcon
+                                            className="manageUser_icon"
+                                            icon={faUnlock}
+                                        />
+                                    </div>
+                                )}
                             </div>
                         ))}
                 </div>
             </div>
+            {open && (
+                <div className="meet-modal">
+                    <Modal setOpen={setOpen} user={user} />
+                </div>
+            )}
         </div>
     );
 };
