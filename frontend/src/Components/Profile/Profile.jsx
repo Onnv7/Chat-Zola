@@ -29,6 +29,7 @@ const Profile = () => {
     const handleUpdateProfile = async (e) => {
         try {
             const { email, ...others } = info;
+            console.log(info?.avatar)
             const { data } = await axios.patch(`/user/update-profile/${user._id}`, {
                 ...others
             })

@@ -18,7 +18,6 @@ export const getAvatar = async (req, res, next) => {
 export const changeAvatar = async (req, res, next) => {
     try {
         let fileStr = req.body.data;
-        // console.log("🚀 ~ file: userController.js:11 ~ changeAvatar ~ fileStr:", fileStr)
         const uploadedResponse = await cloudinary.uploader.upload(fileStr, {
             upload_preset: 'avatar'
         }, () => {
@@ -37,11 +36,16 @@ export const sendFriendRequest = async (req, res, next) => {
     try {
         // TODO: chưa check id người gửi
         session.startTransaction();
+        const receiverId = req.body.receiverId
 
-        const sender = await User.updateOne(
+        const sender = await User.findOne(
             { _id: req.body.senderId },
-            { $push: { invitationSent: req.body.receiverId } }
         );
+        if (sender.invitationSent.includes(receiverId) || sender.friendsList.includes(receiverId) || sender.friendRequest.includes(receiverId))
+            return res.status(200).json({ success: false, message: "Send faild" })
+
+        sender.invitationSent.push(req.body.receiverId)
+        sender.save();
         if (sender.matchedCount === 0) {
             throw createError(404, "Sender not found");
         }
@@ -257,9 +261,10 @@ export const getProfileById = async (req, res, next) => {
 export const getProfileMyFriend = async (req, res, next) => {
     try {
         const myId = req.query.my_id;
+        const friendId = req.params.userId
         const friend = await User.findOne(
             {
-                _id: req.params.userId
+                _id: friendId
             }
         );
         if (friend === null) {
@@ -268,8 +273,8 @@ export const getProfileMyFriend = async (req, res, next) => {
         }
         let relationship = "none";
 
-        const isFriend = friend.friendsList.find(friendId => friendId === myId) ? true : false;
-        const isSentRequest = friend.friendRequest.find(friendId => friendId === myId) ? true : false;
+        const isFriend = friend.friendsList.includes(myId);
+        const isSentRequest = friend.friendRequest.includes(myId);
 
         if (isFriend) {
             relationship = "friend"
@@ -319,3 +324,4 @@ export const getListOfInvitationsSent = async (req, res, next) => {
         next(error);
     }
 }
+
