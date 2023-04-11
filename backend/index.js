@@ -9,6 +9,7 @@ import conversationRoute from "./routes/conversation.js";
 import userRoute from "./routes/user.js";
 import todoRoute from "./routes/todo.js";
 import reportRoute from "./routes/report.js";
+import adminRoute from "./routes/admin.js";
 
 const app = express();
 dotenv.config();
@@ -40,7 +41,7 @@ app.use("/backend/conversation", conversationRoute);
 app.use("/backend/user", userRoute);
 app.use("/backend/todo", todoRoute);
 app.use("/backend/report", reportRoute);
-
+app.use("/backend/admin", adminRoute);
 app.use((err, req, res, next) => {
     const errorStatus = err.status || 500;
     const errorMessage = err.message || "Something went wrong!";
