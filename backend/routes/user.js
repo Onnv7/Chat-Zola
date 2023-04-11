@@ -15,10 +15,12 @@ import {
     changeAvatar,
     getAvatar,
     getAllUser,
+    lockUser,
 } from "../controllers/userController.js";
 const router = express.Router();
 
 router.get("/", getAllUser);
+router.patch("/:userId", lockUser);
 router.post("/up", changeAvatar);
 router.get("/get/:public_id", getAvatar);
 router.post("/send-friend-request", sendFriendRequest);

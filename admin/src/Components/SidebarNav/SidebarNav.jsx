@@ -1,19 +1,29 @@
-import React, { useState } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCommentDots, faUser } from "@fortawesome/free-regular-svg-icons";
 import {
     faClipboardList,
-    faGear,
-    faUserGroup,
-    faVideo,
+    faRightFromBracket,
 } from "@fortawesome/free-solid-svg-icons";
+import { useNavigate } from "react-router-dom";
 import "./sidebarNav.scss";
+import { Auth } from "../../Contexts/authContext";
 
 const SidebarNav = ({ handleClick }) => {
     const [show, setShow] = useState(1);
     const setClick = (i) => {
         setShow(i);
         handleClick(i);
+    };
+    const { state, dispatch } = useContext(Auth);
+    const { adminInfo } = state;
+    const navigate = useNavigate();
+    const logout = () => {
+        dispatch({
+            type: "ADMIN_LOGOUT",
+        });
+        localStorage.setItem("adminInfo", null);
+        navigate("/login");
     };
 
     return (
@@ -49,8 +59,8 @@ const SidebarNav = ({ handleClick }) => {
                         </div>
                     </div>
                     <div className="mainTool-list">
-                        <div className="mainTool-Item">
-                            <FontAwesomeIcon icon={faGear} />
+                        <div className="mainTool-Item" onClick={logout}>
+                            <FontAwesomeIcon icon={faRightFromBracket} />
                         </div>
                     </div>
                 </div>
