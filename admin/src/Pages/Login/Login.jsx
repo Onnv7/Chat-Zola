@@ -1,12 +1,11 @@
 import classNames from "classnames/bind";
 import styles from "./Login.module.scss";
-
+import axios from "./../../Hooks/axios.js";
 //component
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import { Alert, Button, Snackbar, styled } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-// import httpRequest from "../../util/HttpRequest.js";
-// import { Auth } from "~/contexts/authContext";
+import { Auth } from "../../Contexts/authContext";
 
 const cx = classNames.bind(styles);
 
@@ -30,8 +29,13 @@ function Login() {
     const [open, setOpen] = useState(false);
     const navigate = useNavigate();
 
-    // const { state, dispatch } = useContext(Auth);
-    // const { userInfo } = state;
+    const { state, dispatch } = useContext(Auth);
+    const { adminInfo } = state;
+    useEffect(() => {
+        if (adminInfo) {
+            navigate("/home");
+        }
+    }, [navigate, adminInfo]);
 
     const handleSubmit = async () => {
         if (account.trim() === "" || password.trim() === "") {
@@ -39,23 +43,22 @@ function Login() {
             setOpen(true);
             return;
         }
-        // try {
-        //     const { data } = await httpRequest.post("/api/auth/signup", {
-        //         name: Name,
-        //         email: Email,
-        //         password: Password,
-        //     });
-        //     dispatch({
-        //         type: "USER_SIGNIN",
-        //         payload: data,
-        //     });
-        //     localStorage.setItem("userInfo", JSON.stringify(data));
-        //     navigate("/login");
-        // } catch (err) {
-        //     setMessage("Email is already Exist");
-        //     setOpen(true);
-        //     return;
-        // }
+        try {
+            const { data } = await axios.post("/admin/signin", {
+                account: account,
+                password: password,
+            });
+            dispatch({
+                type: "ADMIN_LOGIN",
+                payload: data,
+            });
+            localStorage.setItem("adminInfo", JSON.stringify(data));
+            navigate("/home");
+        } catch (err) {
+            setMessage("Invalid Account or Password");
+            setOpen(true);
+            return;
+        }
     };
     const handleClose = () => {
         setOpen(false);

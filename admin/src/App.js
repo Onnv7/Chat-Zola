@@ -1,4 +1,4 @@
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
 import { useState, useContext, useEffect } from "react";
 import Modal from "react-modal";
 
@@ -18,8 +18,9 @@ function App() {
                 pauseOnHover={false}
             />
             <Routes>
-                <Route path="/home" element={<Home />} />
+                <Route path="/" element={<Navigate to="/login" />} />
                 <Route path="/login" element={<Login />} />
+                <Route path="/home" element={<Home />} />
             </Routes>
         </BrowserRouter>
     );
