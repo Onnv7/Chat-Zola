@@ -62,11 +62,32 @@ export const changePassword = async (req, res, next) => {
 };
 export const sendCodeVerify = async (req, res, next) => {
     try {
+        const mode = req.query.mode;
+        const email = req.body.email;
+        if (mode === "forget") {
+            const user = await User.findOne({ email: email });
+            if (!user) return res.status(200).json({ success: false, message: "User not found" });
+        }
         const code = Math.floor(100000 + Math.random() * 900000);
-        const isSent = await sendEmail(req.body.email, 'Your code: ', '' + code);
+        const isSent = await sendEmail(email, 'Your code: ', '' + code);
         if (isSent) res.status(200).json({ success: true, message: 'Sent code successfully', result: code });
         else res.status(200).json({ success: false, message: 'Cant send code' });
     } catch (error) {
         next(error);
     }
 };
+
+export const getNewPassword = async (req, res, next) => {
+    try {
+        const user = await User.findOne({ email: req.body.email });
+        if (!user) return res.status({ success: false, message: "User not found" });
+        const salt = bcrypt.genSaltSync(10);
+        const hash = bcrypt.hashSync(req.body.password, salt);
+        user.password = hash;
+        await user.save();
+        res.status(200).json({ success: true, message: "Change successfully" });
+    } catch (error) {
+        next(error);
+    }
+};
+
