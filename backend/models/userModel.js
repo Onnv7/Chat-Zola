@@ -10,7 +10,7 @@ const userSchema = new mongoose.Schema(
                 const randomBytes = crypto.randomBytes(4);
                 const id = randomBytes.readUInt32BE();
                 return id.toString();
-            }
+            },
         },
         name: {
             type: String,
@@ -50,18 +50,28 @@ const userSchema = new mongoose.Schema(
         avatar: {
             type: String,
         },
-        friendsList: [{
-            type: String,
-            ref: "User"
-        }],
-        friendRequest: [{
-            type: String,
-            ref: "User"
-        }],
-        invitationSent: [{
-            type: String,
-            ref: "User"
-        }]
+        friendsList: [
+            {
+                type: String,
+                ref: "User",
+            },
+        ],
+        friendRequest: [
+            {
+                type: String,
+                ref: "User",
+            },
+        ],
+        invitationSent: [
+            {
+                type: String,
+                ref: "User",
+            },
+        ],
+        isBlocked: {
+            type: Boolean,
+            default: false,
+        },
     },
     { timestamps: true }
 );

@@ -10,10 +10,11 @@ import { AuthContext } from '../../Contexts/AuthContext.js';
 
 const MessengerTab = () => {
     const {user} = useContext(AuthContext);
-
+    const convRef = useRef();
     const [conversations, setConversations] = useState([]);
     const selectedConversation = useRef();
     const [active, setActive] = useState(1);
+    const [searchText, setSearchText] = useState("");
     const containerRef = useRef(null);
 
     useEffect(() => {
@@ -61,7 +62,20 @@ const MessengerTab = () => {
             return updatedConversationList;
         });
     };
+    const handleSearchConversation = async (e) => {
+        try {
+            let { data } = await axios.get(`conversation/get-conversations-list/${user._id}`);
+            let result = data.slice();  
+            if(e.target.value !=="") {
 
+                result = data.filter(e => e.participants[0].name.includes(searchText))
+                // return;
+            }
+            setConversations(result);
+        } catch (error) {
+            
+        }
+    }
     return (
         <div className="messengerTab">
             <div className="messengerTab-box">
@@ -69,8 +83,11 @@ const MessengerTab = () => {
                     <div className="searchBox">
                         <SearchNormal size={24} className="searchBox-icon" />
                         <div className="searchBox-input">
-                            <input type="text" placeholder="Tìm kiếm" />
-                            <SearchNormal size={28} className="searchBox-icon" />
+                            <input type="text" 
+                                    placeholder="Tìm kiếm" 
+                                    onChange={(e) => {setSearchText(e.target.value); handleSearchConversation(e)}} 
+                                    value={searchText}/>
+                            <SearchNormal size={28} className="searchBox-icon" onClick={handleSearchConversation}/>
                         </div>
                     </div>
                     <i className="fa-solid fa-user-plus"></i>
@@ -78,15 +95,16 @@ const MessengerTab = () => {
                 </div>
                 <div className="messengerTab-list">
                     {conversations.length > 0 && conversations.map(conversation => {
-                        const friend = conversation.participants.filter(mem => mem._id !== user._id);
+                        const avatar = conversation.participants[0].avatar ? conversation.participants[0].avatar : "../Img/Avatar.png"
+                        // const friend = conversation.participants.filter(mem => mem._id !== user._id);
                         if(conversation.latestMsg === null)
                             return(<div className={active === conversation._id ? 'messengerTab-item active-chat' : 'messengerTab-item'} 
                                         key={conversation._id}
                                         onClick={() => handleClickConversation(conversation._id)}>
                                         <div className="messengerTab-friend">
-                                            <img src="../Img/Avatar1.png" alt="" />
+                                            <img src={avatar} alt="" />
                                             <div className="messengerTab-prop">
-                                                <span>{friend[0].name}</span>
+                                                <span>{conversation.participants[0].name}</span>
                                                 <span>"Empty"</span>
                                             </div>
                                         </div>
@@ -98,9 +116,9 @@ const MessengerTab = () => {
                                     key={conversation._id}
                                     onClick={() => handleClickConversation(conversation._id)}>
                                     <div className="messengerTab-friend">
-                                        <img src="../Img/Avatar1.png" alt="" />
+                                        <img src={avatar} alt="" />
                                         <div className="messengerTab-prop">
-                                            <span>{friend[0].name}</span>
+                                            <span>{conversation.participants[0].name}</span>
                                             <span>{sender + content}</span>
                                         </div>
                                     </div>
@@ -109,8 +127,8 @@ const MessengerTab = () => {
                             
                         // }
                     })
-                        
                     }
+                    {conversations.length === 0 && <div>Không tìm thấy tin nhắn nào</div>}
                 </div>
             </div>
             <div className="messgerTab-chat">
