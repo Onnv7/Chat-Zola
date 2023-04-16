@@ -4,7 +4,7 @@
 .homeView{
     flex: 1;
 }
-.beCall-modal{
+.beCall-modal, .logout-modal, .report-modal{
     position: fixed;
     background-color: rgba(0, 0, 0, 0.4);
     top: 0;

@@ -4,11 +4,14 @@ import { faCommentDots } from '@fortawesome/free-regular-svg-icons';
 import { faClipboardList, faGear, faUserGroup, faVideo } from '@fortawesome/free-solid-svg-icons';
 import './sidebarNav.scss';
 
-const SidebarNav = ({ handleClick }) => {
+const SidebarNav = ({ handleClick, subClick }) => {
     const [show, setShow] = useState(1);
     const setClick = (i) => {
         setShow(i);
         handleClick(i);
+    };
+    const setSubClick = (i) => {
+        subClick(i);
     };
 
     return (
@@ -42,8 +45,11 @@ const SidebarNav = ({ handleClick }) => {
                         </div>
                     </div>
                     <div className="mainTool-list">
-                        <div className="mainTool-Item">
-                            <FontAwesomeIcon icon={faGear} />
+                        <div className="mainTool-Item" onClick={() => setSubClick(2)}>
+                            <i className="fa-solid fa-bug"></i>
+                        </div>
+                        <div className="mainTool-Item" onClick={() => setSubClick(1)}>
+                            <i className="logout-around fa-solid fa-arrow-right-to-arc"></i>
                         </div>
                     </div>
                 </div>
