@@ -10,7 +10,8 @@ import userRoute from "./routes/user.js";
 import todoRoute from "./routes/todo.js";
 import reportRoute from "./routes/report.js";
 import adminRoute from "./routes/admin.js";
-
+import { authenticateToken } from "./controllers/authController.js";
+import cookieParser from 'cookie-parser';
 const app = express();
 dotenv.config();
 
@@ -35,10 +36,11 @@ mongoose.connection.on("connected", () => {
 app.use(cors({ credentials: true, origin: true }));
 app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ limit: "50mb", extended: true }));
+app.use(cookieParser());
 
 app.use("/backend/auth", authRoute);
 app.use("/backend/conversation", conversationRoute);
-app.use("/backend/user", userRoute);
+app.use("/backend/user", authenticateToken, userRoute);
 app.use("/backend/todo", todoRoute);
 app.use("/backend/report", reportRoute);
 app.use("/backend/admin", adminRoute);
