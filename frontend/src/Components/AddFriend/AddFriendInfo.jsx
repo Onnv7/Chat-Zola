@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { format, parseISO } from 'date-fns';
 import axios from '../../Hooks/axios';
 import { toast } from 'react-toastify';
@@ -6,8 +6,17 @@ import { AuthContext } from '../../Contexts/AuthContext';
 
 const AddFriendInfo = ({ info, setShow }) => {
     const { user } = useContext(AuthContext);
+    const [list, setList] = useState();
     const birth = parseISO(info.birthday);
     const date = format(birth, 'dd/MM/yyyy');
+    useEffect(() => {
+        const fetchData = async () => {
+            const { data } = await axios.get(`/user/get-list-invitations-sent/${user._id}`);
+            setList(data);
+        };
+        fetchData();
+    }, [list]);
+    const found = list?.find((item) => item._id === info._id);
     const handleClick = async () => {
         try {
             await axios.post(`/user/send-friend-request`, {
@@ -15,6 +24,17 @@ const AddFriendInfo = ({ info, setShow }) => {
                 senderId: user._id,
             });
             toast.success('Gửi lời mời kết bạn thành công');
+        } catch (err) {
+            toast.error(err.message);
+        }
+    };
+    const handleUnf = async () => {
+        try {
+            await axios.post('/user/unsend-friend-request', {
+                receiverId: info._id,
+                senderId: user._id,
+            });
+            toast.success('Hủy lời mời kết bạn thành công');
         } catch (err) {
             toast.error(err.message);
         }
@@ -37,14 +57,17 @@ const AddFriendInfo = ({ info, setShow }) => {
             </div>
             <div className="myFriend-infoBox">
                 <div className="myFriend-btn">
-                    <button onClick={handleClick}>
-                        <i className="fa-regular fa-user-plus"></i>
-                        Gửi lời mời kết bạn
-                    </button>
-                    <button className="hide">
-                        <i className="fa-regular fa-user-xmark"></i>
-                        Hủy kết bạn
-                    </button>
+                    {!found ? (
+                        <button onClick={handleClick} className="btn-add">
+                            <i className="fa-regular fa-user-plus"></i>
+                            Gửi lời mời kết bạn
+                        </button>
+                    ) : (
+                        <button onClick={handleUnf} className="btn-uns">
+                            <i className="fa-regular fa-user-xmark"></i>
+                            Hủy kết bạn
+                        </button>
+                    )}
                 </div>
                 <div className="myFriend-infoList">
                     <div className="myFriend-infoItem">

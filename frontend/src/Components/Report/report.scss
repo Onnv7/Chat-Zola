@@ -1,0 +1,94 @@
+.report{
+    background: #fff;
+    box-shadow: 0px 0px 6px rgba(0, 0, 0, 0.5);
+    border-radius: 20px;
+    padding: 40px 60px;
+    >button{
+        width: 100%;
+        height: 50px;
+        margin-top: 20px;
+        background: rgba(23, 215, 160, 0.8);
+        border: 1px solid var(--third-color);
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        font-size: 2.4rem;
+        color: #fff;
+    }
+    animation: btn-glide ease .5s;
+
+}
+.report-title{
+    font-size: 3.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    >i{
+        position: absolute;
+        left: 0;
+        transform: rotate(-0.5turn);
+        &:hover{
+            cursor: pointer;
+            color: var(--red-color);
+        }
+    }
+    >span{
+        font-weight: 700;
+    }
+}
+.report-inputTitle{
+    border: 1px solid var(--third-color);
+    box-shadow: inset 0px 0px 4px rgba(220, 91, 14, 0.5);
+    border-radius: 10px;
+    position: relative;
+    margin-top: 50px;
+    padding: 24px 20px 16px;
+    >input{
+        width: 480px;
+        height: 72px;
+        outline: none;
+        border: none;
+        border-radius: 10px;
+        font-size: 2.4rem;
+    }
+    >span{
+        position: absolute;
+        font-size: 2rem;
+        font-weight: 700;
+        padding: 0 4px;
+        background-color: #fff;
+        top: -14px;
+        left: 30px;
+    }
+}
+.report-content{
+    border: 1px solid var(--third-color);
+    box-shadow: inset 0px 0px 4px rgba(220, 91, 14, 0.5);
+    border-radius: 10px;
+    margin-top: 24px;
+    position: relative;
+    font-size: 2rem;
+    padding: 24px 20px 16px;
+    >textarea{
+        outline: none;
+        border: none;
+        width: 480px;
+        border-radius: 10px;
+        font-size: 2rem;
+        height: 200px;
+        overflow-y: auto;
+        word-break: break-all;
+        resize: none;
+    }
+    >span{
+        position: absolute;
+        font-weight: 700;
+        padding: 0 4px;
+        background-color: #fff;
+        top: -14px;
+        left: 30px;
+    }
+}

@@ -1,11 +1,15 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 const VerifyEmail = ({ setShow, setActive }) => {
+    const [email, setEmail] = useState();
     const handleClose = () => {
         setShow(false);
     };
     const handleCheck = () => {
         setActive(2);
+    };
+    const handleChange = (e) => {
+        setEmail(e.target.value);
     };
     return (
         <div className="verifyEmail">
@@ -15,7 +19,7 @@ const VerifyEmail = ({ setShow, setActive }) => {
             </div>
             <div className="verifyEmail-input">
                 <span>Email</span>
-                <input type="email" />
+                <input type="email" defaultValue={email} onChange={handleChange} />
             </div>
             <div className="verifyEmail-fail">
                 <i className="fa-solid fa-circle-xmark"></i>

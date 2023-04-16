@@ -5,18 +5,22 @@ import { faClipboardList, faGear, faUserGroup, faVideo } from '@fortawesome/free
 import './sidebarNav.scss';
 import { AuthContext } from '../../Contexts/AuthContext.js';
 
-const SidebarNav = ({ handleClick }) => {
+const SidebarNav = ({ handleClick, subClick }) => {
     const { user } = useContext(AuthContext);
     const [show, setShow] = useState(1);
     const setClick = (i) => {
         setShow(i);
         handleClick(i);
     };
+    const setSubClick = (i) => {
+        subClick(i);
+    };
+
     return (
         <nav className="sidebarNav">
             <div className="main-tab">
                 <div onClick={() => setClick(4)} className={show === 4 ? 'main-img active' : 'main-img'}>
-                    <img src={user?.avatar !== "" ? user.avatar : "../Img/Avatar.png"} alt="Avatar" />
+                    <img src={user?.avatar !== '' ? user.avatar : '../Img/Avatar.png'} alt="Avatar" />
                 </div>
                 <div className="mainTool-box">
                     <div className="mainTool-List">
@@ -43,8 +47,11 @@ const SidebarNav = ({ handleClick }) => {
                         </div>
                     </div>
                     <div className="mainTool-list">
-                        <div className="mainTool-Item">
-                            <FontAwesomeIcon icon={faGear} />
+                        <div className="mainTool-Item" onClick={() => setSubClick(2)}>
+                            <i className="fa-solid fa-bug"></i>
+                        </div>
+                        <div className="mainTool-Item" onClick={() => setSubClick(1)}>
+                            <i className="logout-around fa-solid fa-arrow-right-to-arc"></i>
                         </div>
                     </div>
                 </div>
