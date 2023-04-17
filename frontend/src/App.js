@@ -1,4 +1,4 @@
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Route, Routes, useNavigate, useLocation } from 'react-router-dom';
 import { useState, useContext, useEffect, useRef } from 'react';
 import Modal from 'react-modal';
 
@@ -15,6 +15,7 @@ import GoiDien from './Test/GoiDien.jsx'
 import GoiVIP from './Test/GoiVIP.jsx'
 import ImageUploader from './Test/ImageUploader.jsx'
 import { AuthContext } from './Contexts/AuthContext.js';
+import axios from "../src/Hooks/axios.js"
 function App() {
     const test = useRef();
     const { user } = useContext(AuthContext);
@@ -24,18 +25,12 @@ function App() {
     const [modalIsOpen, setModalIsOpen] = useState(callRealTime?.incomingCall);
 
 
-
     useEffect(() => {
         if (user) {
             const socket = io("ws://localhost:8900");
-            const peer = null
 
 
-            // Mở peer và thêm socket vào stack online
-            // peer.on('open', (id) => {
-            //     socket.emit("addUser", { userId: user._id, peerId: "" });
-            // });
-            socket.emit("addUser", { userId: user._id, peerId: "" });
+            socket.emit("addUser", { userId: user._id });
             socket.on("incoming call", ({ callerID }) => {
                 console.log("NHẬN ĐƯỢC CUỘC GỌI TỪ", callerID)
                 setModalIsOpen(true)
@@ -49,26 +44,6 @@ function App() {
                     }
                 })
             });
-
-            // viết sự kiện lắng nghe 'call' cho NGƯỜI NHẬN
-            // peer.on('call', (call) => {
-            //     var getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
-
-            //     getUserMedia({ audio: true, video: true }, (mediaStream) => {
-            //         console.log("Người nhận neffffffffffffffffff")
-
-            //         // userVideo.current.srcObject = mediaStream;
-            //         // userVideo.current.play();
-            //         console.log("CALL = ", call)
-            //         call.answer(mediaStream);
-            //         // call.on('stream', (remoteStream) => {
-            //         //     remoteVideo.current.srcObject = remoteStream
-            //         //     remoteVideo.current.play();
-
-            //         // })
-            //     });
-            // })
-
 
 
             dispatch({ type: "CONNECTED", payload: { socket: socket, peer: null } });
@@ -115,7 +90,7 @@ function App() {
         });
     }
     return (
-        <BrowserRouter>
+        <>
             <Modal
                 isOpen={modalIsOpen}
                 onRequestClose={handleDeny}
@@ -138,7 +113,7 @@ function App() {
                 <Route path="/a" element={<GoiVIP />} />
                 <Route path="/upload" element={<ImageUploader />} />
             </Routes>
-        </BrowserRouter>
+        </>
     );
 }
 

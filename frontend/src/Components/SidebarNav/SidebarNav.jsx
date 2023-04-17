@@ -20,7 +20,7 @@ const SidebarNav = ({ handleClick, subClick }) => {
         <nav className="sidebarNav">
             <div className="main-tab">
                 <div onClick={() => setClick(4)} className={show === 4 ? 'main-img active' : 'main-img'}>
-                    <img src={user?.avatar !== '' ? user.avatar : '../Img/Avatar.png'} alt="Avatar" />
+                    <img src={(user?.avatar !== '' && user.avatar)? user.avatar : '../Img/Avatar.png'} alt="Avatar" />
                 </div>
                 <div className="mainTool-box">
                     <div className="mainTool-List">

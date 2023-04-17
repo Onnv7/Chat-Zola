@@ -30,13 +30,12 @@ export const login = async (req, res, next) => {
         const user = await User.findOne({ email: req.body.email });
 
         if (!user) return next(createError(404, 'User not found!'));
-
         const isPasswordCorrect = await bcrypt.compare(req.body.password, user.password);
 
         if (!isPasswordCorrect) throw createError(400, 'Wrong password or username!');
 
         const token = jwt.sign({ id: user._id, email: user.email }, process.env.TOKEN_KEY, {
-            expiresIn: process.env.EXPIRE_TOKEN_KEY
+            expiresIn: 3600 * 24 * 30
         });
         const refreshToken = jwt.sign({ id: user._id, email: user.email }, process.env.REFRESH_TOKEN_KEY);
         const dataToken = await Token.findOne({ email: req.body.email })
@@ -53,9 +52,7 @@ export const login = async (req, res, next) => {
         }
         const { password, friendsList, friendRequest, invitationSent, ...otherDetails } = user._doc;
 
-        res.cookie('access_token', token)
-            .cookie('refresh_token', refreshToken)
-            .status(200)
+        res.status(200)
             .json({ ...otherDetails, token, refreshToken });
     } catch (err) {
         next(err);
@@ -65,9 +62,7 @@ export const login = async (req, res, next) => {
 export const changePassword = async (req, res, next) => {
     try {
         const user = await User.findOne({ email: req.body.email });
-        // console.log(req.body, req.params.userId)
         const isPasswordCorrect = await bcrypt.compare(req.body.password, user.password);
-        // console.log(isPasswordCorrect)
         if (!isPasswordCorrect) return res.status(200).json({ success: false, message: 'Old password is incorrect' });
         const salt = bcrypt.genSaltSync(10);
         const hash = bcrypt.hashSync(req.body.newPwd, salt);
@@ -112,12 +107,20 @@ export const getNewPassword = async (req, res, next) => {
 export const authenticateToken = async (req, res, next) => {
     try {
         const authorizationHeader = req.headers.authorization;
+        if (!authorizationHeader) return res.status(401).json({ success: false, message: "Dont have authorization header" });
 
         const token = authorizationHeader.split(' ')[1];
-        if (!token) return res.status(401).json()
+        if (!token) return res.status(401).json({})
+
         jwt.verify(token, process.env.TOKEN_KEY, (err, data) => {
-            console.log(data)
-            if (err) return res.status(403).json({ success: false, message: err.message })
+            if (err) {
+                if (err.name === "TokenExpiredError")
+                    return res.status(401).json({ success: false, message: err.message })
+                else if (err.name === "JsonWebTokenError")
+                    return res.status(498).json({ success: false, message: err.message })
+
+                return res.status(498).json({ success: false, message: err.message })
+            }
             next()
         })
     } catch (error) {
@@ -127,19 +130,19 @@ export const authenticateToken = async (req, res, next) => {
 
 export const refreshToken = async (req, res, next) => {
     try {
-        console.log(req.cookies)
-        const refreshToken = req.cookies.refresh_token
+        // const refreshToken = req.cookies.refresh_token
+        const refreshToken = req.headers.refreshtoken;
         const rfToken = await Token.findOne({ email: req.body.email })
-        if (!rfToken) return res.status(200).json({ success: false, message: "Not found user" })
-        else if (rfToken.refreshToken !== refreshToken) return res.status(403).json({ success: false, message: "Refresh token is invalid" })
-        console.log(refreshToken)
+        if (!rfToken) return res.status(498).json({ success: false, message: "Not found user" })
+        else if (rfToken.refreshToken !== refreshToken) return res.status(498).json({ success: false, message: "Refresh token is invalid" })
+
         jwt.verify(refreshToken, process.env.REFRESH_TOKEN_KEY, (err, data) => {
-            console.log(data)
-            if (err) return res.status(403).json({ success: false, message: err.message })
-            const token = jwt.sign({ data }, process.env.TOKEN_KEY, {
-                expiresIn: process.env.EXPIRE_TOKEN_KEY
+            if (err) return res.status(498).json({ success: false, message: err.message })
+            const { iat, ...others } = data
+            const token = jwt.sign({ ...others }, process.env.TOKEN_KEY, {
+                expiresIn: 3600 * 24 * 30
             });
-            res.cookie('access_token', token).status(200).json({ success: true, message: "Refreshing token successfully" })
+            res.status(200).json({ success: true, message: "Refreshing token successfully", token: token })
         });
     } catch (error) {
         next(error);

@@ -1,4 +1,4 @@
-import { useReducer, useEffect } from "react";
+import { useReducer, useEffect, } from "react";
 import { createContext } from "react";
 
 console.log("TUI LA AUTHEN")
@@ -47,6 +47,15 @@ const AuthReducer = (state, action) => {
                 loading: false,
                 error: null,
             };
+        case "UPDATE":
+            return {
+                user: {
+                    ...state.user,
+                    ...action.payload,
+                },
+                loading: false,
+                error: null,
+            }
         default:
             return state;
     }
@@ -54,6 +63,7 @@ const AuthReducer = (state, action) => {
 
 export const AuthContextProvider = ({ children }) => {
     const [state, dispatch] = useReducer(AuthReducer, INITIAL_STATE);
+    // const [auth, setAuth] = useSate();
 
     useEffect(() => {
         localStorage.setItem("user", JSON.stringify(state.user));

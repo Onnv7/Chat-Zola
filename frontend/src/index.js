@@ -7,6 +7,7 @@ import GlobalStyles from './Components/GlobalStyles';
 import './Fonts/css/all.css';
 import { AuthContextProvider } from './Contexts/AuthContext.js';
 import { SocketClientContextProvider } from './Contexts/SocketClientContext.js';
+import { BrowserRouter, Route, Routes, useNavigate } from 'react-router-dom';
 Modal.setAppElement('#root');
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -14,7 +15,9 @@ root.render(
     <AuthContextProvider>
         <SocketClientContextProvider>
             <GlobalStyles>
-                <App />
+                <BrowserRouter>
+                    <App />
+                </BrowserRouter>
             </GlobalStyles>
         </SocketClientContextProvider>
     </AuthContextProvider>,

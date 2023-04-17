@@ -11,6 +11,7 @@ import Profile from '../../Components/Profile/Profile';
 import Logout from '../../Components/Logout/Logout';
 import Report from '../../Components/Report/Report';
 
+import axios from '../../Hooks/axios.js';
 const Home = () => {
     const [active, setActive] = useState(1);
     const [view, setView] = useState();
@@ -32,7 +33,7 @@ const Home = () => {
     const subClick = (i) => {
         setSubview(i);
     };
-
+   
     return (
         <div className="home">
             <div className="homeNav">

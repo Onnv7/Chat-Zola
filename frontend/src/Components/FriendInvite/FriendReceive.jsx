@@ -3,7 +3,11 @@ import { toast } from "react-toastify";
 import { AuthContext } from "../../Contexts/AuthContext";
 import axios from "../../Hooks/axios";
 
+import useAxiosPrivate from "../../Hooks/useAxiosPrivate.js"
+
 const FriendReceive = ({ setIdr }) => {
+    
+    const axiosPrivate = useAxiosPrivate();
     const { user } = useContext(AuthContext);
     const [list, setList] = useState();
 
@@ -12,7 +16,7 @@ const FriendReceive = ({ setIdr }) => {
 
     useEffect(() => {
         const fetchData = async () => {
-            const { data } = await axios.get(
+            const { data } = await axiosPrivate.get(
                 `/user/get-list-friend-requests/${user._id}`
             );
             setList(data);
@@ -25,7 +29,7 @@ const FriendReceive = ({ setIdr }) => {
     };
     const handleAccept = async (id) => {
         try {
-            await axios.post("/user/accept-new-friend", {
+            await axiosPrivate.post("/user/accept-new-friend", {
                 receiverId: user._id,
                 senderId: id,
             });
@@ -43,7 +47,7 @@ const FriendReceive = ({ setIdr }) => {
     };
     const handleUnsend = async (id) => {
         try {
-            await axios.post("/user/unsend-friend-request", {
+            await axiosPrivate.post("/user/unsend-friend-request", {
                 receiverId: user._id,
                 senderId: id,
             });

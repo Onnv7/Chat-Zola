@@ -55,7 +55,6 @@ export const changeAvatar = async (req, res, next) => {
         );
         res.status(200).json("OK");
     } catch (error) {
-        console.log(error);
         next(error);
     }
 };
@@ -172,7 +171,6 @@ export const acceptNewFriend = async (req, res, next) => {
             });
         }
     } catch (error) {
-        console.log(error);
         await session.abortTransaction();
         next(error);
     } finally {
@@ -241,16 +239,23 @@ export const unfriend = async (req, res, next) => {
 
 export const updateProfile = async (req, res, next) => {
     try {
-        const result = await User.updateOne(
-            { _id: req.params.userId },
-            { ...req.body }
-        );
+        let { avatar, ...others } = req.body;
+        let fileStr = avatar;
+        const uploadedResponse = await cloudinary.uploader.upload(fileStr, {
+            public_id: others._id,
+            upload_preset: 'avatar'
+        })
+        avatar = uploadedResponse.url
+
+        const result = await User.findByIdAndUpdate(
+            req.params.userId,
+            { ...req.body, avatar: avatar },
+            { new: true },
+        )
         if (result.matchedCount !== 0) {
-            res.status(200).json({
-                success: true,
-                message: "Update successfully",
-            });
-            return;
+            const { password, friendsList, friendRequest, invitationSent, ...others } = result._doc
+            res.status(200).json({ success: true, message: "Update successfully", result: { ...others } })
+            return
         }
         res.status(404).json({
             success: false,
