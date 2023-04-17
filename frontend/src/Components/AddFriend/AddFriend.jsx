@@ -4,8 +4,10 @@ import axios from '../../Hooks/axios';
 import AddFriendError from './AddFriendError';
 import AddFriendInfo from './AddFriendInfo';
 import { toast } from 'react-toastify';
+import useAxiosPrivate from "../../Hooks/useAxiosPrivate.js"
 
 const AddFriend = () => {
+    const axiosPrivate = useAxiosPrivate();
     const [email, setEmail] = useState('');
     const [show, setShow] = useState(false);
     const [view, setView] = useState();
@@ -15,7 +17,7 @@ const AddFriend = () => {
     };
     useEffect(() => {
         const fetchData = async () => {
-            const { data } = await axios.get(`/user/get-profile?email=${email}`);
+            const { data } = await axiosPrivate.get(`/user/get-profile?email=${email}`);
             setInfo(data);
         };
         fetchData();

@@ -17,7 +17,7 @@ const Chat = ({ conversation, handleLatestMsg }) => {
     const { user } = useContext(AuthContext);
     const myAvatar = user?.avatar !== "" ? user.avatar : "../Img/Avatar.png"
     
-    let { socket, peer, dispatch } = useContext(SocketClientContext);
+    let { socket, dispatch } = useContext(SocketClientContext);
 
     const containerRef = useRef(null);
     const inputFile = useRef(null);
@@ -106,7 +106,7 @@ const Chat = ({ conversation, handleLatestMsg }) => {
         setImage(null);
         setText("");
     };
-    const handleCallVideo = async (peer) => {
+    const handleCallVideo = async () => {
         const url = `/call`;
         const width = 800;
         const height = 600;
@@ -115,7 +115,6 @@ const Chat = ({ conversation, handleLatestMsg }) => {
         const newWindow = window.open(url, '_blank', `width=${width}, height=${height}, left=${left}, top=${top}`);
 
         newWindow.props = {
-            peer: peer,
             socket: socket,
             callerID: user._id,
             calleeID: conversation?.friend._id,
@@ -192,7 +191,7 @@ const Chat = ({ conversation, handleLatestMsg }) => {
                     <div className="chat-headerBtn">
                         <i className="fa-light fa-magnifying-glass"></i>
                         <i className="fa-light fa-phone-volume" onClick={handleCall} />
-                        <i className="fa-light fa-video" onClick={() => handleCallVideo(peer)}></i>
+                        <i className="fa-light fa-video" onClick={() => handleCallVideo()}></i>
                     </div>
                 </div>
                 <div className="chat-view">

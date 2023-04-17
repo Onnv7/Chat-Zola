@@ -3,8 +3,11 @@ import axios from '../../Hooks/axios';
 import { format, parseISO } from 'date-fns';
 import { toast } from 'react-toastify';
 import { AuthContext } from '../../Contexts/AuthContext';
+import useAxiosPrivate from "../../Hooks/useAxiosPrivate.js"
 
 const InfoFrReceive = ({ setIdr, idr }) => {
+    
+    const axiosPrivate = useAxiosPrivate();
     const { user } = useContext(AuthContext);
     const [info, setInfo] = useState();
     const [date, setDate] = useState();
@@ -12,7 +15,7 @@ const InfoFrReceive = ({ setIdr, idr }) => {
     useEffect(() => {
         const fetchData = async () => {
             if (idr) {
-                const { data } = await axios.get(`/user/get-profile/${idr}`);
+                const { data } = await axiosPrivate.get(`/user/get-profile/${idr}`);
                 setInfo(data);
                 const birth = parseISO(data.birthday);
                 const date = format(birth, 'dd/MM/yyyy');
@@ -23,7 +26,7 @@ const InfoFrReceive = ({ setIdr, idr }) => {
     }, [idr]);
     const handleUnsend = async () => {
         try {
-            await axios.post('/user/unsend-friend-request', {
+            await axiosPrivate.post('/user/unsend-friend-request', {
                 receiverId: info._id,
                 senderId: user._id,
             });
@@ -35,7 +38,7 @@ const InfoFrReceive = ({ setIdr, idr }) => {
     };
     const handleAccept = async () => {
         try {
-            await axios.post('/user/accept-new-friend', {
+            await axiosPrivate.post('/user/accept-new-friend', {
                 receiverId: user._id,
                 senderId: idr,
             });

@@ -5,7 +5,6 @@ import { AuthContext } from './AuthContext.js';
 
 const INITIAL_STATE = {
     socket: null,
-    peer: null,
     callRealTime: {
         incomingCall: false,
         callerID: "",
@@ -42,30 +41,12 @@ export const SocketClientContextProvider = ({ children }) => {
     // const socket = io("ws://localhost:8900");
 
     const [state, dispatch] = useReducer(AuthReducer, { ...INITIAL_STATE });
-    useEffect(() => {
-        const peer = new Peer();
 
-        // peer.on('open', (id) => {
-        //     dispatch({ type: "CONNECTED", payload: { peer } });
-        //     socket.emit("addUser", { userId: user._id, peerId: id });
-        //     // setPeerId(id);
-        // })
-        // socket.on("getUsers", users => console.log("ONLINE:", users));
-
-
-
-    }, [])
-
-    // useEffect(() => {
-    //     socket.emit("addUser", { userId: user._id, peerId: "NOOOO" });
-    //     socket.on("getUsers", users => console.log("ONLINE:", users));
-    // }, [])
 
 
     return (
         <SocketClientContext.Provider
             value={{
-                peer: state.peer,
                 socket: state.socket,
                 callRealTime: state.callRealTime,
                 dispatch,

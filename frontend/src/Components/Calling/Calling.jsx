@@ -19,7 +19,6 @@ const Calling = ({ setIsOpen }) => {
     let { socket, dispatch } = useContext(SocketClientContext);
     const [newPeer, setNewPeer] = useState(new Peer());
     const [newSocket, setSocket] = useState(window.props?.socket);
-
     
     
     useEffect(() => {

@@ -7,41 +7,47 @@ import ChangePass from './ChangePass';
 import { AuthContext } from '../../Contexts/AuthContext';
 import axios from '../../Hooks/axios';
 import { format, parseISO } from 'date-fns';
+import useAxiosPrivate from "../../Hooks/useAxiosPrivate.js"
 
 const Profile = () => {
+    const axiosPrivate = useAxiosPrivate();
     const inputFile = useRef(null);
-    const { user } = useContext(AuthContext);
+    const { user, dispatch } = useContext(AuthContext);
     const [info, setInfo] = useState();
     const [image, setImage] = useState(null);
     useEffect(() => {
         const fetchData = async () => {
-            let { data } = await axios.get(`/user/get-profile/${user._id}`);
+            // console.log(object)
+            let { data } = await axiosPrivate.get(`/user/get-profile/${user._id}`)
             
-            console.log("🚀 FIRSTa:", data)
             const birth = data?.birthday ? parseISO(data.birthday) : null;
             const date = birth ? format(birth, 'yyyy-MM-dd') : '';
             data = { ...data, birthday: date}
             setInfo(data);
         };
-        fetchData();
+        try {
+            fetchData();
+        } catch (error) {
+            
+        }
     }, [user]);
     const [open, setOpen] = useState(false);
     const handleUpdateProfile = async (e) => {
         try {
             const { email, ...others } = info;
-            console.log(info?.avatar)
-            const { data } = await axios.patch(`/user/update-profile/${user._id}`, {
+            const { data } = await axiosPrivate.patch(`/user/update-profile/${user._id}`, {
                 ...others
             })
             if(data.success)
             {
                 localStorage.setItem("user", JSON.stringify(data.result));
                 setInfo(data.result);
+                dispatch({ type: "USER_RELOAD", payload: {...user, ...data.result}})
+
                 console.log("Updated")
             }
             else
             {
-
                 console.log("Cant update")
             }
         
@@ -68,20 +74,16 @@ const Profile = () => {
                 <div className="profile-header">
                     <div className="profile-headerBox">
                         {/* <img src={image ? image: "../Img/Avatar.png"} alt="" /> */}
-                        {console.log(info?.avatar === "")}
-                        {console.log(image == null)}
-                        
                         {
-                            
                             image !== null ? (<img
                                 src={image}
                                 alt=""></img>) :
-                            info?.avatar !== "" ? 
+                            (info?.avatar !== "" && info?.avatar) ? 
                             (<img
                             src={info?.avatar}
-                            alt=''></img>) : (<img
+                            alt='avatar'></img>) : (<img
                                 src={"../Img/Avatar.png"}
-                                alt=""></img>) 
+                                alt="default"></img>) 
                         }
                         <i className="fa-light fa-image" onClick={(e) => inputFile.current.click()}></i>
                             <input

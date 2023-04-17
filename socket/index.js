@@ -8,9 +8,9 @@ const io = new Server(8900, {
 
 let users = []
 
-const addUser = (userId, socketId, peerId) => {
+const addUser = (userId, socketId) => {
     if (!users.some(user => user.userId === userId))
-        users.push({ userId, socketId, peerId });
+        users.push({ userId, socketId });
 }
 const removeUser = (socketId) => {
     users = users.filter(user => user.socketId !== socketId);
@@ -25,9 +25,8 @@ const getUser = (userId) => {
 
 io.on("connection", (socket) => {
     console.log("A user connected");
-    socket.on("addUser", ({ userId, peerId }) => {
-        console.log("THêm", userId, peerId);
-        addUser(userId, socket.id, peerId);
+    socket.on("addUser", ({ userId }) => {
+        addUser(userId, socket.id);
         console.log("DS", users);
         io.emit("getUsers", users);
     });

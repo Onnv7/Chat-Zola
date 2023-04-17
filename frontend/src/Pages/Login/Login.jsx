@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { io } from 'socket.io-client';
 import Peer from 'peerjs';
@@ -16,12 +16,24 @@ const Login = () => {
         email: false,
         password: false,
     });
+    const requestInterceptorId = useRef("");
     const { loading, error, dispatch } = useContext(AuthContext);
     const [credentials, setCredentials] = useState({
         email: '',
         password: '',
     });
+
     const navigate = useNavigate();
+    // const token = localStorage.getItem("access_token");
+    const [token, setToken] = useState(localStorage.getItem('access_token'));
+
+    // if(token){
+    //     const loginWithToken = () => {
+    //         navigate("/home")
+    //     }
+    //     loginWithToken()
+    // }
+  
     const handleChange = (e) => {
         setCredentials((prev) => ({ ...prev, [e.target.id]: e.target.value }));
     };
@@ -49,15 +61,23 @@ const Login = () => {
     };
     const handleLogin = async (e) => {
         e.preventDefault();
+        console.log("click")
         if (checkForm() === false) return;
         try {
-            const { data } = await axios.post('/auth/login', credentials, {
-                withCredentials: true,
-            });
+            
+            const { data } = await axios.post('/auth/login', credentials);
+            
+            localStorage.setItem("access_token", data.token);
+            localStorage.setItem("refresh_token", data.refreshToken);
+            
+            
 
             // Cookies.set("userInfo", JSON.stringify(data));
+            
+           
             dispatch({ type: 'LOGIN_SUCCESS', payload: data });
-            navigate('/home');
+            navigate("/home")
+           
         } catch (err) {
             dispatch({ type: 'LOGIN_FAILURE', payload: err });
         }
