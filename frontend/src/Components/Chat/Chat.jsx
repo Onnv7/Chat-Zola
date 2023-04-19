@@ -12,11 +12,11 @@ import Picker from '@emoji-mart/react';
 
 import { formatDateTime } from '../../Hooks/formatDateTime.js';
 const Chat = ({ conversation, handleLatestMsg }) => {
-    const avatar = conversation?.friend.avatar
+    const avatar = conversation?.friend.avatar;
     const navigate = useNavigate();
     const { user } = useContext(AuthContext);
-    const myAvatar = user?.avatar !== "" ? user.avatar : "../Img/Avatar.png"
-    
+    const myAvatar = user?.avatar !== '' ? user.avatar : '../Img/Avatar.png';
+
     let { socket, dispatch } = useContext(SocketClientContext);
 
     const containerRef = useRef(null);
@@ -104,7 +104,7 @@ const Chat = ({ conversation, handleLatestMsg }) => {
                 console.log(err);
             });
         setImage(null);
-        setText("");
+        setText('');
     };
     const handleCallVideo = async () => {
         const url = `/call`;
@@ -179,7 +179,7 @@ const Chat = ({ conversation, handleLatestMsg }) => {
     const showEmojiPicker = () => {
         setIsOpenPicker((prev) => !prev);
     };
-   
+
     return (
         <div className="chat">
             <div className="chat-container">
@@ -227,20 +227,21 @@ const Chat = ({ conversation, handleLatestMsg }) => {
                                             </div>
                                         );
                                     }
-                                } 
+                                }
                                 // me
                                 else {
                                     if (message.type === 'message') {
                                         return (
                                             <div className="MyMessage">
-                                                <span>{message.content}</span>
                                                 <div>{sentAt}</div>
+                                                <span>{message.content}</span>
                                                 <img src={myAvatar} alt="" />
                                             </div>
                                         );
                                     } else if (message.type === 'image')
                                         return (
                                             <div className="MyMessage">
+                                                <div>{sentAt}</div>
                                                 <span>
                                                     <Image
                                                         cloudName="dtvnsczg8"
@@ -249,7 +250,6 @@ const Chat = ({ conversation, handleLatestMsg }) => {
                                                         width="300"
                                                     ></Image>
                                                 </span>
-                                                <div>{sentAt}</div>
                                                 <img src={myAvatar} alt="" />
                                             </div>
                                         );
@@ -276,11 +276,18 @@ const Chat = ({ conversation, handleLatestMsg }) => {
                             />
                         </div>
                         <div className="chat-inputBox">
-                            {image && <img src={image} alt="Preview" style={{ width: '70px', height: '50px' }} />}
+                            {image && (
+                                <div className="chat-inputImg">
+                                    <i className="fa-regular fa-circle-xmark"></i>
+                                    <img src={image} alt="Preview" style={{ width: '70px', height: '50px' }} />
+                                </div>
+                            )}
                             <div className="chat-input">
-                                <textarea onChange={(e) => setText(e.target.value)} placeholder="Nhập tin nhắn" value={text}>
-                                    
-                                </textarea>
+                                <textarea
+                                    onChange={(e) => setText(e.target.value)}
+                                    placeholder="Nhập tin nhắn"
+                                    value={text}
+                                ></textarea>
                                 <i
                                     className="fa-solid fa-paper-plane-top"
                                     onClick={(e) => handleClickSendMessage(conversation.id)}
@@ -291,10 +298,10 @@ const Chat = ({ conversation, handleLatestMsg }) => {
                     </div>
                 </div>
             </div>
-            <div className="chat-detail">
+            {/* <div className="chat-detail">
                 <img src="../Img/Avatar1.png" alt="" />
                 <span>Friend A</span>
-            </div>
+            </div> */}
         </div>
     );
 };

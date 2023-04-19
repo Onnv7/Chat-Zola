@@ -5,11 +5,7 @@
     width: 360px;
 }
 .messengerTab-Search{
-    display: flex;
     margin: 18px 12px 20px;
-    align-items: center;
-    gap: 12px;
-
     >i{
         color: rgba(11, 115, 45, 0.6);
         font-size: 2rem;
@@ -20,22 +16,25 @@
     align-items: center;
     border: 1px solid #19873D;
     border-radius: 10px;
-    width: 260px;
+    width: 100%;
 }
 .searchBox-icon{
     color: var(--primary-color);
     &:first-child{
         margin: 8px;
     }
-    &:last-child:hover{
+    &:last-child{
+        margin-right: 8px;
+    &:hover{
         cursor: pointer;
         opacity: 0.8;
+    }
     }
 }
 .searchBox-input{
     display: flex;
     align-items: center;
-    justify-content: space-around;
+    justify-content: space-between;
     gap: 4px;
     flex: 1;
 

@@ -49,7 +49,7 @@
     overflow: auto;
 }
 .message-viewImage{
-    height: calc(100% - 175px);
+    height: calc(100% - 180px);
     background-color: #eee;
     padding: 20px;
     display: flex;
@@ -71,6 +71,8 @@
         padding: 15px;
         border: 2px solid var(--sub-color);
         border-radius: 30px;
+        max-width: 600px;
+        word-break: break-all;
     }
 }
 .MyMessage{
@@ -160,5 +162,19 @@
     >span{
         font-size: 2.6rem;
         font-weight: 700;
+    }
+}
+.chat-inputImg{
+    margin-top: 10px;
+    position: relative;
+    >i{
+        position: absolute;
+        z-index: 222;
+        top: -8px;
+        left: 60px;    
+        &:hover{
+            cursor: pointer;
+            color: var(--red-color);
+        }
     }
 }
