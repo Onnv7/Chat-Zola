@@ -31,11 +31,59 @@ const Chat = ({ conversation, handleLatestMsg }) => {
     const [arrivalMessage, setArrivalMessage] = useState(null);
     const [image, setImage] = useState(null);
     const [isOpenPicker, setIsOpenPicker] = useState(false);
+    const [flag, setFlag] = useState(false);
     useEffect(() => {
         socket.on('get message', (data) => {
+            console.log("GET NEW", data, conv.current?.id === data.conversationId)
             if (conv.current?.id === data.conversationId) setArrivalMessage(data?.message);
             handleLatestMsg(data);
         });
+        
+        window.addEventListener('message', async(e) => {
+            console.log("MESSSSSSSSSSSS")
+            window.removeEventListener('message', () => {
+                console.log("XOA EVENT")
+            })
+            if(e.origin !== "http://localhost:3000") return;
+            console.log("EVENT: ", e, conversation?.id)
+            const convId = conversation?.id
+            const url = `/conversation/send-messages/${conversation?.id}`
+            
+            const { data, ...others} = {...e.data}
+            if(user._id === e.data?.calleeID) {
+                socket.emit("end calling", others)
+
+            }
+            if(user._id === e.data?.callerID)
+            {
+                await axios
+                .post(url, {
+                    ...data
+                }).then((res) => {
+                    const newMessage = res.data.data;
+                    setMessages((prev) => {
+                        return [...prev, newMessage];
+                    });
+                    handleLatestMsg({
+                        conversationId: convId,
+                        message: newMessage,
+                    });
+                    return res;
+                }).then((res) => {
+                    const newMessage = res.data.data;
+                    socket.emit('send message', {
+                        conversationId: convId,
+                        senderId: user._id,
+                        receiverId: conversation.friend._id,
+                        message: newMessage,
+                    });
+                    // 
+                })
+                console.log(others, convId)
+                socket.emit("end calling", others)
+                
+            }
+        })
     }, []);
 
     useEffect(() => {
@@ -53,11 +101,13 @@ const Chat = ({ conversation, handleLatestMsg }) => {
     }, [conversation]);
 
     useEffect(() => {
+        console.log("object1", arrivalMessage)
         if (conversation === undefined) return;
         if (arrivalMessage)
             setMessages((prev) => {
                 return [...prev, arrivalMessage];
             });
+            console.log("object2")
     }, [arrivalMessage]);
 
     const handleClickSendMessage = async (conversationId) => {
@@ -114,21 +164,52 @@ const Chat = ({ conversation, handleLatestMsg }) => {
         const top = (window.innerHeight - height) / 2;
         const newWindow = window.open(url, '_blank', `width=${width}, height=${height}, left=${left}, top=${top}`);
 
-        newWindow.props = {
-            socket: socket,
-            callerID: user._id,
-            calleeID: conversation?.friend._id,
-        };
-
-        // newWindow.addEventListener('beforeunload', () => {
-        //     newWindow.close();
-        // });
-        //         newWindow.onload = () => {
-        //     newWindow.opener.postMessage({ type: "peerId", peerId }, "*");
-        //   };
+        if(newWindow)
+        {
+            newWindow.props = {
+                socket: socket,
+                callerID: user._id,
+                calleeID: conversation?.friend._id,
+                video: true,
+                conversationId: conversation?.id
+            };
+            // newWindow.onunload(() => {
+            //     console.log("lalalaalal")
+            //     socket.emit("end calling", {finisher: user._id, callerID: user._id, calleeID: conversation?.friend._id});
+            // })
+            // window.addEventListener('message', async(e) => {
+            //     console.log("EVENT: ", e)
+            //     const { msg, ...others} = {...e.data}
+            //     await axios
+            //     .post(`/conversation/send-messages/${conversation?.id}`, {
+            //         ...msg
+            //     })
+            //     console.log(others)
+            //     socket.emit("end calling", others)
+            // })
+        }
+            
     };
+    
     const handleCall = async () => {
-        navigate('/an');
+        const url = `/call`;
+        const width = 800;
+        const height = 600;
+        const left = (window.innerWidth - width) / 2;
+        const top = (window.innerHeight - height) / 2;
+        const newWindow = window.open(url, '_blank', `width=${width}, height=${height}, left=${left}, top=${top}`);
+
+        if(newWindow)
+        {
+                newWindow.props = {
+                socket: socket,
+                callerID: user._id,
+                calleeID: conversation?.friend._id,
+                video: false,
+                conversationId: conversation?.id
+            };
+        }
+        
     };
     const handleImageUpload = async (event) => {
         const file = event.target.files[0];
@@ -164,6 +245,7 @@ const Chat = ({ conversation, handleLatestMsg }) => {
     }, [conversation, skip]);
 
     useEffect(() => {
+        console.log("set messages new")
         if (isLoadingOldMsg === false) {
             const container = containerRef.current;
             container.scrollTop = container.scrollHeight;
@@ -199,9 +281,6 @@ const Chat = ({ conversation, handleLatestMsg }) => {
                         {messages &&
                             messages.map((message) => {
                                 const sentAt = formatDateTime(message.sentAt);
-                                // console.log("MES ne", message)
-                                // const time = sentAt.toLocaleTimeString();
-                                // your
                                 if (message.sender !== user._id) {
                                     if (message.type === 'message')
                                         return (
@@ -227,6 +306,17 @@ const Chat = ({ conversation, handleLatestMsg }) => {
                                             </div>
                                         );
                                     }
+                                    else if (message.type === 'calling') {
+                                        return (
+                                            <div className="YourMessage">
+                                                <img src={avatar} alt="" />
+                                                <span>
+                                                <span>{message.content}</span>
+                                                </span>
+                                                <div>{sentAt}</div>
+                                            </div>
+                                        );
+                                    }
                                 }
                                 // me
                                 else {
@@ -238,7 +328,7 @@ const Chat = ({ conversation, handleLatestMsg }) => {
                                                 <img src={myAvatar} alt="" />
                                             </div>
                                         );
-                                    } else if (message.type === 'image')
+                                    } else if (message.type === 'image'){
                                         return (
                                             <div className="MyMessage">
                                                 <div>{sentAt}</div>
@@ -253,18 +343,26 @@ const Chat = ({ conversation, handleLatestMsg }) => {
                                                 <img src={myAvatar} alt="" />
                                             </div>
                                         );
+                                    } else if (message.type === 'calling') {
+                                        return (
+                                            <div className="MyMessage">
+                                                <div>{sentAt}</div>
+                                                <span>{message.content}</span>
+                                                <img src={myAvatar} alt="" />
+                                            </div>
+                                        );
+                                    }
                                 }
-                            })}
+                            })
+                        }
+                            
                     </div>
-                    <div className="chat-box">
+                    { conversation?.isFriend ? (<div className="chat-box">
                         <div className="chat-toolbar">
                             <i className="fa-light fa-face-smile-beam" onClick={showEmojiPicker}></i>
                             <div className="emoji-adjust">
                                 {isOpenPicker && <Picker data={data} onEmojiSelect={onEmojiClick} ref={pickerRef} />}
                             </div>
-                            {/* <Picker data={data} onEmojiSelect={chosenEmoji}/> */}
-                            {/* {isOpenPicker && <Picker  onEmojiClick={onEmojiClick} />} */}
-                            {/* <div>{ chosenEmoji && <EmojiData chosenEmoji={chosenEmoji}/>}</div> */}
                             <i className="fa-light fa-image" onClick={(e) => inputFile.current.click()}></i>
                             <input
                                 type="file"
@@ -282,6 +380,7 @@ const Chat = ({ conversation, handleLatestMsg }) => {
                                     <img src={image} alt="Preview" style={{ width: '70px', height: '50px' }} />
                                 </div>
                             )}
+                           
                             <div className="chat-input">
                                 <textarea
                                     onChange={(e) => setText(e.target.value)}
@@ -295,7 +394,7 @@ const Chat = ({ conversation, handleLatestMsg }) => {
                                 <i className="fa-solid fa-thumbs-up"></i>
                             </div>
                         </div>
-                    </div>
+                    </div>) : <div className="chat-box">Khong con la ban thi dung noi nhieu</div>}
                 </div>
             </div>
             {/* <div className="chat-detail">

@@ -15,6 +15,7 @@ import GoiDien from './Test/GoiDien.jsx'
 import GoiVIP from './Test/GoiVIP.jsx'
 import ImageUploader from './Test/ImageUploader.jsx'
 import { AuthContext } from './Contexts/AuthContext.js';
+import useSocket from "./Hooks/useSocket.js"
 import axios from "../src/Hooks/axios.js"
 function App() {
     const test = useRef();
@@ -23,16 +24,20 @@ function App() {
     // const { dispatch: updateSocket } = useContext(SocketClientContext);
     let { socket, peer, dispatch, callRealTime } = useContext(SocketClientContext);
     const [modalIsOpen, setModalIsOpen] = useState(callRealTime?.incomingCall);
-
-
+    const [conversationId, setConversationId] = useState("");
+    const [video, setVideo] = useState(false);
     useEffect(() => {
         if (user) {
-            const socket = io("ws://localhost:8900");
 
-
+            if (!socket) {
+                socket = io("ws://localhost:8900");
+            }
+            socket = window.props?.socket ? window.props?.socket : socket
             socket.emit("addUser", { userId: user._id });
-            socket.on("incoming call", ({ callerID }) => {
-                console.log("NHẬN ĐƯỢC CUỘC GỌI TỪ", callerID)
+            socket.on("incoming call", ({ callerID, video, conversationId }) => {
+                setVideo(video)
+                console.log("NHẬN ĐƯỢC CUỘC GỌI TỪ", callerID, conversationId)
+                setConversationId(conversationId)
                 setModalIsOpen(true)
                 dispatch({
                     type: "CONNECTED",
@@ -45,10 +50,18 @@ function App() {
                 })
             });
 
+            socket.on('ended calling', () => {
+                setModalIsOpen(false)
+                dispatch({
+                    type: "DISCONNECTED",
+                    payload: null,
+                });
+            })
+
 
             dispatch({ type: "CONNECTED", payload: { socket: socket, peer: null } });
         }
-    }, []);
+    }, [socket]);
     useEffect(() => {
         setModalIsOpen(callRealTime?.incomingCall)
     }, [callRealTime?.incomingCall])
@@ -72,13 +85,15 @@ function App() {
         const top = (window.innerHeight - height) / 2;
         const newWindow = window.open(url, '_blank', `width=${width}, height=${height}, left=${left}, top=${top}`);
 
-        console.log("GỬI ĐIOIII: ", peer, socket);
+        // console.log("GỬI ĐIOIII: ", socket);
         newWindow.props = {
-            peer: null,
             socket: socket,
             callerID: callRealTime.callerID,
             calleeID: user._id,
+            video: video,
+            conversationId: conversationId
         };
+
         setModalIsOpen(false);
         dispatch({
             type: "CONNECTED",
@@ -89,6 +104,9 @@ function App() {
             }
         });
     }
+    window.removeEventListener('message', () => {
+        console.log("XOA EVENT")
+    })
     return (
         <>
             <Modal

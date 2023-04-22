@@ -28,11 +28,13 @@ const MessengerTab = () => {
 
     const handleClickConversation = async (conversationId) => {
         const { data } = await axios.get(`/conversation/get-messages/${conversationId}`);
-        // const data = await fetchMessages(conversationId);
+        // const data = await fetchMessages(conversationId);    
         const friend = data.participants.filter((mem) => mem._id !== user._id)[0];
+        
         const conversation = {
             id: data._id,
             friend: friend,
+            isFriend: data.isFriend
         };
         selectedConversation.current = conversation;
         setActive(conversationId);
@@ -110,16 +112,16 @@ const MessengerTab = () => {
                                             <img src={avatar} alt="" />
                                             <div className="messengerTab-prop">
                                                 <span>{conversation.participants[0].name}</span>
-                                                <span>"Empty"</span>
+                                                <span>Hãy trò chuyện cùng với người bạn mới</span>
                                             </div>
                                         </div>
                                     </div>
                                 );
-                            const sender = conversation.latestMsg.sender === user._id ? 'You: ' : '';
+                            const sender = conversation.latestMsg.sender === user._id ? 'Bạn: ' : '';
                             const content =
-                                conversation.latestMsg.type === 'message'
-                                    ? conversation.latestMsg.content
-                                    : ' Sent 1 photo';
+                                conversation.latestMsg.type === 'message' ? conversation.latestMsg.content :
+                                conversation.latestMsg.type === 'image' ? ' Gửi 1 tấm ảnh' :
+                                conversation.latestMsg.type === 'calling' ? ' Tạo 1 cuộc gọi' : ''
                             // if(conversation.latestMsg.type === 'messenge')
                             return (
                                 <div

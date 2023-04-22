@@ -4,14 +4,17 @@ import axios from '../../Hooks/axios';
 import { toast } from 'react-toastify';
 import { AuthContext } from '../../Contexts/AuthContext';
 
+import useAxiosPrivate from "../../Hooks/useAxiosPrivate.js"
 const AddFriendInfo = ({ info, setShow }) => {
+    
+    const axiosPrivate = useAxiosPrivate();
     const { user } = useContext(AuthContext);
     const [list, setList] = useState();
     const birth = parseISO(info.birthday);
     const date = format(birth, 'dd/MM/yyyy');
     useEffect(() => {
         const fetchData = async () => {
-            const { data } = await axios.get(`/user/get-list-invitations-sent/${user._id}`);
+            const { data } = await axiosPrivate.get(`/user/get-list-invitations-sent/${user._id}`);
             setList(data);
         };
         fetchData();
@@ -19,7 +22,7 @@ const AddFriendInfo = ({ info, setShow }) => {
     const found = list?.find((item) => item._id === info._id);
     const handleClick = async () => {
         try {
-            await axios.post(`/user/send-friend-request`, {
+            await axiosPrivate.post(`/user/send-friend-request`, {
                 receiverId: info._id,
                 senderId: user._id,
             });
@@ -30,7 +33,7 @@ const AddFriendInfo = ({ info, setShow }) => {
     };
     const handleUnf = async () => {
         try {
-            await axios.post('/user/unsend-friend-request', {
+            await axiosPrivate.post('/user/unsend-friend-request', {
                 receiverId: info._id,
                 senderId: user._id,
             });

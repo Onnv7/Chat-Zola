@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 
 import Conversation from '../models/conversationModel.js'
+import User from "../models/userModel.js"
 
 import cloudinary from "../utils/cloudinary.js";
 export const createConversation = async (req, res, next) => {
@@ -16,6 +17,7 @@ export const createConversation = async (req, res, next) => {
 }
 export const sendMessageToConversation = async (req, res, next) => {
     try {
+        console.log("SAVING CONVERSATION")
         let msg;
         const { sender, message, sendAt, type } = req.body;
         // const sendAt = Date.now()
@@ -28,7 +30,7 @@ export const sendMessageToConversation = async (req, res, next) => {
             }
 
         }
-        else {
+        else if (type === 'image') {
             let fileStr = message;
             const uploadedResponse = await cloudinary.uploader.upload(fileStr, {
                 upload_preset: 'chat'
@@ -39,6 +41,14 @@ export const sendMessageToConversation = async (req, res, next) => {
                 sentAt: sendAt,
                 type,
                 seen: false,
+            }
+        }
+        else if (type == "calling") {
+            msg = {
+                sender: sender,
+                content: message,
+                sentAt: sendAt,
+                type
             }
         }
         const conversation = await Conversation.findByIdAndUpdate(
@@ -76,7 +86,12 @@ export const getOneConversation = async (req, res, next) => {
             .select({
                 message: 0
             });
-        res.status(200).json(conversation)
+        const friendAId = conversation._doc.participants[0]._id
+        const friendBId = conversation._doc.participants[1]._id
+        const user = await User.findById(friendAId);
+
+        const isFriend = user._doc.friendsList.includes(friendBId);
+        res.status(200).json({ ...conversation._doc, isFriend })
     } catch (error) {
         next(error)
     }
