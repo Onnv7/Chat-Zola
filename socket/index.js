@@ -34,6 +34,7 @@ io.on("connection", (socket) => {
 
     // setup for chatting
     socket.on("send message", ({ conversationId, senderId, receiverId, message }) => {
+        console.log("SNED MESSAGE", senderId, receiverId, message);
         const receiver = getUser(receiverId);
         if (receiver)
             io.to(receiver.socketId).emit("get message", { conversationId, message });

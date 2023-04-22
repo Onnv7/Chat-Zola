@@ -33,6 +33,7 @@ const Chat = ({ conversation, handleLatestMsg }) => {
     const [isOpenPicker, setIsOpenPicker] = useState(false);
     useEffect(() => {
         socket.on('get message', (data) => {
+            console.log("GET NEW")
             if (conv.current?.id === data.conversationId) setArrivalMessage(data?.message);
             handleLatestMsg(data);
         });
@@ -123,21 +124,10 @@ const Chat = ({ conversation, handleLatestMsg }) => {
                 video: true,
                 conversationId: conversation?.id
             };
-            // newWindow.addEventListener('beforeunload', async() => {
-              
-            //     const sentAt = Date.now();
-
-            //     await axios
-            //     .post(`/conversation/send-messages/${conversation?.id}`, {
-            //         sender: user._id,
-            //         message: "Cuộc gọi video",
-            //         sentAt: sentAt,
-            //         type: "calling",
-            //     })
-            // })
         }
             
     };
+    
     const handleCall = async () => {
         const url = `/call`;
         const width = 800;
@@ -155,17 +145,6 @@ const Chat = ({ conversation, handleLatestMsg }) => {
                 video: false,
                 conversationId: conversation?.id
             };
-            newWindow.addEventListener('beforeunload', async() => {
-                console.log("endddddd1")
-                const sentAt = Date.now();
-                await axios
-                .post(`/conversation/send-messages/${conversation?.id}`, {
-                    sender: user._id,
-                    message: "Cuộc gọi thoại",
-                    sentAt: sentAt,
-                    type: "calling",
-                })
-            })
         }
         
     };
@@ -263,6 +242,17 @@ const Chat = ({ conversation, handleLatestMsg }) => {
                                             </div>
                                         );
                                     }
+                                    else if (message.type === 'calling') {
+                                        return (
+                                            <div className="YourMessage">
+                                                <img src={avatar} alt="" />
+                                                <span>
+                                                <span>{message.content}</span>
+                                                </span>
+                                                <div>{sentAt}</div>
+                                            </div>
+                                        );
+                                    }
                                 }
                                 // me
                                 else {
@@ -274,7 +264,7 @@ const Chat = ({ conversation, handleLatestMsg }) => {
                                                 <img src={myAvatar} alt="" />
                                             </div>
                                         );
-                                    } else if (message.type === 'image')
+                                    } else if (message.type === 'image'){
                                         return (
                                             <div className="MyMessage">
                                                 <div>{sentAt}</div>
@@ -289,8 +279,19 @@ const Chat = ({ conversation, handleLatestMsg }) => {
                                                 <img src={myAvatar} alt="" />
                                             </div>
                                         );
+                                    } else if (message.type === 'calling') {
+                                        return (
+                                            <div className="MyMessage">
+                                                <div>{sentAt}</div>
+                                                <span>{message.content}</span>
+                                                <img src={myAvatar} alt="" />
+                                            </div>
+                                        );
+                                    }
                                 }
-                            })}
+                            })
+                        }
+                            
                     </div>
                     { conversation?.isFriend ? (<div className="chat-box">
                         <div className="chat-toolbar">

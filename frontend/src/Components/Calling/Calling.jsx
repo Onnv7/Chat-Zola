@@ -26,23 +26,10 @@ const Calling = ({ setIsOpen }) => {
     const [conversationId, setConversationId] = useState(window.props?.conversationId)
     
     useEffect(() => {
-        window.addEventListener('beforeunload', async () => {
+        // window.addEventListener('beforeunload', async () => {
             
-            const sentAt = Date.now();
-                await axios
-                .post(`/conversation/send-messages/${conversationId}`, {
-                    sender: user._id,
-                    message: "Cuộc gọi thoại",
-                    sentAt: sentAt,
-                    type: "calling",
-                })
-            if(isAccepted)
-                handleEndCalling()
-            else {
-                newSocket.emit("end calling", ({finisher: user._id, callerID, calleeID}));
-            }
-            setIsAccepted(false)
-        });
+            
+        // });
         
         newPeer.on('open', (id) => {
             setPeerId(id)
@@ -115,11 +102,15 @@ const Calling = ({ setIsOpen }) => {
             }
         
         });
-        // window.addEventListener('beforeunload', handleBeforeUnload);
-        // return () => {
-        //     window.removeEventListener('beforeunload', handleBeforeUnload);
-        // };
-    }, [video])
+        window.addEventListener('beforeunload', (e) => {
+            handleBeforeUnload(e);
+            handleCloseWindow();
+        });
+        // window.addEventListener('unload', () => {
+            
+        
+        // })
+    }, [])
     const stopMediaStreamTracks = stream => {
         stream.getTracks().forEach(track => {
             return track.stop()
@@ -129,14 +120,42 @@ const Calling = ({ setIsOpen }) => {
 
     function handleBeforeUnload(e) {
         e.preventDefault();
-        setIsOpen(false);
+        
+        save()
+        // handleCloseWindow()
+        // setIsAccepted(false)
+        // setIsOpen(false);
     }
-
-    const handleEndCalling = async () => {
+    const save = async () => {
+        let message = "Cuộc gọi "
+        if(video)
+        {
+            message += "video"
+        }
+        else
+        {
+            message += "thoại"
+        }
+        const sentAt = Date.now();
+        await axios
+        .post(`/conversation/send-messages/${conversationId}`, {
+            sender: user._id,
+            message: message,
+            sentAt: sentAt,
+            type: "calling",
+        })
+        // await handleCloseWindow()
+    }
+    const handleCloseWindow = async () => {
         if (newPeer) {
+            // console.log(object)
             newSocket.emit("end calling", {finisher: user._id, callerID, calleeID});
+            // newSocket.emit("send message", { conversationId, senderId: callerID, receiverId: calleeID, message: "message"})
             window.close();
         }
+    }
+    const handleEndCalling = () => {
+        handleCloseWindow()
     }
     const handleVideoClick = () => {
         setVideo(prev => !prev)
