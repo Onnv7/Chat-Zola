@@ -28,11 +28,13 @@ const MessengerTab = () => {
 
     const handleClickConversation = async (conversationId) => {
         const { data } = await axios.get(`/conversation/get-messages/${conversationId}`);
-        // const data = await fetchMessages(conversationId);
+        // const data = await fetchMessages(conversationId);    
         const friend = data.participants.filter((mem) => mem._id !== user._id)[0];
+        
         const conversation = {
             id: data._id,
             friend: friend,
+            isFriend: data.isFriend
         };
         selectedConversation.current = conversation;
         setActive(conversationId);

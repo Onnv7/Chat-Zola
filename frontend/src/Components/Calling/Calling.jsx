@@ -6,6 +6,8 @@ import Peer from 'peerjs';
 import { AuthContext } from '../../Contexts/AuthContext.js';
 import { SocketClientContext } from '../../Contexts/SocketClientContext.js';
 import './calling.scss';
+import axios from '../../Hooks/axios.js';
+import { toast } from 'react-toastify';
 
 const Calling = ({ setIsOpen }) => {
     const { user } = useContext(AuthContext);
@@ -16,26 +18,42 @@ const Calling = ({ setIsOpen }) => {
     const [peerId, setPeerId] = useState("")
     const [socketId, setsocketId] = useState(window.props?.socket.id)
     
-    let { socket, dispatch } = useContext(SocketClientContext);
+    
     const [newPeer, setNewPeer] = useState(new Peer());
     const [newSocket, setSocket] = useState(window.props?.socket);
-    
+    const [isAccepted, setIsAccepted] = useState(false);
+    const [video, setVideo] = useState(window.props?.video)
+    const [conversationId, setConversationId] = useState(window.props?.conversationId)
     
     useEffect(() => {
-        if (window.props) {
-            // socket = window.props?.socket;
-            // dispatch("CONNECTED", { socket: socket})
-        }
+        window.addEventListener('beforeunload', async () => {
+            
+            const sentAt = Date.now();
+                await axios
+                .post(`/conversation/send-messages/${conversationId}`, {
+                    sender: user._id,
+                    message: "Cuộc gọi thoại",
+                    sentAt: sentAt,
+                    type: "calling",
+                })
+            if(isAccepted)
+                handleEndCalling()
+            else {
+                newSocket.emit("end calling", ({finisher: user._id, callerID, calleeID}));
+            }
+            setIsAccepted(false)
+        });
+        
         newPeer.on('open', (id) => {
             setPeerId(id)
-            
             if(user._id === calleeID){
                 newSocket.emit("accept video call", ({ calleePeerID: newPeer._id, callerID: callerID }));
 
                 newPeer.on('call', (call) => {
+                    setIsAccepted(true)
                     var getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
         
-                    getUserMedia({ audio: true, video: true }, (mediaStream) => {
+                    getUserMedia({ audio: true, video: video }, (mediaStream) => {
                         
                         userVideo.current.srcObject = mediaStream;
                         userVideo.current.play();
@@ -46,8 +64,9 @@ const Calling = ({ setIsOpen }) => {
                             remoteVideo.current.play();
 
                             newSocket.on('ended calling', () => {
+                                // console.log("Callee tắt may")
                                 stopMediaStreamTracks(remoteStream);
-                                console.log("CALLER ĐÃ NGẮT KẾT NỐI")
+                                // console.log("CALLER ĐÃ NGẮT KẾT NỐI")
                                 newPeer.destroy();
                                 window.close();
                             }) 
@@ -61,50 +80,51 @@ const Calling = ({ setIsOpen }) => {
 
                 // NGƯỜI GỌI khởi tạo camera
                 var getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
-                getUserMedia({ audio: true, video: true }, (mediaStream) => {
-                    console.log("Người gọi", newSocket)
+                getUserMedia({ audio: true, video: video }, (mediaStream) => {
+                    // console.log("Người gọi", newSocket)
                     callerStream = mediaStream;
                     userVideo.current.srcObject = mediaStream;
                     userVideo.current.play();
                 })
 
                 // NGƯỜI GỌI phát 'calling' đến server
-                newSocket.emit('calling', ({callerID: callerID, calleeID: calleeID}))
+                newSocket.emit('calling', ({callerID: callerID, calleeID: calleeID, video: video }))
 
                 // NGƯỜI GỌI lắng nghe 'accepted calling'
-                newSocket.on("accepted calling", ({calleePeerID}) => {
-                    console.log(calleePeerID, "ĐỒNG Ý KẾT NỐI TỚI BẠN")
+                newSocket.on("accepted calling", async({calleePeerID}) => {
+                    setIsAccepted(true)
+                    // console.log(calleePeerID, "ĐỒNG Ý KẾT NỐI TỚI BẠN")
                     const call = newPeer.call(calleePeerID, callerStream);
             
                     call.on('stream', (remoteStream) => {
                         remoteVideo.current.srcObject = remoteStream
                         remoteVideo.current.play();
 
-                        newSocket.on('ended calling', () => {
+                        newSocket.on('ended calling', async () => {
                             stopMediaStreamTracks(remoteStream);
-                            console.log("CALLEE ĐÃ NGẮT KẾT NỐI")
+                            // console.log("CALLEE ĐÃ NGẮT KẾT NỐI")
                             newPeer.destroy();
                             window.close();
                         }) 
                     })
                 });
                 newSocket.on("denied calling", () => {
-                    console.log("CUỘC GỌI BỊ TỪ CHỐI");
+                    // console.log("CUỘC GỌI BỊ TỪ CHỐI");
                     window.close();
                 });
             }
         
         });
-        window.addEventListener('beforeunload', handleBeforeUnload);
-        return () => {
-            window.removeEventListener('beforeunload', handleBeforeUnload);
-        };
-    }, [])
+        // window.addEventListener('beforeunload', handleBeforeUnload);
+        // return () => {
+        //     window.removeEventListener('beforeunload', handleBeforeUnload);
+        // };
+    }, [video])
     const stopMediaStreamTracks = stream => {
         stream.getTracks().forEach(track => {
             return track.stop()
         })
-      }
+    }
     
 
     function handleBeforeUnload(e) {
@@ -114,9 +134,12 @@ const Calling = ({ setIsOpen }) => {
 
     const handleEndCalling = async () => {
         if (newPeer) {
-            newSocket.emit("end calling", ({finisher: user._id, callerID, calleeID}));
-            // window.close();
+            newSocket.emit("end calling", {finisher: user._id, callerID, calleeID});
+            window.close();
         }
+    }
+    const handleVideoClick = () => {
+        setVideo(prev => !prev)
     }
     return (
         <div className="calling">
@@ -130,7 +153,8 @@ const Calling = ({ setIsOpen }) => {
                 <span>Đang gọi ...</span>
             </div>
             <div className="calling-icon">
-                <div className="calling-hideVideo">
+                <div className="calling-hideVideo"
+                onClick={handleVideoClick}>
                     <i className="fa-regular fa-video"></i>
                     <i className="hide fa-regular fa-video-slash "></i>
                 </div>

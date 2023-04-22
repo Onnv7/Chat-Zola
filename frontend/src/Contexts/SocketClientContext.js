@@ -22,6 +22,7 @@ export const SocketClientContext = createContext(INITIAL_STATE);
 const AuthReducer = (state, action) => {
     switch (action.type) {
         case "CONNECTED":
+            console.log("Set socket")
             return { ...state, ...action.payload };
         case "DISCONNECTED":
             return {

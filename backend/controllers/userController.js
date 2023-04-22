@@ -159,10 +159,15 @@ export const acceptNewFriend = async (req, res, next) => {
             );
 
             // Create a new conversation
-            const conversation = new Conversation({
-                participants: [req.body.receiverId, req.body.senderId],
-            });
-            await conversation.save();
+            const oldConversation = await Conversation.findOne({
+                participants: { $all: [req.body.receiverId, req.body.senderId] }
+            })
+            if (!oldConversation) {
+                const conversation = new Conversation({
+                    participants: [req.body.receiverId, req.body.senderId],
+                });
+                await conversation.save();
+            }
 
             await session.commitTransaction();
             res.status(200).json({
@@ -364,3 +369,17 @@ export const getListOfInvitationsSent = async (req, res, next) => {
         next(error);
     }
 };
+export const getAllUser1 = async (req, res, next) => {
+    try {
+        const senderId = req.body.senderId;
+        const receiverId = req.body.receiverId;
+        console.log(req.body)
+        const oldConversation = await Conversation.findOne({
+            participants: { $all: [receiverId, senderId] }
+        })
+        console.log(oldConversation)
+        res.status(200).json(oldConversation)
+    } catch (error) {
+
+    }
+}

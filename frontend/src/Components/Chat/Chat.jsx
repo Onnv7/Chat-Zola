@@ -114,21 +114,60 @@ const Chat = ({ conversation, handleLatestMsg }) => {
         const top = (window.innerHeight - height) / 2;
         const newWindow = window.open(url, '_blank', `width=${width}, height=${height}, left=${left}, top=${top}`);
 
-        newWindow.props = {
-            socket: socket,
-            callerID: user._id,
-            calleeID: conversation?.friend._id,
-        };
+        if(newWindow)
+        {
+            newWindow.props = {
+                socket: socket,
+                callerID: user._id,
+                calleeID: conversation?.friend._id,
+                video: true,
+                conversationId: conversation?.id
+            };
+            // newWindow.addEventListener('beforeunload', async() => {
+              
+            //     const sentAt = Date.now();
 
-        // newWindow.addEventListener('beforeunload', () => {
-        //     newWindow.close();
-        // });
-        //         newWindow.onload = () => {
-        //     newWindow.opener.postMessage({ type: "peerId", peerId }, "*");
-        //   };
+            //     await axios
+            //     .post(`/conversation/send-messages/${conversation?.id}`, {
+            //         sender: user._id,
+            //         message: "Cuộc gọi video",
+            //         sentAt: sentAt,
+            //         type: "calling",
+            //     })
+            // })
+        }
+            
     };
     const handleCall = async () => {
-        navigate('/an');
+        const url = `/call`;
+        const width = 800;
+        const height = 600;
+        const left = (window.innerWidth - width) / 2;
+        const top = (window.innerHeight - height) / 2;
+        const newWindow = window.open(url, '_blank', `width=${width}, height=${height}, left=${left}, top=${top}`);
+
+        if(newWindow)
+        {
+                newWindow.props = {
+                socket: socket,
+                callerID: user._id,
+                calleeID: conversation?.friend._id,
+                video: false,
+                conversationId: conversation?.id
+            };
+            newWindow.addEventListener('beforeunload', async() => {
+                console.log("endddddd1")
+                const sentAt = Date.now();
+                await axios
+                .post(`/conversation/send-messages/${conversation?.id}`, {
+                    sender: user._id,
+                    message: "Cuộc gọi thoại",
+                    sentAt: sentAt,
+                    type: "calling",
+                })
+            })
+        }
+        
     };
     const handleImageUpload = async (event) => {
         const file = event.target.files[0];
@@ -199,9 +238,6 @@ const Chat = ({ conversation, handleLatestMsg }) => {
                         {messages &&
                             messages.map((message) => {
                                 const sentAt = formatDateTime(message.sentAt);
-                                // console.log("MES ne", message)
-                                // const time = sentAt.toLocaleTimeString();
-                                // your
                                 if (message.sender !== user._id) {
                                     if (message.type === 'message')
                                         return (
@@ -256,15 +292,12 @@ const Chat = ({ conversation, handleLatestMsg }) => {
                                 }
                             })}
                     </div>
-                    <div className="chat-box">
+                    { conversation?.isFriend ? (<div className="chat-box">
                         <div className="chat-toolbar">
                             <i className="fa-light fa-face-smile-beam" onClick={showEmojiPicker}></i>
                             <div className="emoji-adjust">
                                 {isOpenPicker && <Picker data={data} onEmojiSelect={onEmojiClick} ref={pickerRef} />}
                             </div>
-                            {/* <Picker data={data} onEmojiSelect={chosenEmoji}/> */}
-                            {/* {isOpenPicker && <Picker  onEmojiClick={onEmojiClick} />} */}
-                            {/* <div>{ chosenEmoji && <EmojiData chosenEmoji={chosenEmoji}/>}</div> */}
                             <i className="fa-light fa-image" onClick={(e) => inputFile.current.click()}></i>
                             <input
                                 type="file"
@@ -282,6 +315,7 @@ const Chat = ({ conversation, handleLatestMsg }) => {
                                     <img src={image} alt="Preview" style={{ width: '70px', height: '50px' }} />
                                 </div>
                             )}
+                           
                             <div className="chat-input">
                                 <textarea
                                     onChange={(e) => setText(e.target.value)}
@@ -295,7 +329,7 @@ const Chat = ({ conversation, handleLatestMsg }) => {
                                 <i className="fa-solid fa-thumbs-up"></i>
                             </div>
                         </div>
-                    </div>
+                    </div>) : <div className="chat-box">Khong con la ban thi dung noi nhieu</div>}
                 </div>
             </div>
             {/* <div className="chat-detail">
