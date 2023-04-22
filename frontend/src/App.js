@@ -24,7 +24,7 @@ function App() {
     // const { dispatch: updateSocket } = useContext(SocketClientContext);
     let { socket, peer, dispatch, callRealTime } = useContext(SocketClientContext);
     const [modalIsOpen, setModalIsOpen] = useState(callRealTime?.incomingCall);
-
+    const [conversationId, setConversationId] = useState("");
     const [video, setVideo] = useState(false);
     useEffect(() => {
         if (user) {
@@ -34,9 +34,10 @@ function App() {
             }
             socket = window.props?.socket ? window.props?.socket : socket
             socket.emit("addUser", { userId: user._id });
-            socket.on("incoming call", ({ callerID, video }) => {
+            socket.on("incoming call", ({ callerID, video, conversationId }) => {
                 setVideo(video)
-                console.log("NHẬN ĐƯỢC CUỘC GỌI TỪ", callerID)
+                console.log("NHẬN ĐƯỢC CUỘC GỌI TỪ", callerID, conversationId)
+                setConversationId(conversationId)
                 setModalIsOpen(true)
                 dispatch({
                     type: "CONNECTED",
@@ -89,7 +90,8 @@ function App() {
             socket: socket,
             callerID: callRealTime.callerID,
             calleeID: user._id,
-            video: video
+            video: video,
+            conversationId: conversationId
         };
 
         setModalIsOpen(false);
@@ -102,6 +104,9 @@ function App() {
             }
         });
     }
+    window.removeEventListener('message', () => {
+        console.log("XOA EVENT")
+    })
     return (
         <>
             <Modal

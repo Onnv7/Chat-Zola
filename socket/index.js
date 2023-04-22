@@ -34,7 +34,7 @@ io.on("connection", (socket) => {
 
     // setup for chatting
     socket.on("send message", ({ conversationId, senderId, receiverId, message }) => {
-        console.log("SNED MESSAGE", senderId, receiverId, message);
+        console.log("SNED MESSAGE", conversationId, senderId, receiverId, message);
         const receiver = getUser(receiverId);
         if (receiver)
             io.to(receiver.socketId).emit("get message", { conversationId, message });
@@ -46,12 +46,12 @@ io.on("connection", (socket) => {
     // setup for calling
 
     // Nhận data từ NGƯỜI GỌI, tìm kiếm NGƯỜI NHẬN và phát 'incoming call' đến NGƯỜI NHẬN
-    socket.on("calling", ({ callerID, calleeID, video }) => {
+    socket.on("calling", ({ callerID, calleeID, video, conversationId }) => {
         console.log(callerID, "GỌI", calleeID);
         const callee = getUser(calleeID);
         if (callee) {
             console.log("PHÁT TÍN HIỆU TỚI", calleeID)
-            io.to(callee.socketId).emit("incoming call", { callerID, video })
+            io.to(callee.socketId).emit("incoming call", { callerID, video, conversationId })
         }
     })
 
@@ -73,9 +73,9 @@ io.on("connection", (socket) => {
     socket.on("end calling", ({ finisher, callerID, calleeID }) => {
         console.log("KẾT THÚC CUỘC GỌI caller = ", finisher)
         const callee = getUser(calleeID)
-        io.to(callee.socketId).emit("ended calling", {});
+        io.to(callee?.socketId).emit("ended calling", {});
         const caller = getUser(callerID)
-        io.to(caller.socketId).emit("ended calling", {});
+        io.to(caller?.socketId).emit("ended calling", {});
     })
 
     // socket.on('join-room', (roomId, userId) => {
