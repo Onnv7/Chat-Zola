@@ -87,3 +87,10 @@ input::-webkit-inner-spin-button {
 .fa-venus{
     color: var(--red-color) !important;
 }
+.ReactModal__Content{
+    background-color: rgba(72, 198, 114, 0.4) !important;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
