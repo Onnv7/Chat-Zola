@@ -34,56 +34,55 @@ const Chat = ({ conversation, handleLatestMsg }) => {
     const [flag, setFlag] = useState(false);
     useEffect(() => {
         socket.on('get message', (data) => {
-            console.log("GET NEW", data, conv.current?.id === data.conversationId)
+            console.log('GET NEW', data, conv.current?.id === data.conversationId);
             if (conv.current?.id === data.conversationId) setArrivalMessage(data?.message);
             handleLatestMsg(data);
         });
-        
-        window.addEventListener('message', async(e) => {
-            console.log("MESSSSSSSSSSSS")
-            window.removeEventListener('message', () => {
-                console.log("XOA EVENT")
-            })
-            if(e.origin !== "http://localhost:3000") return;
-            console.log("EVENT: ", e, conversation?.id)
-            const convId = conversation?.id
-            const url = `/conversation/send-messages/${conversation?.id}`
-            
-            const { data, ...others} = {...e.data}
-            if(user._id === e.data?.calleeID) {
-                socket.emit("end calling", others)
 
+        window.addEventListener('message', async (e) => {
+            console.log('MESSSSSSSSSSSS');
+            window.removeEventListener('message', () => {
+                console.log('XOA EVENT');
+            });
+            if (e.origin !== 'http://localhost:3000') return;
+            console.log('EVENT: ', e, conversation?.id);
+            const convId = conversation?.id;
+            const url = `/conversation/send-messages/${conversation?.id}`;
+
+            const { data, ...others } = { ...e.data };
+            if (user._id === e.data?.calleeID) {
+                socket.emit('end calling', others);
             }
-            if(user._id === e.data?.callerID)
-            {
+            if (user._id === e.data?.callerID) {
                 await axios
-                .post(url, {
-                    ...data
-                }).then((res) => {
-                    const newMessage = res.data.data;
-                    setMessages((prev) => {
-                        return [...prev, newMessage];
+                    .post(url, {
+                        ...data,
+                    })
+                    .then((res) => {
+                        const newMessage = res.data.data;
+                        setMessages((prev) => {
+                            return [...prev, newMessage];
+                        });
+                        handleLatestMsg({
+                            conversationId: convId,
+                            message: newMessage,
+                        });
+                        return res;
+                    })
+                    .then((res) => {
+                        const newMessage = res.data.data;
+                        socket.emit('send message', {
+                            conversationId: convId,
+                            senderId: user._id,
+                            receiverId: conversation.friend._id,
+                            message: newMessage,
+                        });
+                        //
                     });
-                    handleLatestMsg({
-                        conversationId: convId,
-                        message: newMessage,
-                    });
-                    return res;
-                }).then((res) => {
-                    const newMessage = res.data.data;
-                    socket.emit('send message', {
-                        conversationId: convId,
-                        senderId: user._id,
-                        receiverId: conversation.friend._id,
-                        message: newMessage,
-                    });
-                    // 
-                })
-                console.log(others, convId)
-                socket.emit("end calling", others)
-                
+                console.log(others, convId);
+                socket.emit('end calling', others);
             }
-        })
+        });
     }, []);
 
     useEffect(() => {
@@ -101,13 +100,13 @@ const Chat = ({ conversation, handleLatestMsg }) => {
     }, [conversation]);
 
     useEffect(() => {
-        console.log("object1", arrivalMessage)
+        console.log('object1', arrivalMessage);
         if (conversation === undefined) return;
         if (arrivalMessage)
             setMessages((prev) => {
                 return [...prev, arrivalMessage];
             });
-            console.log("object2")
+        console.log('object2');
     }, [arrivalMessage]);
 
     const handleClickSendMessage = async (conversationId) => {
@@ -164,14 +163,13 @@ const Chat = ({ conversation, handleLatestMsg }) => {
         const top = (window.innerHeight - height) / 2;
         const newWindow = window.open(url, '_blank', `width=${width}, height=${height}, left=${left}, top=${top}`);
 
-        if(newWindow)
-        {
+        if (newWindow) {
             newWindow.props = {
                 socket: socket,
                 callerID: user._id,
                 calleeID: conversation?.friend._id,
                 video: true,
-                conversationId: conversation?.id
+                conversationId: conversation?.id,
             };
             // newWindow.onunload(() => {
             //     console.log("lalalaalal")
@@ -188,9 +186,8 @@ const Chat = ({ conversation, handleLatestMsg }) => {
             //     socket.emit("end calling", others)
             // })
         }
-            
     };
-    
+
     const handleCall = async () => {
         const url = `/call`;
         const width = 800;
@@ -199,17 +196,15 @@ const Chat = ({ conversation, handleLatestMsg }) => {
         const top = (window.innerHeight - height) / 2;
         const newWindow = window.open(url, '_blank', `width=${width}, height=${height}, left=${left}, top=${top}`);
 
-        if(newWindow)
-        {
-                newWindow.props = {
+        if (newWindow) {
+            newWindow.props = {
                 socket: socket,
                 callerID: user._id,
                 calleeID: conversation?.friend._id,
                 video: false,
-                conversationId: conversation?.id
+                conversationId: conversation?.id,
             };
         }
-        
     };
     const handleImageUpload = async (event) => {
         const file = event.target.files[0];
@@ -245,7 +240,7 @@ const Chat = ({ conversation, handleLatestMsg }) => {
     }, [conversation, skip]);
 
     useEffect(() => {
-        console.log("set messages new")
+        console.log('set messages new');
         if (isLoadingOldMsg === false) {
             const container = containerRef.current;
             container.scrollTop = container.scrollHeight;
@@ -305,13 +300,12 @@ const Chat = ({ conversation, handleLatestMsg }) => {
                                                 <div>{sentAt}</div>
                                             </div>
                                         );
-                                    }
-                                    else if (message.type === 'calling') {
+                                    } else if (message.type === 'calling') {
                                         return (
                                             <div className="YourMessage">
                                                 <img src={avatar} alt="" />
                                                 <span>
-                                                <span>{message.content}</span>
+                                                    <span>{message.content}</span>
                                                 </span>
                                                 <div>{sentAt}</div>
                                             </div>
@@ -328,7 +322,7 @@ const Chat = ({ conversation, handleLatestMsg }) => {
                                                 <img src={myAvatar} alt="" />
                                             </div>
                                         );
-                                    } else if (message.type === 'image'){
+                                    } else if (message.type === 'image') {
                                         return (
                                             <div className="MyMessage">
                                                 <div>{sentAt}</div>
@@ -353,48 +347,52 @@ const Chat = ({ conversation, handleLatestMsg }) => {
                                         );
                                     }
                                 }
-                            })
-                        }
-                            
+                            })}
                     </div>
-                    { conversation?.isFriend ? (<div className="chat-box">
-                        <div className="chat-toolbar">
-                            <i className="fa-light fa-face-smile-beam" onClick={showEmojiPicker}></i>
-                            <div className="emoji-adjust">
-                                {isOpenPicker && <Picker data={data} onEmojiSelect={onEmojiClick} ref={pickerRef} />}
-                            </div>
-                            <i className="fa-light fa-image" onClick={(e) => inputFile.current.click()}></i>
-                            <input
-                                type="file"
-                                id="file"
-                                ref={inputFile}
-                                style={{ display: 'none' }}
-                                multiple
-                                onChange={handleImageUpload}
-                            />
-                        </div>
-                        <div className="chat-inputBox">
-                            {image && (
-                                <div className="chat-inputImg">
-                                    <i className="fa-regular fa-circle-xmark"></i>
-                                    <img src={image} alt="Preview" style={{ width: '70px', height: '50px' }} />
+                    {conversation?.isFriend ? (
+                        <div className="chat-box">
+                            <div className="chat-toolbar">
+                                <i className="fa-light fa-face-smile-beam" onClick={showEmojiPicker}></i>
+                                <div className="emoji-adjust">
+                                    {isOpenPicker && (
+                                        <Picker data={data} onEmojiSelect={onEmojiClick} ref={pickerRef} />
+                                    )}
                                 </div>
-                            )}
-                           
-                            <div className="chat-input">
-                                <textarea
-                                    onChange={(e) => setText(e.target.value)}
-                                    placeholder="Nhập tin nhắn"
-                                    value={text}
-                                ></textarea>
-                                <i
-                                    className="fa-solid fa-paper-plane-top"
-                                    onClick={(e) => handleClickSendMessage(conversation.id)}
-                                ></i>
-                                <i className="fa-solid fa-thumbs-up"></i>
+                                <i className="fa-light fa-image" onClick={(e) => inputFile.current.click()}></i>
+                                <input
+                                    type="file"
+                                    id="file"
+                                    ref={inputFile}
+                                    style={{ display: 'none' }}
+                                    multiple
+                                    onChange={handleImageUpload}
+                                />
+                            </div>
+                            <div className="chat-inputBox">
+                                {image && (
+                                    <div className="chat-inputImg">
+                                        <i className="fa-regular fa-circle-xmark"></i>
+                                        <img src={image} alt="Preview" style={{ width: '70px', height: '50px' }} />
+                                    </div>
+                                )}
+
+                                <div className="chat-input">
+                                    <textarea
+                                        onChange={(e) => setText(e.target.value)}
+                                        placeholder="Nhập tin nhắn"
+                                        value={text}
+                                    ></textarea>
+                                    <i
+                                        className="fa-solid fa-paper-plane-top"
+                                        onClick={(e) => handleClickSendMessage(conversation.id)}
+                                    ></i>
+                                    <i className="fa-solid fa-thumbs-up"></i>
+                                </div>
                             </div>
                         </div>
-                    </div>) : <div className="chat-box">Khong con la ban thi dung noi nhieu</div>}
+                    ) : (
+                        <div className="chat-noFriend">Khong con la ban thi dung noi nhieu</div>
+                    )}
                 </div>
             </div>
             {/* <div className="chat-detail">

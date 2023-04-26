@@ -33,6 +33,8 @@
 .calling-icon{
     display: flex;
     gap: 32px;
+    position: absolute;
+    bottom: 20px;
 }
 .calling-hideVideo, .calling-muteMic, .calling-cancelPhone{
     width: 66px;
@@ -61,4 +63,14 @@
     >i{
         color: #fff;
     }
+}
+.yourVideo{
+    width: 100vw;
+    height: 100vh;
+    position: relative;
+}
+.myVideo{
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
 }

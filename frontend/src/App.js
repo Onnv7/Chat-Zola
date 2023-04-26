@@ -11,12 +11,12 @@ import Calling from './Components/Calling/Calling';
 import Home from './Pages/Home/Home';
 import Login from './Pages/Login/Login';
 import Register from './Pages/Register/Register';
-import GoiDien from './Test/GoiDien.jsx'
-import GoiVIP from './Test/GoiVIP.jsx'
-import ImageUploader from './Test/ImageUploader.jsx'
+import GoiDien from './Test/GoiDien.jsx';
+import GoiVIP from './Test/GoiVIP.jsx';
+import ImageUploader from './Test/ImageUploader.jsx';
 import { AuthContext } from './Contexts/AuthContext.js';
-import useSocket from "./Hooks/useSocket.js"
-import axios from "../src/Hooks/axios.js"
+import useSocket from './Hooks/useSocket.js';
+import axios from '../src/Hooks/axios.js';
 function App() {
     const test = useRef();
     const { user } = useContext(AuthContext);
@@ -24,56 +24,53 @@ function App() {
     // const { dispatch: updateSocket } = useContext(SocketClientContext);
     let { socket, peer, dispatch, callRealTime } = useContext(SocketClientContext);
     const [modalIsOpen, setModalIsOpen] = useState(callRealTime?.incomingCall);
-    const [conversationId, setConversationId] = useState("");
+    const [conversationId, setConversationId] = useState('');
     const [video, setVideo] = useState(false);
     useEffect(() => {
         if (user) {
-
             if (!socket) {
-                socket = io("ws://localhost:8900");
+                socket = io('ws://localhost:8900');
             }
-            socket = window.props?.socket ? window.props?.socket : socket
-            socket.emit("addUser", { userId: user._id });
-            socket.on("incoming call", ({ callerID, video, conversationId }) => {
-                setVideo(video)
-                console.log("NHẬN ĐƯỢC CUỘC GỌI TỪ", callerID, conversationId)
-                setConversationId(conversationId)
-                setModalIsOpen(true)
+            socket = window.props?.socket ? window.props?.socket : socket;
+            socket.emit('addUser', { userId: user._id });
+            socket.on('incoming call', ({ callerID, video, conversationId }) => {
+                setVideo(video);
+                console.log('NHẬN ĐƯỢC CUỘC GỌI TỪ', callerID, conversationId);
+                setConversationId(conversationId);
+                setModalIsOpen(true);
                 dispatch({
-                    type: "CONNECTED",
+                    type: 'CONNECTED',
                     payload: {
                         callRealTime: {
                             incomingCall: true,
-                            callerID
-                        }
-                    }
-                })
+                            callerID,
+                        },
+                    },
+                });
             });
 
             socket.on('ended calling', () => {
-                setModalIsOpen(false)
+                setModalIsOpen(false);
                 dispatch({
-                    type: "DISCONNECTED",
+                    type: 'DISCONNECTED',
                     payload: null,
                 });
-            })
+            });
 
-
-            dispatch({ type: "CONNECTED", payload: { socket: socket, peer: null } });
+            dispatch({ type: 'CONNECTED', payload: { socket: socket, peer: null } });
         }
     }, [socket]);
     useEffect(() => {
-        setModalIsOpen(callRealTime?.incomingCall)
-    }, [callRealTime?.incomingCall])
+        setModalIsOpen(callRealTime?.incomingCall);
+    }, [callRealTime?.incomingCall]);
 
     const handleDeny = () => {
         setModalIsOpen(false);
         dispatch({
-            type: "DISCONNECTED",
+            type: 'DISCONNECTED',
             payload: null,
         });
-        socket.emit('deny calling', { callerID: callRealTime.callerID })
-
+        socket.emit('deny calling', { callerID: callRealTime.callerID });
     };
     const handleAccept = async () => {
         // socket.emit("accept video call", ({ calleePeerID: peer._id, callerID: callRealTime.callerID }))
@@ -91,33 +88,31 @@ function App() {
             callerID: callRealTime.callerID,
             calleeID: user._id,
             video: video,
-            conversationId: conversationId
+            conversationId: conversationId,
         };
 
         setModalIsOpen(false);
         dispatch({
-            type: "CONNECTED",
+            type: 'CONNECTED',
             payload: {
                 callRealTime: {
                     incomingCall: false,
-                }
-            }
+                },
+            },
         });
-    }
+    };
     window.removeEventListener('message', () => {
-        console.log("XOA EVENT")
-    })
+        console.log('XOA EVENT');
+    });
     return (
         <>
-            <Modal
-                isOpen={modalIsOpen}
-                onRequestClose={handleDeny}
-                contentLabel="Example Modal"
-            >
+            <Modal isOpen={modalIsOpen} onRequestClose={handleDeny} contentLabel="Example Modal">
                 <h2>Modal Title</h2>
                 <p>Modal content goes here.</p>
-                <button onClick={handleDeny}>Từ chối</button>
-                <button onClick={handleAccept}>Chấp nhận</button>
+                <div className="beCalled-btn">
+                    <button onClick={handleDeny}>Từ chối</button>
+                    <button onClick={handleAccept}>Chấp nhận</button>
+                </div>
             </Modal>
             <ToastContainer position="bottom-center" limit={1} autoClose={2000} pauseOnHover={false} />
             <Routes>
@@ -127,8 +122,8 @@ function App() {
 
                 <Route path="home" element={<Home />} />
                 <Route path="call" element={<Calling />} />
-                <Route path="/an" element={<GoiDien />} />
-                <Route path="/a" element={<GoiVIP />} />
+                {/* <Route path="/an" element={<GoiDien />} />
+                <Route path="/a" element={<GoiVIP />} /> */}
                 <Route path="/upload" element={<ImageUploader />} />
             </Routes>
         </>
