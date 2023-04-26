@@ -5,7 +5,7 @@ import axios from "./../../Hooks/axios.js";
 import { useState, useContext, useEffect } from "react";
 import { Alert, Button, Snackbar, styled } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { Auth } from "../../Contexts/authContext";
+import { Auth } from "../../Contexts/AuthContext.js";
 
 const cx = classNames.bind(styles);
 
@@ -13,11 +13,11 @@ const ColorButton = styled(Button)(({ theme }) => ({
     color: "white",
     margin: 10,
     padding: 10,
-    backgroundColor: "#000000",
+    backgroundColor: "#48C672",
     borderRadius: 5,
     fontSize: 16,
     "&:hover": {
-        backgroundColor: "#2C2C2C",
+        backgroundColor: "#48C672",
     },
 }));
 
@@ -66,10 +66,10 @@ function Login() {
 
     return (
         <div className={cx("wrapper")}>
-            <h1>Zola Admin</h1>
+            <h1 style={{ color: "#48C672" }}>Zola Admin</h1>
             <form className={cx("form-signup")}>
                 <input
-                    placeholder="Account"
+                    placeholder="Tài khoản"
                     onChange={(e) => {
                         setAccount(e.target.value);
                     }}

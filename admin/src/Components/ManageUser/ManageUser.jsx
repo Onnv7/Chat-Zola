@@ -22,7 +22,7 @@ const ManageUser = () => {
     const [user, setUser] = useState(null);
     useEffect(() => {
         const fetchData = async () => {
-            const { data } = await axios.get("/user");
+            const { data } = await axios.get("/admin/getAllUser");
             setUsers(data.users);
         };
         fetchData();

@@ -10,7 +10,7 @@ import { toast } from "react-toastify";
 const Modal = ({ setOpen, user }) => {
     const handleLock = async () => {
         try {
-            await axios.patch("/user/" + user._id, {
+            await axios.patch("/admin/lockUser/" + user._id, {
                 isBlocked: true,
             });
             toast.error("Khóa Tài Khoản Thành Công");
@@ -21,7 +21,7 @@ const Modal = ({ setOpen, user }) => {
     };
     const handleUnLock = async () => {
         try {
-            await axios.patch("/user/" + user._id, {
+            await axios.patch("/admin/lockUser/" + user._id, {
                 isBlocked: false,
             });
             toast.success("Mở Khóa Tài Khoản Thành Công");

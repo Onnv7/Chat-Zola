@@ -7,7 +7,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
 import "./sidebarNav.scss";
-import { Auth } from "../../Contexts/authContext";
+import { Auth } from "../../Contexts/AuthContext.js";
 
 const SidebarNav = ({ handleClick }) => {
     const [show, setShow] = useState(1);
@@ -33,7 +33,7 @@ const SidebarNav = ({ handleClick }) => {
                     onClick={() => setClick(4)}
                     className={show === 4 ? "main-img active" : "main-img"}
                 >
-                    <img src="../Img/Avatar.png" alt="Avatar" />
+                    <img src="../Img/admin.jpg" alt="Avatar" />
                 </div>
                 <div className="mainTool-box">
                     <div className="mainTool-List">
