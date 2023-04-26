@@ -1,5 +1,7 @@
 import bcrypt from "bcryptjs";
 import Admin from "../models/adminModel.js";
+import User from "../models/userModel.js";
+
 import { createToken } from "./../utils/utilAdmin.js";
 
 export const signin = async (req, res) => {
@@ -27,4 +29,31 @@ export const signup = async (req, res) => {
         account: admin.account,
         token: createToken(admin),
     });
+};
+
+export const getAllUser = async (req, res, next) => {
+    try {
+        const users = await User.find({});
+        res.status(200).json({
+            message: "Success",
+            users,
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+export const lockUser = async (req, res, next) => {
+    try {
+        const user = await User.findByIdAndUpdate(
+            req.params.userId,
+            { isBlocked: req.body.isBlocked },
+            { new: true }
+        );
+        res.status(200).json({
+            message: "Success",
+            user,
+        });
+    } catch (error) {
+        next(error);
+    }
 };
