@@ -23,7 +23,7 @@ const Calling = ({ setIsOpen }) => {
     const [isAccepted, setIsAccepted] = useState(false);
     const [video, setVideo] = useState(window.props?.video);
     const [conversationId, setConversationId] = useState(window.props?.conversationId);
-    let { socket, peer, dispatch, callRealTime } = useContext(SocketClientContext);
+    let { dispatch, callRealTime } = useContext(SocketClientContext);
     const flag = useRef(true)
     console.log(window.props);
     useEffect(() => {
@@ -134,6 +134,7 @@ const Calling = ({ setIsOpen }) => {
                 };
                 // newSocket.emit('end calling', { finisher: user._id, callerID, calleeID });
                 flag.current = false
+                // if(callRealTime.incomingCall)
                 window.opener.postMessage({ finisher: user._id, callerID, calleeID, data }, '*');
             }
         });
@@ -151,28 +152,6 @@ const Calling = ({ setIsOpen }) => {
 
     const save = () => {
         console.log("SAVE 02")
-        let message = 'Cuộc gọi ';
-        if (video) {
-            message += 'video';
-        } else {
-            message += 'thoại';
-        }
-        const sentAt = Date.now();
-        const fetch = async () => {
-            await axios
-                .post(`/conversation/send-messages/${conversationId}`, {
-                    sender: callerID,
-                    message: message,
-                    sentAt: sentAt,
-                    type: 'calling',
-                })
-                .then(() => {
-                    newSocket.emit('end calling', { finisher: user._id, callerID, calleeID });
-                    window.close();
-                });
-        };
-        // fetch();
-        // newSocket.emit('end calling', { finisher: user._id, callerID, calleeID });
         flag.current = true
         window.close();
     };
