@@ -33,27 +33,29 @@ const Chat = ({ conversation, handleLatestMsg }) => {
     const [isOpenPicker, setIsOpenPicker] = useState(false);
     const [flag, setFlag] = useState(false);
     useEffect(() => {
+        console.log("exittttttttttttttttttttttttttttttt")
         socket.on('get message', (data) => {
-            console.log('GET NEW', data, conv.current?.id === data.conversationId);
             if (conv.current?.id === data.conversationId) setArrivalMessage(data?.message);
             handleLatestMsg(data);
         });
 
         window.addEventListener('message', async (e) => {
-            console.log('MESSSSSSSSSSSS');
+            console.log("LAWSNG NGHEEEEEEEEEEEE")
             window.removeEventListener('message', () => {
                 console.log('XOA EVENT');
             });
             if (e.origin !== 'http://localhost:3000') return;
-            console.log('EVENT: ', e, conversation?.id);
+            
             const convId = conversation?.id;
             const url = `/conversation/send-messages/${conversation?.id}`;
 
             const { data, ...others } = { ...e.data };
-            if (user._id === e.data?.calleeID) {
-                socket.emit('end calling', others);
+            if(user._id === e.data?.finisher) {
+                socket.emit('end calling', { finisher: user._id, callerID: e.data.callerID, calleeID: e.data.calleeID });
             }
-            if (user._id === e.data?.callerID) {
+            console.log(user._id === e.data?.callerID, "leq")
+            if (user._id === e.data?.finisher) {
+                console.log("SAVE 01")
                 await axios
                     .post(url, {
                         ...data,
@@ -73,14 +75,13 @@ const Chat = ({ conversation, handleLatestMsg }) => {
                         const newMessage = res.data.data;
                         socket.emit('send message', {
                             conversationId: convId,
-                            senderId: user._id,
+                            senderId: e.data?.callerID,
                             receiverId: conversation.friend._id,
                             message: newMessage,
                         });
                         //
                     });
-                console.log(others, convId);
-                socket.emit('end calling', others);
+                // socket.emit('end calling', others);
             }
         });
     }, []);
@@ -100,18 +101,15 @@ const Chat = ({ conversation, handleLatestMsg }) => {
     }, [conversation]);
 
     useEffect(() => {
-        console.log('object1', arrivalMessage);
         if (conversation === undefined) return;
         if (arrivalMessage)
             setMessages((prev) => {
                 return [...prev, arrivalMessage];
             });
-        console.log('object2');
     }, [arrivalMessage]);
 
     const handleClickSendMessage = async (conversationId) => {
         if (image !== null) {
-            console.log('send');
             await sendMessage(conversationId, 'image', image);
         }
         if (text !== '') await sendMessage(conversationId, 'message', text);
@@ -171,20 +169,6 @@ const Chat = ({ conversation, handleLatestMsg }) => {
                 video: true,
                 conversationId: conversation?.id,
             };
-            // newWindow.onunload(() => {
-            //     console.log("lalalaalal")
-            //     socket.emit("end calling", {finisher: user._id, callerID: user._id, calleeID: conversation?.friend._id});
-            // })
-            // window.addEventListener('message', async(e) => {
-            //     console.log("EVENT: ", e)
-            //     const { msg, ...others} = {...e.data}
-            //     await axios
-            //     .post(`/conversation/send-messages/${conversation?.id}`, {
-            //         ...msg
-            //     })
-            //     console.log(others)
-            //     socket.emit("end calling", others)
-            // })
         }
     };
 
@@ -240,7 +224,6 @@ const Chat = ({ conversation, handleLatestMsg }) => {
     }, [conversation, skip]);
 
     useEffect(() => {
-        console.log('set messages new');
         if (isLoadingOldMsg === false) {
             const container = containerRef.current;
             container.scrollTop = container.scrollHeight;

@@ -40,7 +40,7 @@ app.use(cookieParser());
 
 app.use("/backend/auth", authRoute);
 app.use("/backend/conversation", conversationRoute);
-app.use("/backend/user", authenticateToken, userRoute);
+app.use("/backend/user", userRoute);
 app.use("/backend/todo", todoRoute);
 app.use("/backend/report", reportRoute);
 app.use("/backend/admin", adminRoute);
