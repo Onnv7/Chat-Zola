@@ -17,8 +17,10 @@ import ImageUploader from './Test/ImageUploader.jsx';
 import { AuthContext } from './Contexts/AuthContext.js';
 import useSocket from './Hooks/useSocket.js';
 import axios from '../src/Hooks/axios.js';
+import useAxiosPrivate from "./Hooks/useAxiosPrivate.js"
 function App() {
     const test = useRef();
+    const axiosPrivate = useAxiosPrivate()
     const { user } = useContext(AuthContext);
     // const { callRealTime } = useContext(SocketClientContext);
     // const { dispatch: updateSocket } = useContext(SocketClientContext);
@@ -26,6 +28,9 @@ function App() {
     const [modalIsOpen, setModalIsOpen] = useState(callRealTime?.incomingCall);
     const [conversationId, setConversationId] = useState('');
     const [video, setVideo] = useState(false);
+    const [callerId, setCallerId] = useState("")
+    // const [calling, setCalling] = useState({caller: "", video: false});
+    const [callerName, setCallerName] = useState("")
     useEffect(() => {
         if (user) {
             if (!socket) {
@@ -35,9 +40,9 @@ function App() {
             socket.emit('addUser', { userId: user._id });
             socket.on('incoming call', ({ callerID, video, conversationId }) => {
                 setVideo(video);
-                console.log('NHẬN ĐƯỢC CUỘC GỌI TỪ', callerID, conversationId);
+                // console.log('NHẬN ĐƯỢC CUỘC GỌI TỪ', callerID, conversationId);
                 setConversationId(conversationId);
-                setModalIsOpen(true);
+                setCallerId(callerId)
                 dispatch({
                     type: 'CONNECTED',
                     payload: {
@@ -60,8 +65,15 @@ function App() {
             dispatch({ type: 'CONNECTED', payload: { socket: socket, peer: null } });
         }
     }, [socket]);
+
     useEffect(() => {
         setModalIsOpen(callRealTime?.incomingCall);
+        const fetch = async () => {
+            const { data } = await axiosPrivate.get(`/user/get-profile/${callRealTime.callerID}`)
+            setCallerName(data.name)
+        }
+        fetch();
+        // console.log("object===============================", callRealTime)
     }, [callRealTime?.incomingCall]);
 
     const handleDeny = () => {
@@ -106,9 +118,10 @@ function App() {
     });
     return (
         <>
+            {console.log("open")}
             <Modal isOpen={modalIsOpen} onRequestClose={handleDeny} contentLabel="Example Modal">
-                <h2>Modal Title</h2>
-                <p>Modal content goes here.</p>
+                <h2>{callerName}</h2>
+                <p>Đang gọi tới bạn</p>
                 <div className="beCalled-btn">
                     <button onClick={handleDeny}>Từ chối</button>
                     <button onClick={handleAccept}>Chấp nhận</button>

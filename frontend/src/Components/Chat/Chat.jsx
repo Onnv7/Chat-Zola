@@ -34,18 +34,16 @@ const Chat = ({ conversation, handleLatestMsg }) => {
     const [flag, setFlag] = useState(false);
     useEffect(() => {
         socket.on('get message', (data) => {
-            console.log('GET NEW', data, conv.current?.id === data.conversationId);
             if (conv.current?.id === data.conversationId) setArrivalMessage(data?.message);
             handleLatestMsg(data);
         });
 
         window.addEventListener('message', async (e) => {
-            console.log('MESSSSSSSSSSSS');
             window.removeEventListener('message', () => {
                 console.log('XOA EVENT');
             });
             if (e.origin !== 'http://localhost:3000') return;
-            console.log('EVENT: ', e, conversation?.id);
+            
             const convId = conversation?.id;
             const url = `/conversation/send-messages/${conversation?.id}`;
 
@@ -79,7 +77,6 @@ const Chat = ({ conversation, handleLatestMsg }) => {
                         });
                         //
                     });
-                console.log(others, convId);
                 socket.emit('end calling', others);
             }
         });
@@ -100,18 +97,15 @@ const Chat = ({ conversation, handleLatestMsg }) => {
     }, [conversation]);
 
     useEffect(() => {
-        console.log('object1', arrivalMessage);
         if (conversation === undefined) return;
         if (arrivalMessage)
             setMessages((prev) => {
                 return [...prev, arrivalMessage];
             });
-        console.log('object2');
     }, [arrivalMessage]);
 
     const handleClickSendMessage = async (conversationId) => {
         if (image !== null) {
-            console.log('send');
             await sendMessage(conversationId, 'image', image);
         }
         if (text !== '') await sendMessage(conversationId, 'message', text);
@@ -171,20 +165,6 @@ const Chat = ({ conversation, handleLatestMsg }) => {
                 video: true,
                 conversationId: conversation?.id,
             };
-            // newWindow.onunload(() => {
-            //     console.log("lalalaalal")
-            //     socket.emit("end calling", {finisher: user._id, callerID: user._id, calleeID: conversation?.friend._id});
-            // })
-            // window.addEventListener('message', async(e) => {
-            //     console.log("EVENT: ", e)
-            //     const { msg, ...others} = {...e.data}
-            //     await axios
-            //     .post(`/conversation/send-messages/${conversation?.id}`, {
-            //         ...msg
-            //     })
-            //     console.log(others)
-            //     socket.emit("end calling", others)
-            // })
         }
     };
 
