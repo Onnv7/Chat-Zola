@@ -33,12 +33,14 @@ const Chat = ({ conversation, handleLatestMsg }) => {
     const [isOpenPicker, setIsOpenPicker] = useState(false);
     const [flag, setFlag] = useState(false);
     useEffect(() => {
+        console.log("exittttttttttttttttttttttttttttttt")
         socket.on('get message', (data) => {
             if (conv.current?.id === data.conversationId) setArrivalMessage(data?.message);
             handleLatestMsg(data);
         });
 
         window.addEventListener('message', async (e) => {
+            console.log("LAWSNG NGHEEEEEEEEEEEE")
             window.removeEventListener('message', () => {
                 console.log('XOA EVENT');
             });
@@ -220,7 +222,6 @@ const Chat = ({ conversation, handleLatestMsg }) => {
     }, [conversation, skip]);
 
     useEffect(() => {
-        console.log('set messages new');
         if (isLoadingOldMsg === false) {
             const container = containerRef.current;
             container.scrollTop = container.scrollHeight;
