@@ -55,6 +55,7 @@ function App() {
             });
 
             socket.on('ended calling', () => {
+                console.log("==========>>>>>>>>>>>>>>>>>>")
                 setModalIsOpen(false);
                 dispatch({
                     type: 'DISCONNECTED',
@@ -62,7 +63,7 @@ function App() {
                 });
             });
 
-            dispatch({ type: 'CONNECTED', payload: { socket: socket, peer: null } });
+            dispatch({ type: 'CONNECTED', payload: { socket: socket } });
         }
     }, [socket]);
 

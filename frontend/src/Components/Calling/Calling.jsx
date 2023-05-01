@@ -23,7 +23,7 @@ const Calling = ({ setIsOpen }) => {
     const [isAccepted, setIsAccepted] = useState(false);
     const [video, setVideo] = useState(window.props?.video);
     const [conversationId, setConversationId] = useState(window.props?.conversationId);
-    const [isFinisher, setIsFinisher] = useState(false)
+    let { socket, peer, dispatch, callRealTime } = useContext(SocketClientContext);
     const flag = useRef(true)
     console.log(window.props);
     useEffect(() => {
@@ -133,7 +133,6 @@ const Calling = ({ setIsOpen }) => {
                     type: 'calling',
                 };
                 // newSocket.emit('end calling', { finisher: user._id, callerID, calleeID });
-                setIsFinisher(false)
                 flag.current = false
                 window.opener.postMessage({ finisher: user._id, callerID, calleeID, data }, '*');
             }
@@ -174,7 +173,6 @@ const Calling = ({ setIsOpen }) => {
         };
         // fetch();
         // newSocket.emit('end calling', { finisher: user._id, callerID, calleeID });
-        setIsFinisher(true)
         flag.current = true
         window.close();
     };
