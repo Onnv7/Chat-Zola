@@ -23,6 +23,8 @@ const Calling = ({ setIsOpen }) => {
     const [isAccepted, setIsAccepted] = useState(false);
     const [video, setVideo] = useState(window.props?.video);
     const [conversationId, setConversationId] = useState(window.props?.conversationId);
+    const [isFinisher, setIsFinisher] = useState(false)
+    const flag = useRef(true)
     console.log(window.props);
     useEffect(() => {
         const fetch = async () => {
@@ -53,10 +55,13 @@ const Calling = ({ setIsOpen }) => {
                             remoteVideo.current.srcObject = remoteStream;
                             remoteVideo.current.play();
 
-                            newSocket.on('ended calling', () => {
-                                stopMediaStreamTracks(remoteStream);
-                                newPeer.destroy();
-                                window.close();
+                            newSocket.on('ended calling', ({finisher}) => {
+                                if(finisher !== user._id) {
+                                    stopMediaStreamTracks(remoteStream);
+                                    newPeer.destroy();
+                                    flag.current = false;
+                                    window.close();
+                                }
                             });
                         });
                     });
@@ -92,10 +97,16 @@ const Calling = ({ setIsOpen }) => {
                         remoteVideo.current.srcObject = remoteStream;
                         remoteVideo.current.play();
 
-                        newSocket.on('ended calling', async () => {
-                            stopMediaStreamTracks(remoteStream);
-                            newPeer.destroy();
-                            window.close();
+                        newSocket.on('ended calling', async ({finisher}) => {
+                            if(finisher !== user._id) {
+                                stopMediaStreamTracks(remoteStream);
+                                newPeer.destroy();
+                                flag.current = false;
+                                window.close();
+                            }
+                            // stopMediaStreamTracks(remoteStream);
+                            // newPeer.destroy();
+                            // window.close();
                         });
                     });
                 });
@@ -106,20 +117,26 @@ const Calling = ({ setIsOpen }) => {
             }
         });
         window.addEventListener('beforeunload', async (e) => {
-            let message = 'Cuộc gọi ';
-            if (video) {
-                message += 'video';
-            } else {
-                message += 'thoại';
+            console.log("FLAG ", flag.current)
+            if(flag.current) {
+                let message = 'Cuộc gọi ';
+                if (video) {
+                    message += 'video';
+                } else {
+                    message += 'thoại';
+                }
+                const sentAt = Date.now();
+                const data = {
+                    sender: callerID,
+                    message: message,
+                    sentAt: sentAt,
+                    type: 'calling',
+                };
+                // newSocket.emit('end calling', { finisher: user._id, callerID, calleeID });
+                setIsFinisher(false)
+                flag.current = false
+                window.opener.postMessage({ finisher: user._id, callerID, calleeID, data }, '*');
             }
-            const sentAt = Date.now();
-            const data = {
-                sender: user._id,
-                message: message,
-                sentAt: sentAt,
-                type: 'calling',
-            };
-            window.opener.postMessage({ finisher: user._id, callerID, calleeID, data }, '*');
         });
     }, []);
     const stopMediaStreamTracks = (stream) => {
@@ -134,6 +151,7 @@ const Calling = ({ setIsOpen }) => {
     }
 
     const save = () => {
+        console.log("SAVE 02")
         let message = 'Cuộc gọi ';
         if (video) {
             message += 'video';
@@ -144,7 +162,7 @@ const Calling = ({ setIsOpen }) => {
         const fetch = async () => {
             await axios
                 .post(`/conversation/send-messages/${conversationId}`, {
-                    sender: user._id,
+                    sender: callerID,
                     message: message,
                     sentAt: sentAt,
                     type: 'calling',
@@ -154,7 +172,11 @@ const Calling = ({ setIsOpen }) => {
                     window.close();
                 });
         };
-        fetch();
+        // fetch();
+        // newSocket.emit('end calling', { finisher: user._id, callerID, calleeID });
+        setIsFinisher(true)
+        flag.current = true
+        window.close();
     };
     
     const handleEndCalling = async () => {

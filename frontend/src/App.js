@@ -85,8 +85,6 @@ function App() {
         socket.emit('deny calling', { callerID: callRealTime.callerID });
     };
     const handleAccept = async () => {
-        // socket.emit("accept video call", ({ calleePeerID: peer._id, callerID: callRealTime.callerID }))
-
         const url = `/call`;
         const width = 800;
         const height = 600;

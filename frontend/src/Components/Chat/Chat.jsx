@@ -50,10 +50,12 @@ const Chat = ({ conversation, handleLatestMsg }) => {
             const url = `/conversation/send-messages/${conversation?.id}`;
 
             const { data, ...others } = { ...e.data };
-            if (user._id === e.data?.calleeID) {
-                socket.emit('end calling', others);
+            if(user._id === e.data?.finisher) {
+                socket.emit('end calling', { finisher: user._id, callerID: e.data.callerID, calleeID: e.data.calleeID });
             }
-            if (user._id === e.data?.callerID) {
+            console.log(user._id === e.data?.callerID, "leq")
+            if (user._id === e.data?.finisher) {
+                console.log("SAVE 01")
                 await axios
                     .post(url, {
                         ...data,
@@ -73,13 +75,13 @@ const Chat = ({ conversation, handleLatestMsg }) => {
                         const newMessage = res.data.data;
                         socket.emit('send message', {
                             conversationId: convId,
-                            senderId: user._id,
+                            senderId: e.data?.callerID,
                             receiverId: conversation.friend._id,
                             message: newMessage,
                         });
                         //
                     });
-                socket.emit('end calling', others);
+                // socket.emit('end calling', others);
             }
         });
     }, []);

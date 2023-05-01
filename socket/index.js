@@ -72,10 +72,18 @@ io.on("connection", (socket) => {
 
     socket.on("end calling", ({ finisher, callerID, calleeID }) => {
         console.log("KẾT THÚC CUỘC GỌI caller = ", finisher)
-        const callee = getUser(calleeID)
-        io.to(callee?.socketId).emit("ended calling", {});
-        const caller = getUser(callerID)
-        io.to(caller?.socketId).emit("ended calling", {});
+        if (finisher !== callerID) {
+            const caller = getUser(callerID)
+            io.to(caller?.socketId).emit("ended calling", { finisher });
+        }
+        else {
+            const callee = getUser(calleeID)
+            io.to(callee?.socketId).emit("ended calling", { finisher });
+        }
+        // const callee = getUser(calleeID)
+        // io.to(callee?.socketId).emit("ended calling", { finisher });
+        // const caller = getUser(callerID)
+        // io.to(caller?.socketId).emit("ended calling", { finisher });
     })
 
     // socket.on('join-room', (roomId, userId) => {
