@@ -7,6 +7,7 @@ import Peer from "peerjs";
 import "react-toastify/dist/ReactToastify.css";
 import Home from "./Pages/Home/Home";
 import Login from "./Pages/Login/Login";
+import ProtectedRoute from "./Hooks/ProtectedRoute";
 
 function App() {
     return (
@@ -20,7 +21,14 @@ function App() {
             <Routes>
                 <Route path="/" element={<Navigate to="/login" />} />
                 <Route path="/login" element={<Login />} />
-                <Route path="/home" element={<Home />} />
+                <Route
+                    path="/home"
+                    element={
+                        <ProtectedRoute>
+                            <Home />
+                        </ProtectedRoute>
+                    }
+                />
             </Routes>
         </BrowserRouter>
     );
