@@ -10,10 +10,13 @@ import { faCakeCandles, faEnvelope, faKey, faUser } from '@fortawesome/free-soli
 const Register = () => {
     const navigate = useNavigate();
     const [error, setError] = useState('');
-    const [check, setCheck] = useState({
+    const initStateCheck = {
         existedEmail: false,
         errorPwd: false,
-    });
+        invalidEmail: false,
+    }
+    const [check, setCheck] = useState(initStateCheck);
+    
     const [info, setInfo] = useState({
         name: '',
         email: '',
@@ -58,27 +61,64 @@ const Register = () => {
     }
 
     const handleRegister = async () => {
+        if(isEmpty()) {
+            toast.error("Vui lòng điền đầy đủ thông tin");
+            return;
+        }
+        if(!isValidEmail(info?.email)) {
+            setCheck(prev => {
+                return { ...initStateCheck, invalidEmail: true }
+            })
+            return;
+        }
         if (await isExistedUser()) {
             setCheck((prev) => ({
-                ...prev,
+                ...initStateCheck,
                 existedEmail: true,
             }));
             return;
         }
-        if (info.password !== info.rePassword) {
-            setCheck((prev) => ({
-                ...prev,
-                errorPwd: true,
-            }));
+        if(checkPassword() === false) {
             return;
         }
-        setCheck((prev) => ({
-            ...prev,
-            existedEmail: false,
-            errorPwd: false,
-        }));
-        if (await registerNewUser()) navigate('/login');
+        
+        // if (info.password !== info.rePassword) {
+        //     setCheck((prev) => ({
+        //         ...initStateCheck,
+        //         errorPwd: true,
+        //     }));
+        //     return;
+        // }
+        // setCheck((prev) => ({
+        //     ...initStateCheck,
+        //     existedEmail: false,
+        //     errorPwd: false,
+        // }));
+        if (await registerNewUser()) {
+            toast.success("Đăng ký thành công")
+            navigate('/login');
+        }
     };
+    const isValidEmail = (email) => {
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailPattern.test(email);
+    }
+    const checkPassword = () => {
+        if(info.password.length < 6 || info.rePassword.length < 6) {
+            toast.error("Mật khẩu ít nhất 6 ký tự")
+            return false;
+        }
+        if(info.password !== info.rePassword) {
+            toast.error("Mật khẩu không hợp lệ")
+            return false;
+        }
+        return true;
+    }
+    const isEmpty = () => {
+        if(info.email.length === 0 || info.birthday.length === 0 || info.gender.length === 0
+            || info.name.length === 0 || info.password.length ===0 || info.rePassword.length === 0) return true;
+        return false;
+    }
     return (
         <div>
             <div className="login">
@@ -108,6 +148,12 @@ const Register = () => {
                             <div className="regis-fail">
                                 <CloseCircle size="18" variant="Bold" />
                                 <span>Email đã được đăng ký bởi một tài khoản khác.</span>
+                            </div>
+                        )}
+                        {check.invalidEmail && (
+                            <div className="regis-fail">
+                                <CloseCircle size="18" variant="Bold" />
+                                <span>Email không hợp lệ.</span>
                             </div>
                         )}
                         {/* <div className="login-text">

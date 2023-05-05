@@ -40,7 +40,7 @@ const ChangePass = ({ setActive, email }) => {
         setPassword((prev) => ({ ...prev, [e.target.id]: e.target.value }));
     };
     const checkLength = () => {
-        if (password.newPassword.length < 8) {
+        if (password.newPassword.length < 6) {
             setError1(true);
         } else setError1(false);
     };
@@ -76,7 +76,7 @@ const ChangePass = ({ setActive, email }) => {
                         {error1 && (
                             <div className="changePassword-check">
                                 <i className="fa-solid fa-circle-xmark"></i>
-                                Mật khẩu mới cần ít nhất 8 kí tự
+                                Mật khẩu mới cần ít nhất 6 kí tự
                             </div>
                         )}
                     </div>
