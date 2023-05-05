@@ -84,6 +84,9 @@ const Login = () => {
             dispatch({ type: "LOGIN_FAILURE", payload: err });
         }
     };
+    const handleClickRegister = async (e) => {
+        navigate('/register');
+    }
     return (
         <div>
             <div className="login">
@@ -157,7 +160,7 @@ const Login = () => {
                         </div>
                         <div className="login-Regis">
                             <span>Bạn chưa có tài khoản?</span>
-                            <span>Đăng kí ngay tại đây</span>
+                            <span onClick={handleClickRegister}>Đăng kí ngay tại đây</span>
                         </div>
                     </div>
                 </div>

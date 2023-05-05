@@ -4,30 +4,35 @@ import { toast } from 'react-toastify';
 
 const VerifyEmail = ({ setShow, setActive, setEmail, setCodes }) => {
     const [emails, setEmails] = useState();
-    const [exist, setExist] = useState(false);
+    const [exist, setExist] = useState(true);
     const handleClose = () => {
         setShow(false);
     };
-
+    
     const handleCheck = async () => {
         try {
+            if(emails.trim().length === 0) {
+                toast.error("Vui lòng điền đầy đủ thông tin")
+                return;
+            }
             const { data } = await axios.post('/auth/send-confirmation-code?mode=forget', {
-                email: emails,
+                email: emails.trim(),
             });
-            toast.success('Đã gửi mã cho bạn');
             if (data.success === true) {
                 setActive(2);
                 setCodes(data.result);
                 setExist(false);
-            } else setExist(true);
+                toast.success('Đã gửi mã cho bạn');
+            } else setExist(false);
         } catch (err) {
+            console.log(err.message)
             toast.error(err.message);
         }
     };
     const handleChange = (e) => {
         setEmail(e.target.value);
         setEmails(e.target.value);
-        setExist(false);
+        setExist(true);
     };
 
     return (
@@ -40,7 +45,7 @@ const VerifyEmail = ({ setShow, setActive, setEmail, setCodes }) => {
                 <span>Email</span>
                 <input type="email" defaultValue={emails} onChange={handleChange} />
             </div>
-            {exist && (
+            {!exist && (
                 <div className="verifyEmail-fail">
                     <i className="fa-solid fa-circle-xmark"></i>
                     <span>Email chưa được đăng ký</span>

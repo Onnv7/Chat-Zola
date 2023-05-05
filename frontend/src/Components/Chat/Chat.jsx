@@ -34,7 +34,7 @@ const Chat = ({ conversation, handleLatestMsg }) => {
     const [flag, setFlag] = useState(false);
     useEffect(() => {
         console.log("exittttttttttttttttttttttttttttttt")
-        socket.on('get message', (data) => {
+        socket?.on('get message', (data) => {
             if (conv.current?.id === data.conversationId) setArrivalMessage(data?.message);
             handleLatestMsg(data);
         });
@@ -51,7 +51,7 @@ const Chat = ({ conversation, handleLatestMsg }) => {
 
             const { data, ...others } = { ...e.data };
             if(user._id === e.data?.finisher) {
-                socket.emit('end calling', { finisher: user._id, callerID: e.data.callerID, calleeID: e.data.calleeID });
+                socket?.emit('end calling', { finisher: user._id, callerID: e.data.callerID, calleeID: e.data.calleeID });
             }
             console.log(user._id === e.data?.callerID, "leq")
             if (user._id === e.data?.finisher) {
@@ -73,7 +73,7 @@ const Chat = ({ conversation, handleLatestMsg }) => {
                     })
                     .then((res) => {
                         const newMessage = res.data.data;
-                        socket.emit('send message', {
+                        socket?.emit('send message', {
                             conversationId: convId,
                             senderId: e.data?.callerID,
                             receiverId: conversation.friend._id,
@@ -137,7 +137,7 @@ const Chat = ({ conversation, handleLatestMsg }) => {
             })
             .then((res) => {
                 const newMessage = res.data.data;
-                socket.emit('send message', {
+                socket?.emit('send message', {
                     conversationId: conversationId,
                     senderId: user._id,
                     receiverId: conversation.friend._id,
