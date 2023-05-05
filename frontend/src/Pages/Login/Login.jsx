@@ -1,15 +1,15 @@
-import React, { useState, useContext, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { io } from 'socket.io-client';
-import Peer from 'peerjs';
-import { SocketClientContext } from '../../Contexts/SocketClientContext.js';
-import './login.scss';
-import axios from '../../Hooks/axios.js';
-import { CloseCircle } from 'iconsax-react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEnvelope, faKey } from '@fortawesome/free-solid-svg-icons';
-import { AuthContext } from '../../Contexts/AuthContext.js';
-import ForgotPass from '../../Components/ForgotPass/ForgotPass';
+import React, { useState, useContext, useRef, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { io } from "socket.io-client";
+import Peer from "peerjs";
+import { SocketClientContext } from "../../Contexts/SocketClientContext.js";
+import "./login.scss";
+import axios from "../../Hooks/axios.js";
+import { CloseCircle } from "iconsax-react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEnvelope, faKey } from "@fortawesome/free-solid-svg-icons";
+import { AuthContext } from "../../Contexts/AuthContext.js";
+import ForgotPass from "../../Components/ForgotPass/ForgotPass";
 const Login = () => {
     const [show, setShow] = useState(false);
     const [empty, setEmpty] = useState({
@@ -19,13 +19,14 @@ const Login = () => {
     const requestInterceptorId = useRef("");
     const { loading, error, dispatch } = useContext(AuthContext);
     const [credentials, setCredentials] = useState({
-        email: '',
-        password: '',
+        email: "",
+        password: "",
     });
+    const { user } = useContext(AuthContext);
 
     const navigate = useNavigate();
     // const token = localStorage.getItem("access_token");
-    const [token, setToken] = useState(localStorage.getItem('access_token'));
+    const [token, setToken] = useState(localStorage.getItem("access_token"));
 
     // if(token){
     //     const loginWithToken = () => {
@@ -33,19 +34,25 @@ const Login = () => {
     //     }
     //     loginWithToken()
     // }
-  
+
+    useEffect(() => {
+        if (user) {
+            navigate("/home");
+        }
+    }, [navigate, user]);
+
     const handleChange = (e) => {
         setCredentials((prev) => ({ ...prev, [e.target.id]: e.target.value }));
     };
     const checkForm = () => {
         let flag = true;
-        if (credentials.password === '') {
+        if (credentials.password === "") {
             setEmpty((prev) => ({
                 ...prev,
                 password: true,
             }));
             flag = false;
-        } else if (credentials.email.trim() === '') {
+        } else if (credentials.email.trim() === "") {
             setEmpty((prev) => ({
                 ...prev,
                 email: true,
@@ -61,25 +68,20 @@ const Login = () => {
     };
     const handleLogin = async (e) => {
         e.preventDefault();
-        console.log("click")
+        console.log("click");
         if (checkForm() === false) return;
         try {
-            
-            const { data } = await axios.post('/auth/login', credentials);
-            
+            const { data } = await axios.post("/auth/login", credentials);
+
             localStorage.setItem("access_token", data.token);
             localStorage.setItem("refresh_token", data.refreshToken);
-            
-            
 
             // Cookies.set("userInfo", JSON.stringify(data));
-            
-           
-            dispatch({ type: 'LOGIN_SUCCESS', payload: data });
-            navigate("/home")
-           
+
+            dispatch({ type: "LOGIN_SUCCESS", payload: data });
+            navigate("/home");
         } catch (err) {
-            dispatch({ type: 'LOGIN_FAILURE', payload: err });
+            dispatch({ type: "LOGIN_FAILURE", payload: err });
         }
     };
     return (
@@ -131,19 +133,24 @@ const Login = () => {
                                 <div className="login-fail">
                                     <CloseCircle size="18" variant="Bold" />
                                     <span>
-                                        Tài khoản hoặc mật khẩu không chính xác. Nếu quên mật khẩu hãy nhấn quên mật
-                                        khẩu để đặt lại mật khẩu mới.
+                                        Tài khoản hoặc mật khẩu không chính xác.
+                                        Nếu quên mật khẩu hãy nhấn quên mật khẩu
+                                        để đặt lại mật khẩu mới.
                                     </span>
                                 </div>
                             </>
                         )}
-                        <button onClick={(e) => handleLogin(e)}>Đăng nhập</button>
+                        <button onClick={(e) => handleLogin(e)}>
+                            Đăng nhập
+                        </button>
                         <div className="login-help">
                             <div className="login-rememberPass">
                                 <input type="checkbox" />
                                 <span>Nhớ mật khẩu</span>
                             </div>
-                            <span onClick={() => setShow(true)}>Quên mật khẩu ?</span>
+                            <span onClick={() => setShow(true)}>
+                                Quên mật khẩu ?
+                            </span>
                         </div>
                         <div className="login-footer">
                             <span>Zola</span>
