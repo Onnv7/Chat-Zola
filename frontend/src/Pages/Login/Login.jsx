@@ -10,13 +10,14 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEnvelope, faKey } from "@fortawesome/free-solid-svg-icons";
 import { AuthContext } from "../../Contexts/AuthContext.js";
 import ForgotPass from "../../Components/ForgotPass/ForgotPass";
+import { toast } from "react-toastify";
 const Login = () => {
     const [show, setShow] = useState(false);
     const [empty, setEmpty] = useState({
         email: false,
         password: false,
     });
-    const requestInterceptorId = useRef("");
+    
     const { loading, error, dispatch } = useContext(AuthContext);
     const [credentials, setCredentials] = useState({
         email: "",
@@ -68,11 +69,14 @@ const Login = () => {
     };
     const handleLogin = async (e) => {
         e.preventDefault();
-        console.log("click");
+        
         if (checkForm() === false) return;
         try {
             const { data } = await axios.post("/auth/login", credentials);
-
+            if(data?.isBlocked) {
+                toast.error("Tài khoản của bạn bị khóa, vui lòng liên hệ với quản trị")
+                return;
+            }
             localStorage.setItem("access_token", data.token);
             localStorage.setItem("refresh_token", data.refreshToken);
 
