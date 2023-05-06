@@ -12,10 +12,13 @@ const MyFriend = () => {
     const [active, setActive] = useState('');
     const [isUpdated, setIsUpdated] = useState(false);
     const [view, setView] = useState();
+    const [textSearch, setTextSearch] = useState("");
+    const [friendList, setFriendList] = useState([]);
     useEffect(() => {
         const fetchData = async () => {
             const { data } = await axios.get(`/user/get-friends-list/${user._id}`);
-            setList(data);
+            setList(data)
+            setFriendList(data);
         };
         fetchData();
     }, [isUpdated]);
@@ -38,12 +41,28 @@ const MyFriend = () => {
             toast.error(err.message);
         }
     };
+    const handleSearch = async (e) => {
+        if(textSearch.trim().length === 0) {
+            setList(friendList)
+            return;
+        }
+        if(e.key !== "Enter") {
+            return
+        }
+        const searchList =  []
+        friendList.forEach(friend => {
+            if (friend.name.toLowerCase().includes((textSearch).trim().toLowerCase())) {
+                searchList.push(friend);
+            }
+        })
+        setList(searchList)
+    }
     return (
         <div className="myFriend">
             <div className="myFriend-List">
                 <div className="addFriend-search">
                     <i className="fa-duotone fa-magnifying-glass"></i>
-                    <input type="text" placeholder="Tìm kiếm" />
+                    <input type="text" placeholder="Tìm kiếm" onChange={(e) => setTextSearch(e.target.value)} value={textSearch} onKeyDown={handleSearch}/>
                 </div>
                 {list?.map((item) => (
                     <div
@@ -52,7 +71,7 @@ const MyFriend = () => {
                         onClick={() => handleClick(item._id)}
                     >
                         <div className="myFriend-info">
-                            <img src="../Img/Avatar1.png" alt="" />
+                            <img src={item.avatar} alt="" />
                             <span>{item.name}</span>
                             {item.gender === 'male' ? (
                                 <i className="fa-regular fa-venus"></i>

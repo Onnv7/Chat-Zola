@@ -33,7 +33,7 @@ const MyFriendInfo = ({ friendId, setFriendId }) => {
         <div className="myFriend-infoContent">
             <div className="myFriend-bg">
                 <div className="myFriend-name">
-                    <img src="../Img/Avatar1.png" alt="" />
+                    <img src={info?.avatar} alt="" />
                     <div className="myFriend-nameBox">
                         <span>{info?.name}</span>
                         {info?.gender === 'male' ? (

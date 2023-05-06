@@ -29,7 +29,7 @@ const FriendInvite = () => {
     const handleClick = (i) => {
         setActive(i);
     };
-    console.log(ids);
+    
     return (
         <div className="myFriend">
             <div className="myFriend-List">
