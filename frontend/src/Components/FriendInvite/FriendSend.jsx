@@ -44,7 +44,7 @@ const FriendSend = ({ setIds }) => {
                     onClick={() => handleClick(item._id)}
                 >
                     <div className="myFriend-info">
-                        <img src="../Img/Avatar1.png" alt="" />
+                        <img src={item?.avatar} alt="" />
                         <span>{item.name}</span>
                         {/* {item.gender === 'male' ? (
                             <i className="fa-regular fa-mars"></i>

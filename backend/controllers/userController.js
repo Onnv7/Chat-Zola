@@ -347,7 +347,7 @@ export const getFriendsRequestList = async (req, res, next) => {
         const list = await User.findById(req.params.userId)
             .populate({
                 path: "friendRequest",
-                select: "_id name",
+                select: "_id name avatar",
             })
             .select({ _id: 0, friendRequest: 1 });
         const { friendRequest } = { ...list._doc };

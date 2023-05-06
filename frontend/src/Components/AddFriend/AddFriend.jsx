@@ -25,7 +25,6 @@ const AddFriend = () => {
         fetchData();
     }, [email]);
     const handleSearch = (e) => {
-        console.log("🚀 ~ file: AddFriend.jsx:24 ~ fetchData ~ data:", info)
         if (e.key === 'Enter') {
             if (info?.name != null) {
                 setView(<AddFriendInfo info={info} setShow={setShow} />);
