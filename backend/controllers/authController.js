@@ -8,7 +8,6 @@ import Token from '../models/tokenModel.js';
 dotenv.config();
 // register a new user
 export const register = async (req, res, next) => {
-    // TODO: sửa lỗi chỗ ngày sinh trong mongoose khác với date tong js => sử dụng 'yyyy-mm-dd để fix
     try {
         const salt = bcrypt.genSaltSync(10);
         const hash = bcrypt.hashSync(req.body.password, salt);
@@ -16,6 +15,7 @@ export const register = async (req, res, next) => {
         const newUser = new User({
             ...req.body,
             password: hash,
+            avatar: "https://res.cloudinary.com/dtvnsczg8/image/upload/v1683376878/Zola/avatar/user_avatar_default.png"
         });
 
         await newUser.save();

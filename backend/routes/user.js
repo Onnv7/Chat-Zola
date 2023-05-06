@@ -20,7 +20,7 @@ import {
 } from "../controllers/userController.js";
 const router = express.Router();
 
-router.get("/aaa", getAllUser1);
+
 router.get("/", getAllUser);
 router.patch("/:userId", lockUser);
 router.post("/up", changeAvatar);

@@ -5,7 +5,7 @@ const userSchema = new mongoose.Schema(
     {
         _id: {
             type: String,
-            // unique: true,
+            unique: true,
             default: () => {
                 const randomBytes = crypto.randomBytes(4);
                 const id = randomBytes.readUInt32BE();
@@ -26,14 +26,14 @@ const userSchema = new mongoose.Schema(
         },
         email: {
             type: String,
-            //required: [true, "User must have a email"],
-            // unique: true,
+            required: [true, "User must have a email"],
+            unique: true,
         },
         password: {
             type: String,
             required: [true, "User must have a password"],
             minLength: [
-                1,
+                6,
                 "A user password must have more or equal than 6 characters",
             ],
         },
