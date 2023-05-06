@@ -32,7 +32,7 @@ router.post("/reject-new-friend", rejectNewFriend);
 router.patch("/unfriend/:userId", unfriend);
 router.patch("/update-profile/:userId", updateProfile);
 router.get("/get-profile/:userId", getProfileById);
-router.get("/get-profile-my-friend/:userId", getProfileMyFriend);
+router.get("/get-profile-my-friend", getProfileMyFriend);
 router.get("/get-profile", getProfileByEmail);
 router.get("/get-friends-list/:userId", getFriendsList);
 router.get("/get-list-friend-requests/:userId", getFriendsRequestList);

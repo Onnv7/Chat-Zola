@@ -371,7 +371,7 @@ const Chat = ({ conversation, handleLatestMsg }) => {
                             </div>
                         </div>
                     ) : (
-                        <div className="chat-noFriend">Khong con la ban thi dung noi nhieu</div>
+                        <div className="chat-noFriend">Hãy kết bạn với nhau để tiếp tục trò chuyện nhé</div>
                     )}
                 </div>
             </div>
