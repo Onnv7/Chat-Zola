@@ -8,6 +8,7 @@ import { AuthContext } from '../../Contexts/AuthContext';
 import axios from '../../Hooks/axios';
 import { format, parseISO } from 'date-fns';
 import useAxiosPrivate from "../../Hooks/useAxiosPrivate.js"
+import { toast } from 'react-toastify';
 
 const Profile = () => {
     const axiosPrivate = useAxiosPrivate();
@@ -44,11 +45,11 @@ const Profile = () => {
                 setInfo(data.result);
                 dispatch({ type: "USER_RELOAD", payload: {...user, ...data.result}})
 
-                console.log("Updated")
+                toast.success("Cập nhật thành công")
             }
             else
             {
-                console.log("Cant update")
+                toast.success("Cập nhật thất bại")
             }
         
         } catch (error) {

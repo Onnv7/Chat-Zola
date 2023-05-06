@@ -2,6 +2,7 @@ import React, { useState, useContext } from 'react';
 
 import axios from '../../Hooks/axios.js';
 import { AuthContext } from '../../Contexts/AuthContext.js';
+import { toast } from 'react-toastify';
 const ChangePass = ({ setOpen }) => {
     const { user } = useContext(AuthContext);
     const [show1, setShow1] = useState(false);
@@ -29,6 +30,10 @@ const ChangePass = ({ setOpen }) => {
     };
     const handleChangePwd = async (e) => {
         try {
+            if(newPass.length < 6 || rePass.length < 6) {
+                toast.error("Mật khẩu phải ít nhấ 6 ký tự")
+                return;
+            }
             setCheckNewPass(true);
             setCheckOldPass(true)
             if(newPass !== rePass) {
@@ -43,7 +48,10 @@ const ChangePass = ({ setOpen }) => {
             })
             if(data.success)
             {
-                console.log("okkkkkkkkkkkk")
+                toast.success("Đổi mật khẩu thành công")
+                setOldPass("")
+                setNewPass("")
+                setRePass("")
             }
             else {
                 setCheckOldPass(false)
@@ -66,6 +74,7 @@ const ChangePass = ({ setOpen }) => {
                             <span>Mật khẩu cũ</span>
                             <div className="changePassword-input">
                                 <input type={show1 ? 'text' : 'password'} 
+                                value={oldPass}
                                 onChange={(e) => setOldPass(e.target.value)}
                                 />
                                 <i
@@ -84,6 +93,7 @@ const ChangePass = ({ setOpen }) => {
                             <span>Mật khẩu mới</span>
                             <div className="changePassword-input">
                                 <input type={show2 ? 'text' : 'password'} 
+                                value={newPass}
                                 onChange={(e) => setNewPass(e.target.value)}
                                 />
 
@@ -103,6 +113,7 @@ const ChangePass = ({ setOpen }) => {
                             <span>Xác nhận mật khẩu mới</span>
                             <div className="changePassword-input">
                                 <input type={show3 ? 'text' : 'password'}
+                                value={rePass}
                                 onChange={(e) => setRePass(e.target.value)} />
 
                                 <i

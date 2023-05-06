@@ -1,6 +1,7 @@
 import bcrypt from "bcryptjs";
 import Admin from "../models/adminModel.js";
 import User from "../models/userModel.js";
+import cloudinary from "../utils/cloudinary.js";
 
 import { createToken } from "./../utils/utilAdmin.js";
 
@@ -57,3 +58,21 @@ export const lockUser = async (req, res, next) => {
         next(error);
     }
 };
+export const uploadAvatarDefault = async (req, res, next) => {
+    try {
+        let type;
+        let image, avatarUrl = "";
+        if (req.file) {
+            type = req.file.mimetype
+            image = `data:${type};base64,` + req.file.buffer.toString('base64');
+            const uploadedResponse = await cloudinary.uploader.upload(image, {
+                public_id: "user_avatar_default",
+                upload_preset: 'avatar'
+            })
+        }
+
+        res.status(200).json({ success: true, message: "Uploaded avatar" })
+    } catch (error) {
+        next(error);
+    }
+}

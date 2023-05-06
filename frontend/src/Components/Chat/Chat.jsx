@@ -33,14 +33,14 @@ const Chat = ({ conversation, handleLatestMsg }) => {
     const [isOpenPicker, setIsOpenPicker] = useState(false);
     const [flag, setFlag] = useState(false);
     useEffect(() => {
-        console.log("exittttttttttttttttttttttttttttttt")
+        
         socket?.on('get message', (data) => {
             if (conv.current?.id === data.conversationId) setArrivalMessage(data?.message);
             handleLatestMsg(data);
         });
 
         window.addEventListener('message', async (e) => {
-            console.log("LAWSNG NGHEEEEEEEEEEEE")
+            
             window.removeEventListener('message', () => {
                 console.log('XOA EVENT');
             });
@@ -53,9 +53,8 @@ const Chat = ({ conversation, handleLatestMsg }) => {
             if(user._id === e.data?.finisher) {
                 socket?.emit('end calling', { finisher: user._id, callerID: e.data.callerID, calleeID: e.data.calleeID });
             }
-            console.log(user._id === e.data?.callerID, "leq")
+            
             if (user._id === e.data?.finisher) {
-                console.log("SAVE 01")
                 await axios
                     .post(url, {
                         ...data,
@@ -248,11 +247,10 @@ const Chat = ({ conversation, handleLatestMsg }) => {
                         <img src={avatar} alt="" />
                         <span>{conversation?.friend.name}</span>
                     </div>
-                    <div className="chat-headerBtn">
-                        <i className="fa-light fa-magnifying-glass"></i>
+                    {conversation?.isFriend && (<div className="chat-headerBtn">
                         <i className="fa-light fa-phone-volume" onClick={handleCall} />
                         <i className="fa-light fa-video" onClick={() => handleCallVideo()}></i>
-                    </div>
+                    </div>)}
                 </div>
                 <div className="chat-view">
                     <div className={image === null ? 'message-view' : 'message-viewImage'} ref={containerRef}>
@@ -369,12 +367,11 @@ const Chat = ({ conversation, handleLatestMsg }) => {
                                         className="fa-solid fa-paper-plane-top"
                                         onClick={(e) => handleClickSendMessage(conversation.id)}
                                     ></i>
-                                    <i className="fa-solid fa-thumbs-up"></i>
                                 </div>
                             </div>
                         </div>
                     ) : (
-                        <div className="chat-noFriend">Khong con la ban thi dung noi nhieu</div>
+                        <div className="chat-noFriend">Hãy kết bạn với nhau để tiếp tục trò chuyện nhé</div>
                     )}
                 </div>
             </div>

@@ -188,14 +188,19 @@ export const rejectNewFriend = async (req, res, next) => {
     try {
         session.startTransaction();
         await User.updateOne(
-            { _id: req.body.userId },
-            { $pull: { friendRequest: req.body.friendId } }
+            { _id: req.body.receiverId },
+            { $pull: { friendRequest: req.body.senderId } }
         );
-        await User.invitationSent(
-            { _id: req.body.friendId },
-            { $pull: { friendRequest: req.body.userId } }
+        await User.updateOne(
+            { _id: req.body.senderId },
+            { $pull: { invitationSent: req.body.receiverId } }
         );
-        session.commitTransaction();
+
+        await session.commitTransaction();
+        res.status(200).json({
+            success: true,
+            message: `Reject successful `,
+        });
     } catch (error) {
         await session.abortTransaction();
         next(error);
@@ -303,10 +308,10 @@ export const getProfileMyFriend = async (req, res, next) => {
     try {
         const myId = req.query.my_id;
         const friend = await User.findOne({
-            _id: req.params.userId,
+            email: req.query.friend_email,
         });
         if (friend === null) {
-            res.status(404).json({ success: false, message: "Not found user" });
+            res.status(200).json({ success: false, message: "Not found user" });
             return;
         }
         let relationship = "none";
@@ -316,15 +321,13 @@ export const getProfileMyFriend = async (req, res, next) => {
         )
             ? true
             : false;
-        const isSentRequest = friend.friendRequest.find(
-            (friendId) => friendId === myId
-        )
-            ? true
-            : false;
-
+        const sentFriendRequest = friend.friendRequest.find((friendId) => friendId === myId) ? true : false;
+        const receivedFriendRequest = friend.invitationSent.find((friendId) => friendId === myId) ? true : false;
         if (isFriend) {
-            relationship = "friend";
-        } else if (isSentRequest) {
+            relationship = "is friend";
+        } else if (receivedFriendRequest) {
+            relationship = "received request";
+        } else if (sentFriendRequest) {
             relationship = "sent request";
         }
 

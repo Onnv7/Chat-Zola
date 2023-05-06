@@ -1,12 +1,14 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import './addFriend.scss';
 import axios from '../../Hooks/axios';
 import AddFriendError from './AddFriendError';
 import AddFriendInfo from './AddFriendInfo';
 import { toast } from 'react-toastify';
 import useAxiosPrivate from "../../Hooks/useAxiosPrivate.js"
-
+import { AuthContext } from '../../Contexts/AuthContext.js';
 const AddFriend = () => {
+    const { user } = useContext(AuthContext);
+    // console.log("🚀 ~ file: AddFriend.jsx:11 ~ AddFriend ~ user:", user)
     const axiosPrivate = useAxiosPrivate();
     const [email, setEmail] = useState('');
     const [show, setShow] = useState(false);
@@ -17,17 +19,18 @@ const AddFriend = () => {
     };
     useEffect(() => {
         const fetchData = async () => {
-            const { data } = await axiosPrivate.get(`/user/get-profile?email=${email}`);
+            const { data } = await axios.get(`/user/get-profile-my-friend?my_id=${user._id}&friend_email=${email}`);
             setInfo(data);
         };
         fetchData();
     }, [email]);
     const handleSearch = (e) => {
+        console.log("🚀 ~ file: AddFriend.jsx:24 ~ fetchData ~ data:", info)
         if (e.key === 'Enter') {
-            setShow(true);
-            if (info != null) {
+            if (info?.name != null) {
                 setView(<AddFriendInfo info={info} setShow={setShow} />);
             } else setView(<AddFriendError setShow={setShow} />);
+            setShow(true);
         }
     };
     return (
