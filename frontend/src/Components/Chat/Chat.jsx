@@ -352,7 +352,7 @@ const Chat = ({ conversation, handleLatestMsg }) => {
                             <div className="chat-inputBox">
                                 {image && (
                                     <div className="chat-inputImg">
-                                        <i className="fa-regular fa-circle-xmark"></i>
+                                        <i className="fa-regular fa-circle-xmark" onClick={() => {setImage(null)}}></i>
                                         <img src={image} alt="Preview" style={{ width: '70px', height: '50px' }} />
                                     </div>
                                 )}
