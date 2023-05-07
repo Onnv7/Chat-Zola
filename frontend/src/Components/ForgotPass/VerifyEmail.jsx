@@ -8,11 +8,11 @@ const VerifyEmail = ({ setShow, setActive, setEmail, setCodes }) => {
     const handleClose = () => {
         setShow(false);
     };
-    
+
     const handleCheck = async () => {
         try {
-            if(emails.trim().length === 0) {
-                toast.error("Vui lòng điền đầy đủ thông tin")
+            if (emails.trim().length === 0) {
+                toast.error('Vui lòng điền đầy đủ thông tin');
                 return;
             }
             const { data } = await axios.post('/auth/send-confirmation-code?mode=forget', {
@@ -25,7 +25,6 @@ const VerifyEmail = ({ setShow, setActive, setEmail, setCodes }) => {
                 toast.success('Đã gửi mã cho bạn');
             } else setExist(false);
         } catch (err) {
-            console.log(err.message)
             toast.error(err.message);
         }
     };

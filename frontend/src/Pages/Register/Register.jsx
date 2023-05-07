@@ -6,17 +6,20 @@ import './register.scss';
 import { CloseCircle, Mobile } from 'iconsax-react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCakeCandles, faEnvelope, faKey, faUser } from '@fortawesome/free-solid-svg-icons';
+import ConfirmEmail from '../../Components/ComfirmEmail/ComfirmEmail';
 
 const Register = () => {
     const navigate = useNavigate();
     const [error, setError] = useState('');
+    const [show, setShow] = useState(false);
+    const [codes, setCodes] = useState();
     const initStateCheck = {
         existedEmail: false,
         errorPwd: false,
         invalidEmail: false,
-    }
+    };
     const [check, setCheck] = useState(initStateCheck);
-    
+
     const [info, setInfo] = useState({
         name: '',
         email: '',
@@ -47,11 +50,16 @@ const Register = () => {
             return true;
         } catch (error) {}
     }
-    async function registerNewUser() {
+    async function comfirmEmail() {
+        setShow(true);
         try {
-            const { rePassword, ...user } = { ...info };
-            const { data } = await axios.post('/auth/register', user);
+            // const { rePassword, ...user } = { ...info };
+            // const { data } = await axios.post('/auth/register', user);
+            const { data } = await axios.post('/auth/send-confirmation-code', {
+                email: info.email,
+            });
             if (data.success) {
+                setCodes(data.result);
                 return true;
             }
             return false;
@@ -59,16 +67,17 @@ const Register = () => {
             console.error('Error:' + error.message);
         }
     }
+    console.log(codes);
 
     const handleRegister = async () => {
-        if(isEmpty()) {
-            toast.error("Vui lòng điền đầy đủ thông tin");
+        if (isEmpty()) {
+            toast.error('Vui lòng điền đầy đủ thông tin');
             return;
         }
-        if(!isValidEmail(info?.email)) {
-            setCheck(prev => {
-                return { ...initStateCheck, invalidEmail: true }
-            })
+        if (!isValidEmail(info?.email)) {
+            setCheck((prev) => {
+                return { ...initStateCheck, invalidEmail: true };
+            });
             return;
         }
         if (await isExistedUser()) {
@@ -78,47 +87,43 @@ const Register = () => {
             }));
             return;
         }
-        if(checkPassword() === false) {
+        if (checkPassword() === false) {
             return;
         }
-        
-        // if (info.password !== info.rePassword) {
-        //     setCheck((prev) => ({
-        //         ...initStateCheck,
-        //         errorPwd: true,
-        //     }));
-        //     return;
-        // }
-        // setCheck((prev) => ({
-        //     ...initStateCheck,
-        //     existedEmail: false,
-        //     errorPwd: false,
-        // }));
-        if (await registerNewUser()) {
-            toast.success("Đăng ký thành công")
-            navigate('/login');
+        if (await comfirmEmail()) {
+            toast.success('Đã gửi mã đến email');
         }
     };
     const isValidEmail = (email) => {
         const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return emailPattern.test(email);
-    }
+    };
     const checkPassword = () => {
-        if(info.password.length < 6 || info.rePassword.length < 6) {
-            toast.error("Mật khẩu ít nhất 6 ký tự")
+        if (info.password.length < 6 || info.rePassword.length < 6) {
+            toast.error('Mật khẩu ít nhất 6 ký tự');
             return false;
         }
-        if(info.password !== info.rePassword) {
-            toast.error("Mật khẩu không hợp lệ")
+        if (info.password !== info.rePassword) {
+            toast.error('Mật khẩu không hợp lệ');
             return false;
         }
         return true;
-    }
+    };
     const isEmpty = () => {
-        if(info.email.length === 0 || info.birthday.length === 0 || info.gender.length === 0
-            || info.name.length === 0 || info.password.length ===0 || info.rePassword.length === 0) return true;
+        if (
+            info.email.length === 0 ||
+            info.birthday.length === 0 ||
+            info.gender.length === 0 ||
+            info.name.length === 0 ||
+            info.password.length === 0 ||
+            info.rePassword.length === 0
+        )
+            return true;
         return false;
-    }
+    };
+    const handleLogin = () => {
+        navigate('/login');
+    };
     return (
         <div>
             <div className="login">
@@ -129,17 +134,6 @@ const Register = () => {
                             <FontAwesomeIcon icon={faUser} />
                             <input id="name" type="text" placeholder="Họ và tên" onChange={handleChange} />
                         </div>
-
-                        {/* <div className="register-name">
-                            <div className="login-text">
-                                <FontAwesomeIcon icon={faUser} />
-                                <input type="text" placeholder="Họ" />
-                            </div>
-                            <div className="login-text">
-                                <FontAwesomeIcon icon={faUser} />
-                                <input type="text" placeholder="Tên" />
-                            </div>
-                        </div> */}
                         <div className="login-text">
                             <FontAwesomeIcon icon={faEnvelope} />
                             <input id="email" type="text" placeholder="Email" onChange={handleChange} />
@@ -156,18 +150,6 @@ const Register = () => {
                                 <span>Email không hợp lệ.</span>
                             </div>
                         )}
-                        {/* <div className="login-text">
-                            <Mobile size="32" color="#fff" />
-                            <input type="number" 
-                                    placeholder="Số điện thoại" 
-                                    min={0} 
-                                    maxLength={10} 
-                                    onChange={(e) =>setUsername(e.target.value)}/>
-                        </div> */}
-                        {/* <div className="regis-fail">
-                            <CloseCircle size="18" variant="Bold" />
-                            <span>Số điện thoại đã được đăng ký bởi một tài khoản khác.</span>
-                        </div> */}
                         <div className="login-text">
                             <FontAwesomeIcon icon={faKey} />
                             <input
@@ -254,8 +236,8 @@ const Register = () => {
                             <span>Zola</span>
                         </div>
                         <div className="login-Regis">
-                            <span>Bạn chưa có tài khoản?</span>
-                            <span>Đăng kí ngay tại đây</span>
+                            <span>Bạn đã có tài khoản?</span>
+                            <span onClick={handleLogin}>Đăng nhập ngay</span>
                         </div>
                     </div>
                 </div>
@@ -263,6 +245,11 @@ const Register = () => {
                     <span>Zola</span>
                 </div>
             </div>
+            {show && (
+                <div className="modal-recovery">
+                    <ConfirmEmail setShow={setShow} info={info} codes={codes} />
+                </div>
+            )}
         </div>
     );
 };

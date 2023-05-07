@@ -12,6 +12,7 @@ const FriendInvite = () => {
     const [infoR, setInfoR] = useState();
     const [idr, setIdr] = useState(null);
     const [ids, setIds] = useState(null);
+    const [textSearch, setTextSearch] = useState('');
     useEffect(() => {
         if (active === 1) {
             setView(<FriendReceive setIdr={setIdr} />);
@@ -29,7 +30,7 @@ const FriendInvite = () => {
     const handleClick = (i) => {
         setActive(i);
     };
-    
+
     return (
         <div className="myFriend">
             <div className="myFriend-List">
@@ -40,10 +41,6 @@ const FriendInvite = () => {
                     <span onClick={() => handleClick(2)} className={active === 2 ? 'second-border' : 'first-border'}>
                         Đã gửi
                     </span>
-                    <div className="addFriend-search">
-                        <i className="fa-duotone fa-magnifying-glass"></i>
-                        <input type="text" placeholder="Tìm kiếm" />
-                    </div>
                 </div>
                 {view}
             </div>
