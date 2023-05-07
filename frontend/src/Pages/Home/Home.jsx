@@ -22,8 +22,6 @@ const Home = () => {
         } else if (active === 2) {
             setView(<Friend />);
         } else if (active === 3) {
-            setView(<Meet />);
-        } else if (active === 4) {
             setView(<Profile />);
         }
     }, [active]);
@@ -33,7 +31,7 @@ const Home = () => {
     const subClick = (i) => {
         setSubview(i);
     };
-   
+
     return (
         <div className="home">
             <div className="homeNav">

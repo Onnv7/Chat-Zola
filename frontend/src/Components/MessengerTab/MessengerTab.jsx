@@ -15,6 +15,7 @@ const MessengerTab = () => {
     const [active, setActive] = useState(1);
     const [searchText, setSearchText] = useState('');
     const containerRef = useRef(null);
+    const [view, setView] = useState(false);
 
     useEffect(() => {
         getAllConversations();
@@ -28,13 +29,14 @@ const MessengerTab = () => {
 
     const handleClickConversation = async (conversationId) => {
         const { data } = await axios.get(`/conversation/get-messages/${conversationId}`);
-        // const data = await fetchMessages(conversationId);    
+        // const data = await fetchMessages(conversationId);
         const friend = data.participants.filter((mem) => mem._id !== user._id)[0];
-        
+        setView(true);
+
         const conversation = {
             id: data._id,
             friend: friend,
-            isFriend: data.isFriend
+            isFriend: data.isFriend,
         };
         selectedConversation.current = conversation;
         setActive(conversationId);
@@ -119,9 +121,13 @@ const MessengerTab = () => {
                                 );
                             const sender = conversation.latestMsg.sender === user._id ? 'Bạn: ' : '';
                             const content =
-                                conversation.latestMsg.type === 'message' ? conversation.latestMsg.content :
-                                conversation.latestMsg.type === 'image' ? ' Gửi 1 tấm ảnh' :
-                                conversation.latestMsg.type === 'calling' ? ' Tạo 1 cuộc gọi' : ''
+                                conversation.latestMsg.type === 'message'
+                                    ? conversation.latestMsg.content
+                                    : conversation.latestMsg.type === 'image'
+                                    ? ' Gửi 1 tấm ảnh'
+                                    : conversation.latestMsg.type === 'calling'
+                                    ? ' Tạo 1 cuộc gọi'
+                                    : '';
                             // if(conversation.latestMsg.type === 'messenge')
                             return (
                                 <div
@@ -149,13 +155,17 @@ const MessengerTab = () => {
                     {conversations.length === 0 && <div>Không tìm thấy tin nhắn nào</div>}
                 </div>
             </div>
-            <div className="messgerTab-chat">
-                <Chat
-                    key={selectedConversation.current?.id}
-                    conversation={selectedConversation.current}
-                    handleLatestMsg={handleLatestMsg}
-                />
-            </div>
+            {view ? (
+                <div className="messgerTab-chat">
+                    <Chat
+                        key={selectedConversation.current?.id}
+                        conversation={selectedConversation.current}
+                        handleLatestMsg={handleLatestMsg}
+                    />
+                </div>
+            ) : (
+                <div className="bg-chat"></div>
+            )}
         </div>
     );
 };

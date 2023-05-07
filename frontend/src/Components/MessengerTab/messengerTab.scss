@@ -3,6 +3,7 @@
 }
 .messengerTab-box{
     width: 360px;
+    border-right: 1px solid #19873D
 }
 .messengerTab-Search{
     margin: 18px 12px 20px;
@@ -89,4 +90,13 @@
 }
 .messgerTab-chat{
     flex: 1;
+}
+.bg-chat{
+    flex: 1;
+    background: url('../../../public/Img/LikeAndFollow.png') no-repeat;
+    object-fit: cover;
+    // background-size: 100%;
+    background-position: center;
+
+    
 }

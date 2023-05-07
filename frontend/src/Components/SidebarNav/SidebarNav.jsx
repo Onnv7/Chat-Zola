@@ -19,8 +19,8 @@ const SidebarNav = ({ handleClick, subClick }) => {
     return (
         <nav className="sidebarNav">
             <div className="main-tab">
-                <div onClick={() => setClick(4)} className={show === 4 ? 'main-img active' : 'main-img'}>
-                    <img src={(user?.avatar !== '' && user.avatar)? user.avatar : '../Img/Avatar.png'} alt="Avatar" />
+                <div onClick={() => setClick(3)} className={show === 4 ? 'main-img active' : 'main-img'}>
+                    <img src={user?.avatar !== '' && user.avatar ? user.avatar : '../Img/Avatar.png'} alt="Avatar" />
                 </div>
                 <div className="mainTool-box">
                     <div className="mainTool-List">
@@ -37,15 +37,6 @@ const SidebarNav = ({ handleClick, subClick }) => {
                         >
                             <FontAwesomeIcon icon={faUserGroup} />
                             <div className="red-dot"></div>
-                        </div>
-                        <div className="mainTool-Item">
-                            <FontAwesomeIcon icon={faClipboardList} />
-                        </div>
-                        <div
-                            onClick={() => setClick(3)}
-                            className={show === 3 ? 'mainTool-Item active' : 'mainTool-Item'}
-                        >
-                            <FontAwesomeIcon icon={faVideo} />
                         </div>
                     </div>
                     <div className="mainTool-list">
