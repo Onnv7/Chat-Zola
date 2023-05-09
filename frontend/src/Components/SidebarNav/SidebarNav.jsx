@@ -29,14 +29,14 @@ const SidebarNav = ({ handleClick, subClick }) => {
                             className={show === 1 ? 'mainTool-Item active' : 'mainTool-Item'}
                         >
                             <FontAwesomeIcon icon={faCommentDots} />
-                            <div className="red-dot"> </div>
+                            {/* <div className="red-dot"> </div> */}
                         </div>
                         <div
                             onClick={() => setClick(2)}
                             className={show === 2 ? 'mainTool-Item active' : 'mainTool-Item'}
                         >
                             <FontAwesomeIcon icon={faUserGroup} />
-                            <div className="red-dot"></div>
+                            {/* <div className="red-dot"></div> */}
                         </div>
                     </div>
                     <div className="mainTool-list">
