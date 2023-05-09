@@ -95,19 +95,19 @@ const Profile = () => {
                                 multiple
                                 onChange={handleImageUpload}
                             />
-                        <div className="profile-name">
+                        {/* <div className="profile-name">
                             <span>{info?.name}</span>
                             {info?.gender === 'male' ? (
                                 <i className="fa-regular fa-mars"></i>
                             ) : (
                                 <i className="fa-regular fa-venus"></i>
                             )}
-                        </div>
+                        </div> */}
                     </div>
                 </div>
                 <div className="profile-body">
                     <div className="profile-item">
-                        <i className="fa-duotone fa-envelope"></i>
+                        <i className="fa-duotone fa-person-simple"></i>
                         <input type="text" defaultValue={info?.name} 
                         onChange={(e) => {
                             setInfo(prev => {
