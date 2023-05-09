@@ -4,7 +4,7 @@
     height: 100vh;
     background: url('../../../public/Img/Background.png') no-repeat;
     object-fit: cover;
-    background-size: 100%;
+    background-size: cover;
 }
 
 .login-container {
@@ -73,8 +73,9 @@
     align-items: center;
     justify-content: space-between;
     margin-top: 6px;
-    >span{
-        &:hover{
+
+    >span {
+        &:hover {
             cursor: pointer;
             color: var(--third-color);
         }
@@ -126,7 +127,7 @@
         text-decoration: underline;
         margin-left: 4px;
 
-        &:hover{
+        &:hover {
             cursor: pointer;
             color: var(--red-color);
         }
@@ -151,7 +152,8 @@
         top: calc((100% / 2) - 80px);
     }
 }
-.modal-recovery{
+
+.modal-recovery {
     position: fixed;
     background-color: rgba(0, 0, 0, 0.4);
     top: 0;
