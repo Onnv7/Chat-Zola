@@ -46,10 +46,10 @@ const MyFriendInfo = ({ friendId, setFriendId }) => {
             </div>
             <div className="myFriend-infoBox">
                 <div className="myFriend-btn">
-                    <button>
+                    {/* <button>
                         <i className="fa-brands fa-facebook-messenger"></i>
                         Nhắn tin
-                    </button>
+                    </button> */}
                     <button onClick={handleUnfriend}>
                         <i className="fa-regular fa-user-xmark"></i>
                         Hủy kết bạn

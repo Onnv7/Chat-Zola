@@ -80,7 +80,7 @@ const MyFriend = () => {
                             )}
                         </div>
                         <div className="myFriend-icon">
-                            <i className="fa-brands fa-facebook-messenger"></i>
+                            {/* <i className="fa-brands fa-facebook-messenger"></i> */}
                             <i onClick={() => handleUnfriend(item._id)} className="fa-regular fa-user-xmark"></i>
                         </div>
                     </div>

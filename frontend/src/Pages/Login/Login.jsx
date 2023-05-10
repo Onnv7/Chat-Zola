@@ -151,10 +151,10 @@ const Login = () => {
                             Đăng nhập
                         </button>
                         <div className="login-help">
-                            <div className="login-rememberPass">
+                            {/* <div className="login-rememberPass">
                                 <input type="checkbox" />
                                 <span>Nhớ mật khẩu</span>
-                            </div>
+                            </div> */}
                             <span onClick={() => setShow(true)}>
                                 Quên mật khẩu ?
                             </span>
