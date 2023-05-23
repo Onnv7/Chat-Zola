@@ -12,6 +12,7 @@ const VerifyCode = ({ setActive, email, codes }) => {
     const [fail, setFail] = useState(false);
     const [newCode, setNewCode] = useState(codes);
     const [inputChanged, setInputChanged] = useState(false);
+    console.log(codes);
     const handleBack = () => {
         setActive(1);
     };
