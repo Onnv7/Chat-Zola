@@ -23,21 +23,26 @@ const ChangePass = ({ setActive, email }) => {
         setActive(2);
     };
     const handleCheck = async () => {
-        try {
-            const { data } = await axios.post('/auth/get-new-password', {
-                email: email,
-                password: password.newPassword,
-            });
-            if (data.success === true) {
-                setActive(4);
-                toast.success('Đổi mật khẩu thành công');
+        if (error2 === false) {
+            try {
+                const { data } = await axios.post('/auth/get-new-password', {
+                    email: email,
+                    password: password.newPassword,
+                });
+                if (data.success === true) {
+                    setActive(4);
+                    toast.success('Đổi mật khẩu thành công');
+                }
+            } catch (err) {
+                toast.error(err.message);
             }
-        } catch (err) {
-            toast.error(err.message);
+        } else {
+            setError2(true);
         }
     };
     const handleChange = (e) => {
         setPassword((prev) => ({ ...prev, [e.target.id]: e.target.value }));
+        setError2(false);
     };
     const checkLength = () => {
         if (password.newPassword.length < 6) {

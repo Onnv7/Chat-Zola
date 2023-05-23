@@ -21,7 +21,7 @@ const Report = ({ subClick }) => {
             await axios.post('/report/', {
                 title: report.title,
                 description: report.description,
-                reporter: user._id,
+                userId: user._id,
             });
             toast.success('Gửi báo cáo thành công');
             setReport({ title: '', description: '' });
