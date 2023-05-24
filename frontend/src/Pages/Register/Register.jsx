@@ -67,7 +67,6 @@ const Register = () => {
             console.error('Error:' + error.message);
         }
     }
-    console.log(codes);
 
     const handleRegister = async () => {
         if (isEmpty()) {
